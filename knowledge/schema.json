@@ -1,0 +1,184 @@
+{
+  "database": "EgyptBI_DWH1",
+  "description": "Egypt Trade Intelligence Warehouse — tracks bilateral trade flows, macro-economic indicators, and supply-chain operations.",
+  "syntax_rules": [
+    "SQL Server T-SQL only",
+    "Use TOP N, never LIMIT",
+    "Query only vw_* views — never raw tables",
+    "Never use SELECT *",
+    "Always alias every column and view",
+    "Use SUM() for trade totals",
+    "Always include GROUP BY when using aggregates",
+    "Maximum TOP 20"
+  ],
+  "views": [
+    {
+      "view": "vw_fact_trade_flows",
+      "domain": "trade",
+      "description": "Core fact table for Egypt bilateral trade. One row per trade event. Join to dimensions for human-readable names.",
+      "columns": [
+        {"name": "trade_key",        "type": "INT",     "role": "pk",      "notes": "Surrogate primary key"},
+        {"name": "date_key",         "type": "INT",     "role": "fk",      "notes": "→ vw_dim_date.date_key"},
+        {"name": "country_key",      "type": "INT",     "role": "fk",      "notes": "→ vw_dim_country.country_key"},
+        {"name": "commodity_key",    "type": "INT",     "role": "fk",      "notes": "→ vw_dim_commodity.commodity_key"},
+        {"name": "flow_type",        "type": "VARCHAR", "role": "filter",  "notes": "Values: 'X' or 'M'"},
+        {"name": "source_system",    "type": "VARCHAR", "role": "meta",    "notes": "Origin ETL system identifier"},
+        {"name": "trade_value_usd",  "type": "DECIMAL", "role": "measure", "notes": "Trade value in USD. Always SUM() this column for totals."}
+      ],
+      "relationships": [
+        {"fk": "country_key",   "references": "vw_dim_country.country_key"},
+        {"fk": "date_key",      "references": "vw_dim_date.date_key"},
+        {"fk": "commodity_key", "references": "vw_dim_commodity.commodity_key"}
+      ],
+      "kpis": {
+        "total_exports":         "SUM(trade_value_usd) WHERE flow_type = 'Export'",
+        "total_imports":         "SUM(trade_value_usd) WHERE flow_type = 'Import'",
+        "trade_balance":         "SUM(CASE WHEN flow_type='Export' THEN trade_value_usd ELSE -trade_value_usd END)",
+        "top_export_partner":    "MAX country by SUM(trade_value_usd) WHERE flow_type='Export'",
+        "top_import_partner":    "MAX country by SUM(trade_value_usd) WHERE flow_type='Import'",
+        "top_export_commodity":  "MAX commodity by SUM(trade_value_usd) WHERE flow_type='Export'"
+      }
+    },
+    {
+      "view": "vw_dim_country",
+      "domain": "dimension",
+      "description": "Country dimension. Always join here when a query needs country_name, region, or income_group.",
+      "columns": [
+        {"name": "country_key",   "type": "INT",     "role": "pk"},
+        {"name": "country_name",  "type": "VARCHAR", "role": "label",  "notes": "Human-readable country name"},
+        {"name": "income_group",  "type": "VARCHAR", "role": "filter", "notes": "e.g. High income, Upper middle income"},
+        {"name": "is_egypt",      "type": "BIT",     "role": "filter", "notes": "1 = Egypt itself; use to exclude Egypt from partner lists"},
+        {"name": "iso_code",      "type": "VARCHAR", "role": "label",  "notes": "ISO 3166-1 alpha-3"},
+        {"name": "region",        "type": "VARCHAR", "role": "filter", "notes": "e.g. Middle East & North Africa, Europe & Central Asia"}
+      ],
+      "relationships": []
+    },
+    {
+      "view": "vw_dim_commodity",
+      "domain": "dimension",
+      "description": "Commodity dimension. Join here when queries mention product categories, HS codes, or strategic goods.",
+      "columns": [
+        {"name": "commodity_key", "type": "INT",     "role": "pk"},
+        {"name": "category",      "type": "VARCHAR", "role": "filter", "notes": "Broad product category"},
+        {"name": "description",   "type": "VARCHAR", "role": "label",  "notes": "Full commodity description"},
+        {"name": "hs_code",       "type": "VARCHAR", "role": "filter", "notes": "Harmonized System code"},
+        {"name": "is_strategic",  "type": "BIT",     "role": "filter", "notes": "1 = strategic commodity (energy, wheat, etc.)"}
+      ],
+      "relationships": []
+    },
+    {
+      "view": "vw_dim_date",
+      "domain": "dimension",
+      "description": "Date dimension. Join here when queries mention years, quarters, months, or fiscal years.",
+      "columns": [
+        {"name": "date_key",       "type": "INT",     "role": "pk"},
+        {"name": "year",           "type": "INT",     "role": "filter"},
+        {"name": "quarter",        "type": "INT",     "role": "filter", "notes": "1–4"},
+        {"name": "quarter_name",   "type": "VARCHAR", "role": "label",  "notes": "e.g. Q1 2023"},
+        {"name": "month",          "type": "INT",     "role": "filter", "notes": "1–12"},
+        {"name": "month_name",     "type": "VARCHAR", "role": "label"},
+        {"name": "egypt_fy",       "type": "VARCHAR", "role": "filter", "notes": "Egypt fiscal year (Jul–Jun), e.g. FY2023"},
+        {"name": "is_crisis_year", "type": "BIT",     "role": "filter", "notes": "1 = year flagged as economic crisis period"}
+      ],
+      "relationships": []
+    },
+    {
+      "view": "vw_dim_egypt_macro",
+      "domain": "macro",
+      "description": "Egypt macro-economic indicators per year. Standalone dimension — does NOT join to vw_fact_trade_flows. Query directly when asked about GDP, inflation, reserves, or exchange rate.",
+      "columns": [
+        {"name": "macro_key",            "type": "INT",     "role": "pk"},
+        {"name": "date_key",             "type": "INT",     "role": "fk",      "notes": "→ vw_dim_date.date_key"},
+        {"name": "foreign_reserves_usd", "type": "DECIMAL", "role": "measure", "notes": "Foreign reserves in USD"},
+        {"name": "gdp_growth_pct",       "type": "DECIMAL", "role": "measure", "notes": "Annual GDP growth rate in %"},
+        {"name": "gdp_usd",              "type": "DECIMAL", "role": "measure", "notes": "Nominal GDP in USD"},
+        {"name": "inflation_pct",        "type": "DECIMAL", "role": "measure", "notes": "Annual CPI inflation in %"},
+        {"name": "usd_egp_annual_avg",   "type": "DECIMAL", "role": "measure", "notes": "Annual average USD/EGP exchange rate"}
+      ],
+      "relationships": [
+        {"fk": "date_key", "references": "vw_dim_date.date_key"}
+      ],
+      "kpis": {
+        "gdp_growth":       "SELECT gdp_growth_pct FROM vw_dim_egypt_macro JOIN vw_dim_date ...",
+        "inflation_trend":  "SELECT year, inflation_pct ORDER BY year",
+        "fx_rate":          "SELECT usd_egp_annual_avg — higher means weaker EGP",
+        "reserve_adequacy": "SUM(foreign_reserves_usd) / 3 months of imports"
+      }
+    },
+    {
+      "view": "vw_fact_supply_chain",
+      "domain": "supply_chain",
+      "description": "Supply chain order-level fact table. Contains sales, profit, and shipping performance. Does NOT connect to vw_fact_trade_flows.",
+      "columns": [
+        {"name": "order_key",              "type": "INT",     "role": "pk"},
+        {"name": "country_key",            "type": "INT",     "role": "fk",      "notes": "→ vw_dim_country.country_key"},
+        {"name": "date_key",               "type": "INT",     "role": "fk",      "notes": "→ vw_dim_date.date_key"},
+        {"name": "product_key",            "type": "INT",     "role": "fk",      "notes": "→ vw_dim_product.product_key"},
+        {"name": "sales_usd",              "type": "DECIMAL", "role": "measure", "notes": "Order revenue in USD"},
+        {"name": "profit_usd",             "type": "DECIMAL", "role": "measure", "notes": "Order profit in USD"},
+        {"name": "actual_shipping_days",   "type": "INT",     "role": "measure"},
+        {"name": "scheduled_shipping_days","type": "INT",     "role": "measure"},
+        {"name": "shipping_delay_days",    "type": "INT",     "role": "measure", "notes": "= actual − scheduled. Positive = late."},
+        {"name": "delivery_status",        "type": "VARCHAR", "role": "filter",  "notes": "Values: 'On Time', 'Late', 'Early'"},
+        {"name": "shipping_mode",          "type": "VARCHAR", "role": "filter",  "notes": "Values: 'Air', 'Sea', 'Road', 'Rail'"},
+        {"name": "is_late",                "type": "BIT",     "role": "filter",  "notes": "1 = late delivery"}
+      ],
+      "relationships": [
+        {"fk": "country_key",  "references": "vw_dim_country.country_key"},
+        {"fk": "date_key",     "references": "vw_dim_date.date_key"},
+        {"fk": "product_key",  "references": "vw_dim_product.product_key"}
+      ],
+      "kpis": {
+        "on_time_rate":        "COUNT(*) WHERE is_late=0 / COUNT(*) * 100",
+        "avg_delay":           "AVG(shipping_delay_days) WHERE is_late=1",
+        "profit_margin":       "SUM(profit_usd) / SUM(sales_usd) * 100",
+        "late_order_revenue":  "SUM(sales_usd) WHERE is_late=1",
+        "top_delayed_mode":    "MAX shipping_mode by AVG(shipping_delay_days)"
+      }
+    },
+    {
+      "view": "vw_dim_product",
+      "domain": "dimension",
+      "description": "Product dimension for supply chain. Join here when queries mention product names, categories, or departments.",
+      "columns": [
+        {"name": "product_key",    "type": "INT",     "role": "pk"},
+        {"name": "product_name",   "type": "VARCHAR", "role": "label"},
+        {"name": "category_name",  "type": "VARCHAR", "role": "filter"},
+        {"name": "department_name","type": "VARCHAR", "role": "filter"},
+        {"name": "product_price",  "type": "DECIMAL", "role": "measure"}
+      ],
+      "relationships": []
+    }
+  ],
+  "domain_routing": {
+    "trade": ["vw_fact_trade_flows", "vw_dim_country", "vw_dim_commodity", "vw_dim_date"],
+    "macro": ["vw_dim_egypt_macro", "vw_dim_date"],
+    "supply_chain": ["vw_fact_supply_chain", "vw_dim_country", "vw_dim_date", "vw_dim_product"]
+  },
+  "keyword_hints": {
+    "export":           ["vw_fact_trade_flows", "vw_dim_country", "vw_dim_commodity", "vw_dim_date"],
+    "import":           ["vw_fact_trade_flows", "vw_dim_country", "vw_dim_commodity", "vw_dim_date"],
+    "trade":            ["vw_fact_trade_flows", "vw_dim_country", "vw_dim_commodity", "vw_dim_date"],
+    "commodity":        ["vw_fact_trade_flows", "vw_dim_commodity"],
+    "country":          ["vw_dim_country"],
+    "partner":          ["vw_fact_trade_flows", "vw_dim_country"],
+    "gdp":              ["vw_dim_egypt_macro", "vw_dim_date"],
+    "inflation":        ["vw_dim_egypt_macro", "vw_dim_date"],
+    "reserves":         ["vw_dim_egypt_macro", "vw_dim_date"],
+    "exchange rate":    ["vw_dim_egypt_macro", "vw_dim_date"],
+    "macro":            ["vw_dim_egypt_macro", "vw_dim_date"],
+    "shipping":         ["vw_fact_supply_chain", "vw_dim_product", "vw_dim_country", "vw_dim_date"],
+    "supply chain":     ["vw_fact_supply_chain", "vw_dim_product", "vw_dim_country", "vw_dim_date"],
+    "delivery":         ["vw_fact_supply_chain", "vw_dim_product"],
+    "late":             ["vw_fact_supply_chain"],
+    "profit":           ["vw_fact_supply_chain", "vw_dim_product"],
+    "sales":            ["vw_fact_supply_chain", "vw_dim_product"],
+    "product":          ["vw_dim_product", "vw_fact_supply_chain"],
+    "region":           ["vw_dim_country"],
+    "year":             ["vw_dim_date"],
+    "quarter":          ["vw_dim_date"],
+    "month":            ["vw_dim_date"],
+    "fiscal":           ["vw_dim_date"],
+    "crisis":           ["vw_dim_date"]
+  }
+}

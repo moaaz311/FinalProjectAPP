@@ -1,0 +1,12 @@
+flask
+flask-cors
+python-dotenv
+openai
+flask-mail
+reportlab
+pyodbc
+pandas
+requests
+numpy
+sqlalchemy
+cachetools

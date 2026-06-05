@@ -1,0 +1,150 @@
+DATABASE: Egypt Trade Intelligence Warehouse
+
+IMPORTANT RULES:
+
+- Use SQL Server syntax
+- Use TOP not LIMIT
+- Use only views (vw_*)
+- Never query raw tables
+- Join dimensions whenever names are needed
+- For totals use SUM()
+- Use aliases
+- Return SQL only
+- Never explain
+- Never greet
+- Never return comments
+- Output starts with SELECT or WITH
+- Use TOP instead of LIMIT
+- Use only vw_* views
+- Never use SELECT *
+- Maximum TOP 20
+
+
+------------------------
+
+Trade model
+
+vw_fact_trade_flows
+
+trade_key
+date_key
+country_key
+commodity_key
+flow_type
+source_system
+trade_value_usd
+
+
+Relationships:
+
+vw_fact_trade_flows.country_key
+→ vw_dim_country.country_key
+
+vw_fact_trade_flows.date_key
+→ vw_dim_date.date_key
+
+vw_fact_trade_flows.commodity_key
+→ vw_dim_commodity.commodity_key
+
+
+------------------------
+
+Country
+
+vw_dim_country
+
+country_key
+country_name
+income_group
+is_egypt
+iso_code
+region
+
+
+------------------------
+
+Commodity
+
+vw_dim_commodity
+
+commodity_key
+category
+description
+hs_code
+is_strategic
+
+
+------------------------
+
+Date
+
+vw_dim_date
+
+date_key
+year
+quarter
+quarter_name
+month
+month_name
+egypt_fy
+is_crisis_year
+
+
+------------------------
+
+Macro Economy
+
+vw_dim_egypt_macro
+
+macro_key
+date_key
+foreign_reserves_usd
+gdp_growth_pct
+gdp_usd
+inflation_pct
+usd_egp_annual_avg
+
+
+------------------------
+
+Supply Chain
+
+vw_fact_supply_chain
+
+order_key
+country_key
+date_key
+product_key
+sales_usd
+profit_usd
+actual_shipping_days
+scheduled_shipping_days
+shipping_delay_days
+delivery_status
+shipping_mode
+is_late
+
+
+Relationships:
+
+vw_fact_supply_chain.country_key
+→ vw_dim_country.country_key
+
+vw_fact_supply_chain.date_key
+→ vw_dim_date.date_key
+
+vw_fact_supply_chain.product_key
+→ vw_dim_product.product_key
+
+
+------------------------
+
+Products
+
+vw_dim_product
+
+product_key
+product_name
+category_name
+department_name
+product_price

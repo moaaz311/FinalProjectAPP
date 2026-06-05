@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Power BI Dashboard V2</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+</head>
+
+<body>
+
+<div class="header">
+
+<button onclick="showReport('pbix1')">
+Dashbords</button>
+
+<button onclick="showReport('rdl1')">
+Strategic Dependency
+</button>
+
+<button onclick="showReport('rdl2')">
+Trade Executive
+</button>
+
+<button onclick="toggleChat()">
+AI Assistant
+</button>
+
+<button onclick="toggleEmail()">
+Share Reports via Email 
+</button>
+
+<button onclick="toggleUpdates()">
+Get Update Alerts
+</button>
+
+</div>
+
+<div id="viewer">
+
+<!-- PBIX -->
+
+<!-- <iframe
+id="pbix1"
+class="active"
+src="https://app.powerbi.com/reportEmbed?reportId=d280f2c1-1a58-44a7-8806-ccfddb75cf24&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
+</iframe> -->
+<iframe 
+id="pbix1"
+class="active"
+src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
+</iframe>
+<!-- RDL1 -->
+
+<iframe
+id="rdl1"
+src="https://app.powerbi.com/rdlEmbed?reportId=71e8e860-6d44-4983-87ab-ca5ea954c090&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+</iframe>
+
+<!-- RDL2 -->
+
+<iframe
+id="rdl2"
+src="https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d6f3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+</iframe>
+
+</div>
+
+
+<!-- CHAT -->
+
+<div id="chatModal">
+
+<div
+style="
+padding:18px;
+background:#dd3f24;
+color:white;
+font-size:20px;
+font-weight:bold;
+">
+
+🤖 AI Assistant
+
+</div>
+
+<div id="messages">
+
+</div>
+
+<div class="chatBottom">
+
+<input
+id="userInput"
+placeholder="Ask question..."
+>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
+</div>
+
+
+<!-- EMAIL -->
+
+<div id="emailModal">
+<div class="report-options">
+
+<label>
+
+<input
+type="checkbox"
+value="Full_Light_Mode_PowerBI">
+
+Dashboards
+
+</label>
+
+
+<label>
+
+<input
+type="checkbox"
+value="StrategicDependency">
+
+Strategic Dependency
+
+</label>
+
+
+<label>
+
+<input
+type="checkbox"
+value="TradeExecutive">
+
+Trade Executive
+
+</label>
+
+</div>
+
+<input
+    type="email"
+    id="email"
+    placeholder="Enter email"
+/>
+
+<button onclick="sendPDF()">
+    Send PDF
+</button>
+</div>
+
+
+
+
+<!-- UPDATE ALERTS -->
+
+<div id="updatesModal">
+
+<div style="font-size:18px;font-weight:bold;margin-bottom:10px">
+Report Update Alerts
+</div>
+
+<div class="modal-note">
+Enter your email and choose whether you want to receive notifications when a dashboard/report name is updated.
+</div>
+
+<input
+    type="email"
+    id="updatesEmail"
+    placeholder="Enter email"
+/>
+
+<label class="update-choice">
+<input
+    type="checkbox"
+    id="updatesEnabled"
+    checked
+/>
+<span>I want to receive dashboard update notifications</span>
+</label>
+
+<button onclick="saveUpdatePreference()">
+    Save Preference
+</button>
+
+<div id="updateStatus"></div>
+
+</div>
+
+
+<script>
+
+function showReport(id){
+
+document
+.querySelectorAll(
+"iframe"
+)
+.forEach(x=>{
+
+x.classList.remove(
+"active"
+)
+
+})
+
+document
+.getElementById(
+id
+)
+.classList.add(
+"active"
+)
+
+}
+
+/* CHAT */
+
+function toggleChat(){
+
+let c=
+document.getElementById(
+"chatModal"
+)
+
+c.style.display=
+
+c.style.display=="block"
+?
+
+"none"
+
+:
+
+"block"
+
+}
+
+/* EMAIL */
+
+function toggleEmail(){
+
+let e=
+document.getElementById(
+"emailModal"
+)
+
+e.style.display=
+
+e.style.display=="block"
+?
+
+"none"
+
+:
+
+"block"
+
+}
+
+
+
+function toggleUpdates(){
+
+let u=
+document.getElementById(
+"updatesModal"
+)
+
+u.style.display=
+
+u.style.display=="block"
+?
+
+"none"
+
+:
+
+"block"
+
+}
+
+async function saveUpdatePreference(){
+
+const email=
+document.getElementById(
+"updatesEmail"
+).value.trim();
+
+const enabled=
+document.getElementById(
+"updatesEnabled"
+).checked;
+
+const statusBox=
+document.getElementById(
+"updateStatus"
+);
+
+if(!email){
+
+alert(
+"Enter email"
+);
+
+return;
+
+}
+
+const selectedReports=
+
+Array.from(
+
+document.querySelectorAll(
+".report-options input:checked"
+)
+
+)
+
+.map(
+
+x=>x.value
+
+);
+
+const payload={
+
+email:email,
+
+reports:
+selectedReports.length > 0
+?
+selectedReports
+:
+["ALL"]
+
+};
+
+const endpoint=
+enabled
+?
+"/subscribe-updates"
+:
+"/unsubscribe-updates";
+
+try{
+
+let response=
+
+await fetch(
+
+endpoint,
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+JSON.stringify(
+payload
+)
+
+}
+
+);
+
+let data=
+await response.json();
+
+if(response.ok){
+
+statusBox.style.color="#86efac";
+
+}
+else{
+
+statusBox.style.color="#fecaca";
+
+}
+
+statusBox.innerText=
+data.message ||
+data.error ||
+"Done";
+
+}
+
+catch(e){
+
+console.log(e);
+
+statusBox.style.color="#fecaca";
+
+statusBox.innerText=
+"Connection error";
+
+}
+
+}
+
+function addMessage(text,type){
+
+const box=
+document.getElementById(
+"messages"
+)
+
+const div=
+document.createElement(
+"div"
+)
+
+div.className=
+"message "+type
+
+div.innerText=
+text
+
+box.appendChild(
+div
+)
+
+box.scrollTop=
+box.scrollHeight
+
+}
+
+function addMessage(message,sender){
+
+    const chatBox=
+    document.getElementById(
+        "messages"
+    );
+
+    const bubble=
+    document.createElement(
+        "div"
+    );
+
+    bubble.className=
+    sender==="user"
+    ?
+    "user-message"
+    :
+    "bot-message";
+
+    // يسمح بعرض HTML styling
+    bubble.innerHTML=
+    message;
+
+    chatBox.appendChild(
+        bubble
+    );
+
+    chatBox.scrollTop=
+    chatBox.scrollHeight;
+
+}
+
+
+async function sendMessage(){
+
+    const input=
+    document.getElementById(
+        "userInput"
+    );
+
+    const msg=
+    input.value.trim();
+
+    if(!msg){
+
+        return;
+    }
+
+    addMessage(
+        msg,
+        "user"
+    );
+
+    input.value="";
+
+    try{
+
+        const response=
+        await fetch(
+
+            "/chat",
+
+            {
+
+                method:"POST",
+
+                headers:{
+
+                    "Content-Type":
+                    "application/json"
+
+                },
+
+                body:
+                JSON.stringify({
+
+                    message:msg
+
+                })
+
+            }
+
+        );
+
+        const data=
+        await response.json();
+
+
+        if(data.error){
+
+            addMessage(
+
+                "⚠️ "+data.error,
+
+                "bot"
+
+            );
+
+            return;
+        }
+
+        addMessage(
+
+            data.answer,
+
+            "bot"
+
+        );
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        addMessage(
+
+            "Connection Error",
+
+            "bot"
+
+        );
+
+    }
+
+}
+
+
+// send on Enter
+document
+.getElementById(
+"userInput"
+)
+.addEventListener(
+
+"keypress",
+
+function(e){
+
+if(e.key==="Enter"){
+
+sendMessage();
+
+}
+
+}
+
+);
+async function sendPDF(){
+
+let email=
+document.getElementById(
+"email"
+).value.trim();
+
+if(!email){
+
+alert(
+"Enter email"
+);
+
+return;
+
+}
+
+let selectedReports=
+
+Array.from(
+
+document.querySelectorAll(
+".report-options input:checked"
+)
+
+)
+
+.map(
+
+x=>x.value
+
+);
+
+if(
+selectedReports.length===0
+){
+
+alert(
+"Select at least one report"
+);
+
+return;
+
+}
+
+const payload={
+
+email:email,
+
+title:
+"Dashboard Export",
+
+reports:
+selectedReports
+
+};
+
+console.log(
+payload
+);
+
+try{
+
+let response=
+
+await fetch(
+
+"/send-dashboard-pdf",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+JSON.stringify(
+payload
+)
+
+}
+
+);
+
+let data=
+await response.json();
+
+alert(
+data.message ||
+data.error
+);
+
+}
+
+catch(e){
+
+console.log(e);
+
+alert(
+"Connection error"
+);
+
+}
+
+}
+</script>
+
+</body>
+</html>

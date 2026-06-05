@@ -1,0 +1,13 @@
+What are the top 10 countries by trade value?
+
+Show strategic commodities.
+
+Which regions contribute most to trade value?
+
+Compare yearly trade volume.
+
+Which products have the largest shipping delays?
+
+Show GDP growth trend.
+
+Which countries have highest trade activity in 2025?
