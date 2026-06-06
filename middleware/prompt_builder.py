@@ -104,10 +104,11 @@ def _get_intent_hint(intent: str) -> str:
             "Use UPPER(LTRIM(RTRIM(flow_type))) = 'X' for exports. "
             "Use UPPER(LTRIM(RTRIM(flow_type))) = 'M' for imports. "
             "When calculating trade balance, exports are positive and imports are negative. "
+            "When calculating trade balance, alias it as trade_balance_usd, not trade_balance. "
             "Always SUM(trade_value_usd) for trade value totals. "
-            "For yearly/monthly/quarterly comparison, group by the relevant date column and order chronologically. "
+            "Always include _usd in aliases for monetary values. "
             "Join vw_dim_country for country names, vw_dim_commodity for product names, "
-            "and vw_dim_date for year/quarter/month filtering."
+            "vw_dim_date for year/quarter/month filtering."
         ),
         "MACRO": (
                 "The question is about macro-economic indicators. "
@@ -200,7 +201,7 @@ Rules:
 
 def build_summary_prompt(question: str, sql: str, records: list[dict]) -> str:
     # Send at most 5 records to the summariser — we only need context, not all rows
-    sample = records[:5]
+    sample = records[:20]
 
     return f"""
 Original question: {question}
@@ -208,13 +209,13 @@ Original question: {question}
 SQL that was executed:
 {sql}
 
-Query results (first {len(sample)} of {len(records)} rows):
+Query results shown to the user ({len(sample)} of {len(records)} rows):
 {sample}
 
 Write a concise 1–2 sentence insight.
+If this is a trend result, use all rows provided to identify the real highest, lowest, increase, or decline.
 If this is a ranking result, mention the top item and summarize ties or patterns briefly.
-If this is a trend result, mention the overall direction or the highest/lowest visible year only if supported by the data.
 Do not repeat every row because the table will already show the detailed values.
 Only format a number as currency if the column name clearly represents money.
-Never format year columns with commas.
+Never claim a peak, minimum, increase, or decrease unless it is supported by the provided rows.
 """.strip()

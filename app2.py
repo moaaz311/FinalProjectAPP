@@ -6,12 +6,9 @@ from flask_mail import Mail
 
 import hashlib
 import html
-import json
 import os
 import re
 import time
-from datetime import datetime, timezone
-from pathlib import Path
 from urllib.parse import quote_plus
 
 import numpy as np
@@ -63,10 +60,9 @@ MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
 POWER_AUTOMATE_URL = os.getenv("POWER_AUTOMATE_URL")
 
-# Local file used by the web app to store users who opted in to update alerts.
-# Power Automate can read these emails through /update-subscribers when the local app is exposed by ngrok.
-UPDATE_SUBSCRIBERS_FILE = os.getenv("UPDATE_SUBSCRIBERS_FILE", "data/update_subscribers.json")
-SUBSCRIBERS_API_KEY = os.getenv("SUBSCRIBERS_API_KEY", "change-this-secret")
+# Power Automate HTTP trigger that receives update-alert preferences
+# and creates/updates rows in SharePoint List: ReportSubscribers.
+SUBSCRIBE_FLOW_URL = os.getenv("SUBSCRIBE_FLOW_URL")
 
 # ======================
 # OPENROUTER
@@ -213,66 +209,14 @@ def _clean_sql(raw: str) -> str:
 
 
 # ======================
-# UPDATE SUBSCRIBERS HELPERS
+# UPDATE SUBSCRIPTION HELPERS
 # ======================
 
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
-def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-
-
 def _normalise_email(email: str) -> str:
     return (email or "").strip().lower()
-
-
-def _subscribers_path() -> Path:
-    path = Path(UPDATE_SUBSCRIBERS_FILE)
-    if not path.is_absolute():
-        path = Path(app.root_path) / path
-    path.parent.mkdir(parents=True, exist_ok=True)
-    return path
-
-
-def _load_subscribers() -> list[dict]:
-    path = _subscribers_path()
-
-    if not path.exists():
-        return []
-
-    try:
-        with path.open("r", encoding="utf-8") as file:
-            data = json.load(file)
-
-        if isinstance(data, list):
-            return data
-
-        return []
-
-    except Exception:
-        return []
-
-
-def _save_subscribers(subscribers: list[dict]) -> None:
-    path = _subscribers_path()
-
-    with path.open("w", encoding="utf-8") as file:
-        json.dump(subscribers, file, ensure_ascii=False, indent=2)
-
-
-def _active_subscriber_emails() -> list[str]:
-    subscribers = _load_subscribers()
-
-    emails = []
-
-    for subscriber in subscribers:
-        if subscriber.get("is_active") is True:
-            email = _normalise_email(subscriber.get("email", ""))
-            if email and email not in emails:
-                emails.append(email)
-
-    return emails
 
 
 def _llm(system: str, user: str, model: str, max_tokens: int = 600) -> str:
@@ -377,66 +321,79 @@ def _is_measure_col(col_name: str) -> bool:
 
 
 def format_metric(value, col_name: str) -> str:
-    """Format values for chatbot KPI cards and tables."""
     c = col_name.lower()
 
-    if value is None:
-        return "N/A"
-
     try:
-        # Keep years readable: 2019, not 2,019
-        if _is_year_col(c):
-            return str(int(float(value)))
-
         value = float(value)
-
     except Exception:
         return html.escape(str(value))
 
-    # Time columns
-    if c in {"month", "quarter"}:
-        return str(int(value)) if value.is_integer() else f"{value:g}"
+    # Never format years/codes/flags as money
+    if c in {"year", "trade_year", "month", "quarter", "hs_code", "is_strategic"}:
+        if value.is_integer():
+            return str(int(value))
+        return str(value)
 
-    # EGP currency
+    # Percent / rate
+    if any(x in c for x in ["pct", "percent", "rate", "growth", "inflation"]):
+        return f"{value:.2f}%"
+
+    # Days / delays
+    if "days" in c or "delay" in c:
+        return f"{value:.1f} days"
+
+    # EGP money
     if "egp" in c:
-        if abs(value) >= 1_000_000_000:
-            return f"EGP {value / 1_000_000_000:.2f}B"
-        if abs(value) >= 1_000_000:
-            return f"EGP {value / 1_000_000:.2f}M"
-        if abs(value) >= 1_000:
-            return f"EGP {value / 1_000:.2f}K"
-        return f"EGP {value:,.2f}"
+        sign = "-" if value < 0 else ""
+        abs_value = abs(value)
 
-    # USD currency
-    if any(x in c for x in ["usd", "sales", "profit", "revenue", "trade_value", "cost", "balance"]):
+        if abs_value >= 1_000_000_000:
+            return f"{sign}EGP {abs_value / 1_000_000_000:.2f}B"
+        elif abs_value >= 1_000_000:
+            return f"{sign}EGP {abs_value / 1_000_000:.2f}M"
+        elif abs_value >= 1_000:
+            return f"{sign}EGP {abs_value / 1_000:.2f}K"
+        return f"{sign}EGP {abs_value:,.2f}"
+
+    # USD / trade money
+    money_keywords = [
+        "usd",
+        "sales",
+        "profit",
+        "revenue",
+        "trade_value",
+        "cost",
+        "value",
+        "amount",
+        "export",
+        "exports",
+        "import",
+        "imports",
+        "trade_balance",
+        "balance",
+        "total_trade",
+        "total_exports",
+        "total_imports"
+    ]
+
+    if any(x in c for x in money_keywords):
         sign = "-" if value < 0 else ""
         abs_value = abs(value)
 
         if abs_value >= 1_000_000_000:
             return f"{sign}${abs_value / 1_000_000_000:.2f}B"
-        if abs_value >= 1_000_000:
+        elif abs_value >= 1_000_000:
             return f"{sign}${abs_value / 1_000_000:.2f}M"
-        if abs_value >= 1_000:
+        elif abs_value >= 1_000:
             return f"{sign}${abs_value / 1_000:.2f}K"
         return f"{sign}${abs_value:,.2f}"
 
-    # Percent / rate
-    if any(x in c for x in ["pct", "percent", "growth", "inflation"]):
-        return f"{value:.2f}%"
-
-    # Days / delay
-    if "days" in c or "delay" in c:
-        return f"{value:.1f} days"
-
-    # Counts/quantities/generic numbers
+    # Generic number
     if value.is_integer():
         return f"{int(value):,}"
 
     return f"{value:,.2f}"
-
-
 def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_rank: bool = False) -> str:
-    """Build an HTML table with clean labels and proper numeric formatting."""
     table_df = source_df[display_cols].copy()
 
     rename_map = {
@@ -453,8 +410,23 @@ def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_
 
     for original_col in display_cols:
         display_col = rename_map[original_col]
+        col_lower = original_col.lower()
 
-        if pd.api.types.is_numeric_dtype(source_df[original_col]):
+        should_format = any(keyword in col_lower for keyword in [
+            "usd", "egp", "value", "sales", "profit", "revenue",
+            "cost", "amount", "total", "avg", "pct", "percent",
+            "rate", "growth", "inflation", "days", "delay",
+            "export", "exports", "import", "imports",
+            "balance", "trade_balance"
+        ])
+
+        should_not_format = (
+            col_lower in {"year", "trade_year", "hs_code", "is_strategic"}
+            or col_lower.endswith("_key")
+            or col_lower.endswith("_id")
+        )
+
+        if should_format and not should_not_format:
             formatters[display_col] = (
                 lambda value, col=original_col: format_metric(value, col)
             )
@@ -466,8 +438,6 @@ def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_
         escape=True,
         formatters=formatters
     )
-
-
 def _detect_result_type(question: str, df: pd.DataFrame, metric_col: str | None) -> str:
     q = question.lower()
     columns = {c.lower() for c in df.columns}
@@ -920,30 +890,78 @@ def chat():
 
 
 # ======================
-# UPDATE SUBSCRIPTIONS
+# UPDATE SUBSCRIPTIONS - SHAREPOINT VIA POWER AUTOMATE
 # ======================
+
+def _post_subscriber_preference(email: str, is_active: bool, reports: list[str]) -> dict:
+    """
+    Sends the user's update-alert preference to a Power Automate HTTP trigger.
+    The flow should create/update the SharePoint list: ReportSubscribers.
+    """
+    if not SUBSCRIBE_FLOW_URL:
+        return {
+            "ok": False,
+            "status_code": 500,
+            "data": {
+                "error": "SUBSCRIBE_FLOW_URL is missing in .env file"
+            }
+        }
+
+    email = _normalise_email(email)
+
+    payload = {
+        "email": email,
+        "isActive": is_active,
+        "reports": reports if reports else ["ALL"],
+        "source": "local-flask-web-app"
+    }
+
+    response = requests.post(
+        SUBSCRIBE_FLOW_URL,
+        json=payload,
+        headers={
+            "Content-Type": "application/json"
+        },
+        timeout=20
+    )
+
+    try:
+        response_data = response.json()
+    except Exception:
+        response_data = {
+            "raw": response.text
+        }
+
+    return {
+        "ok": response.status_code in [200, 201, 202],
+        "status_code": response.status_code,
+        "data": response_data
+    }
+
+
+def _extract_subscription_payload() -> tuple[str, list[str]]:
+    data = request.json or {}
+
+    email = _normalise_email(data.get("email", ""))
+    reports = data.get("reports") or ["ALL"]
+
+    if isinstance(reports, str):
+        reports = [reports]
+
+    reports = [
+        str(report).strip()
+        for report in reports
+        if str(report).strip()
+    ] or ["ALL"]
+
+    return email, reports
+
 
 @app.route("/subscribe-updates", methods=["POST"])
 def subscribe_updates():
-    """
-    Save an email locally so Power Automate can later read it from /update-subscribers.
-    This keeps the app usable while it is still running locally.
-    """
+    """Enable update alerts for an email via the SharePoint-backed Power Automate flow."""
     try:
-        data = request.json or {}
-
-        email = _normalise_email(data.get("email", ""))
-        name = (data.get("name") or "").strip()
-        reports = data.get("reports") or ["ALL"]
-
-        if isinstance(reports, str):
-            reports = [reports]
-
-        reports = [
-            str(report).strip()
-            for report in reports
-            if str(report).strip()
-        ] or ["ALL"]
+        email, reports = _extract_subscription_payload()
 
         if not email:
             return jsonify({"error": "Email required"}), 400
@@ -951,36 +969,22 @@ def subscribe_updates():
         if not _EMAIL_RE.match(email):
             return jsonify({"error": "Invalid email format"}), 400
 
-        subscribers = _load_subscribers()
-        now = _utc_now_iso()
-
-        existing = next(
-            (subscriber for subscriber in subscribers if _normalise_email(subscriber.get("email")) == email),
-            None
+        result = _post_subscriber_preference(
+            email=email,
+            is_active=True,
+            reports=reports
         )
 
-        if existing:
-            existing["name"] = name or existing.get("name", "")
-            existing["reports"] = reports
-            existing["is_active"] = True
-            existing["updated_at_utc"] = now
-        else:
-            subscribers.append({
-                "email": email,
-                "name": name,
-                "reports": reports,
-                "is_active": True,
-                "source": "local_web_app",
-                "created_at_utc": now,
-                "updated_at_utc": now
-            })
-
-        _save_subscribers(subscribers)
+        if not result["ok"]:
+            return jsonify({
+                "error": "Subscriber flow failed",
+                "details": result["data"]
+            }), result["status_code"]
 
         return jsonify({
-            "message": "You will receive update alerts.",
+            "message": "You are subscribed to report update alerts.",
             "email": email,
-            "is_active": True
+            "isActive": True
         })
 
     except Exception as e:
@@ -989,57 +993,36 @@ def subscribe_updates():
 
 @app.route("/unsubscribe-updates", methods=["POST"])
 def unsubscribe_updates():
-    """Disable update alerts for a saved email without deleting its history."""
+    """Disable update alerts for an email via the SharePoint-backed Power Automate flow."""
     try:
-        data = request.json or {}
-
-        email = _normalise_email(data.get("email", ""))
+        email, reports = _extract_subscription_payload()
 
         if not email:
             return jsonify({"error": "Email required"}), 400
 
-        subscribers = _load_subscribers()
-        now = _utc_now_iso()
+        if not _EMAIL_RE.match(email):
+            return jsonify({"error": "Invalid email format"}), 400
 
-        existing = next(
-            (subscriber for subscriber in subscribers if _normalise_email(subscriber.get("email")) == email),
-            None
+        result = _post_subscriber_preference(
+            email=email,
+            is_active=False,
+            reports=reports
         )
 
-        if existing:
-            existing["is_active"] = False
-            existing["updated_at_utc"] = now
-            _save_subscribers(subscribers)
+        if not result["ok"]:
+            return jsonify({
+                "error": "Subscriber flow failed",
+                "details": result["data"]
+            }), result["status_code"]
 
         return jsonify({
-            "message": "Update alerts disabled.",
+            "message": "You are unsubscribed from report update alerts.",
             "email": email,
-            "is_active": False
+            "isActive": False
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-@app.route("/update-subscribers", methods=["GET"])
-def get_update_subscribers():
-    """
-    Endpoint consumed by Power Automate.
-    It returns active subscriber emails stored in the local JSON file.
-    Protect this endpoint with X-API-Key when exposing the local app through ngrok.
-    """
-    api_key = request.headers.get("X-API-Key") or request.args.get("api_key")
-
-    if SUBSCRIBERS_API_KEY and api_key != SUBSCRIBERS_API_KEY:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    emails = _active_subscriber_emails()
-
-    return jsonify({
-        "count": len(emails),
-        "emails": emails,
-        "emailsString": ";".join(emails)
-    })
 
 # ======================
 # SEND PDF

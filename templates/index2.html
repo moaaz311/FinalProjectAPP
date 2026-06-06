@@ -24,10 +24,6 @@ Strategic Dependency
 Trade Executive
 </button>
 
-<button onclick="toggleChat()">
-AI Assistant
-</button>
-
 <button onclick="toggleEmail()">
 Share Reports via Email 
 </button>
@@ -68,22 +64,18 @@ src="https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d
 
 </div>
 
+<!-- FLOATING AI BUTTON -->
+<button id="aiFloatingBtn" class="aiFloatingBtn" onclick="toggleChat()" type="button" aria-label="AI Assistant">
+    <img src="{{ url_for('static', filename='img/ai-assistant-icon.png') }}" alt="AI Assistant">
+</button>
 
 <!-- CHAT -->
 
 <div id="chatModal">
 
-<div
-style="
-padding:18px;
-background:#dd3f24;
-color:white;
-font-size:20px;
-font-weight:bold;
-">
-
-🤖 AI Assistant
-
+<div class="chatHeader">
+    <div class="chatTitle">🤖 AI Assistant</div>
+    <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
 </div>
 
 <div id="messages">
@@ -103,6 +95,17 @@ Send
 
 </div>
 
+</div>
+
+<!-- TABLE FULL VIEW MODAL -->
+<div id="tableFullViewModal" class="tableFullViewModal" aria-hidden="true">
+    <div class="tableFullViewBox">
+        <div class="tableFullViewHeader">
+            <div class="tableFullViewTitle">Full Table View</div>
+            <button id="closeTableFullViewBtn" class="tableFullViewClose" type="button" onclick="closeTableFullView()">×</button>
+        </div>
+        <div id="tableFullViewContent" class="tableFullViewContent"></div>
+    </div>
 </div>
 
 
@@ -223,23 +226,41 @@ id
 
 /* CHAT */
 
+function openChat(){
+
+const c = document.getElementById("chatModal");
+const b = document.getElementById("aiFloatingBtn");
+const input = document.getElementById("userInput");
+
+c.classList.add("open");
+if(b){ b.classList.add("active"); }
+
+setTimeout(function(){
+    if(input){ input.focus(); }
+}, 80);
+
+}
+
+function closeChat(){
+
+const c = document.getElementById("chatModal");
+const b = document.getElementById("aiFloatingBtn");
+
+c.classList.remove("open");
+if(b){ b.classList.remove("active"); }
+
+}
+
 function toggleChat(){
 
-let c=
-document.getElementById(
-"chatModal"
-)
+const c = document.getElementById("chatModal");
 
-c.style.display=
-
-c.style.display=="block"
-?
-
-"none"
-
-:
-
-"block"
+if(c.classList.contains("open")){
+    closeChat();
+}
+else{
+    openChat();
+}
 
 }
 
@@ -412,33 +433,6 @@ statusBox.innerText=
 
 }
 
-function addMessage(text,type){
-
-const box=
-document.getElementById(
-"messages"
-)
-
-const div=
-document.createElement(
-"div"
-)
-
-div.className=
-"message "+type
-
-div.innerText=
-text
-
-box.appendChild(
-div
-)
-
-box.scrollTop=
-box.scrollHeight
-
-}
-
 function addMessage(message,sender){
 
     const chatBox=
@@ -466,10 +460,98 @@ function addMessage(message,sender){
         bubble
     );
 
+    enhanceWideTables(bubble);
+
     chatBox.scrollTop=
     chatBox.scrollHeight;
 
 }
+
+function enhanceWideTables(scope){
+
+    const tables = scope.querySelectorAll(".ai-result-table");
+
+    tables.forEach(function(table){
+
+        if(table.closest(".ai-table-shell")){
+            return;
+        }
+
+        const shell = document.createElement("div");
+        shell.className = "ai-table-shell";
+
+        table.parentNode.insertBefore(shell, table);
+        shell.appendChild(table);
+
+        const fullBtn = document.createElement("button");
+        fullBtn.type = "button";
+        fullBtn.className = "tableFullViewBtn";
+        fullBtn.title = "Open full table view";
+        fullBtn.setAttribute("aria-label", "Open full table view");
+        fullBtn.innerHTML = "⛶";
+
+        fullBtn.onclick = function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            openTableFullView(table);
+        };
+
+        shell.appendChild(fullBtn);
+
+        requestAnimationFrame(function(){
+            if(table.scrollWidth > shell.clientWidth + 8){
+                shell.classList.add("is-wide");
+            } else {
+                shell.classList.add("is-normal");
+            }
+        });
+
+    });
+
+}
+
+function openTableFullView(table){
+
+    const modal = document.getElementById("tableFullViewModal");
+    const content = document.getElementById("tableFullViewContent");
+
+    if(!modal || !content){
+        return;
+    }
+
+    content.innerHTML = "";
+
+    const clonedTable = table.cloneNode(true);
+    clonedTable.classList.add("ai-result-table-full");
+
+    content.appendChild(clonedTable);
+
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+
+}
+
+function closeTableFullView(){
+
+    const modal = document.getElementById("tableFullViewModal");
+    const content = document.getElementById("tableFullViewContent");
+
+    if(content){
+        content.innerHTML = "";
+    }
+
+    if(modal){
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+}
+
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        closeTableFullView();
+    }
+});
 
 
 async function sendMessage(){
@@ -568,25 +650,19 @@ async function sendMessage(){
 
 
 // send on Enter
-document
-.getElementById(
-"userInput"
-)
-.addEventListener(
+document.getElementById("userInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        e.preventDefault();
+        sendMessage();
+    }
+});
 
-"keypress",
-
-function(e){
-
-if(e.key==="Enter"){
-
-sendMessage();
-
-}
-
-}
-
-);
+// close chat with Escape
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        closeChat();
+    }
+});
 async function sendPDF(){
 
 let email=
