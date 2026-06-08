@@ -1,101 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Power BI Dashboard V2</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egypt Trade Pulse</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-
 </head>
 
 <body>
 
-<div class="header">
+<!-- TOP APP BAR -->
+<header class="appHeader">
+    <div class="brandBlock">
+        <div class="brandMark">△</div>
+        <div class="brandText">
+            <div class="brandTitle">EGYPT TRADE PULSE</div>
+            <div class="brandSub">Trade & Supply Chain Intelligence</div>
+        </div>
+    </div>
 
-<button onclick="showReport('pbix1')">
-Dashbords</button>
+    <nav class="mainNav" aria-label="Dashboard navigation">
+        <button class="navBtn active" data-report="pbix1" onclick="showReport('pbix1', this)" type="button">
+            <span>▦</span> Dashboards
+        </button>
+        <button class="navBtn" data-report="rdl1" onclick="showReport('rdl1', this)" type="button">
+            <span>◇</span> Strategic Dependency
+        </button>
+        <button class="navBtn" data-report="rdl2" onclick="showReport('rdl2', this)" type="button">
+            <span>⇄</span> Trade Executive
+        </button>
+    </nav>
 
-<button onclick="showReport('rdl1')">
-Strategic Dependency
-</button>
+    <div class="headerActions">
+        <button class="actionBtn" onclick="toggleEmail()" type="button">
+            <span>✉</span> Share Reports via Email
+        </button>
+        <button class="actionBtn" onclick="toggleUpdates()" type="button">
+            <span>🔔</span> Get Update Alerts
+        </button>
+    </div>
+</header>
 
-<button onclick="showReport('rdl2')">
-Trade Executive
-</button>
+<!-- DASHBOARD VIEWER -->
+<main id="viewer" class="dashboardShell">
+    <iframe
+        id="pbix1"
+        class="active"
+        title="Dashboards"
+        src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
+    </iframe>
 
-<button onclick="toggleEmail()">
-Share Reports via Email 
-</button>
+    <iframe
+        id="rdl1"
+        title="Strategic Dependency"
+        src="https://app.powerbi.com/rdlEmbed?reportId=71e8e860-6d44-4983-87ab-ca5ea954c090&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+    </iframe>
 
-<button onclick="toggleUpdates()">
-Get Update Alerts
-</button>
-
-</div>
-
-<div id="viewer">
-
-<!-- PBIX -->
-
-<!-- <iframe
-id="pbix1"
-class="active"
-src="https://app.powerbi.com/reportEmbed?reportId=d280f2c1-1a58-44a7-8806-ccfddb75cf24&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
-</iframe> -->
-<iframe 
-id="pbix1"
-class="active"
-src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
-</iframe>
-<!-- RDL1 -->
-
-<iframe
-id="rdl1"
-src="https://app.powerbi.com/rdlEmbed?reportId=71e8e860-6d44-4983-87ab-ca5ea954c090&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
-</iframe>
-
-<!-- RDL2 -->
-
-<iframe
-id="rdl2"
-src="https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d6f3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
-</iframe>
-
-</div>
+    <iframe
+        id="rdl2"
+        title="Trade Executive"
+        src="https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d6f3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+    </iframe>
+</main>
 
 <!-- FLOATING AI BUTTON -->
 <button id="aiFloatingBtn" class="aiFloatingBtn" onclick="toggleChat()" type="button" aria-label="AI Assistant">
     <img src="{{ url_for('static', filename='img/ai-assistant-icon.png') }}" alt="AI Assistant">
+    <span class="aiFloatingLabel">Ask AI</span>
 </button>
 
-<!-- CHAT -->
+<!-- AI ASSISTANT DRAWER -->
+<aside id="chatModal" class="aiDrawer" aria-label="AI Assistant panel">
+    <div class="chatHeader">
+        <div class="chatTitle">
+            <span class="chatIcon">🤖</span>
+            <div>
+                <div class="chatTitleMain">AI Assistant</div>
+                <div class="chatTitleSub">Analytics companion</div>
+            </div>
+        </div>
+        <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
+    </div>
 
-<div id="chatModal">
+    <div id="messages" class="chatMessages">
+        <div class="welcomeCard">
+            <div class="welcomeTitle">Ask about your dashboard</div>
+            <div class="welcomeText">Use natural language to query trade, macro, and supply-chain performance.</div>
+            <div class="quickQuestions">
+                <button type="button" onclick="askQuickQuestion('What are the top 10 countries by trade value?')">Top countries</button>
+                <button type="button" onclick="askQuickQuestion('Compare exports and imports by year.')">Exports vs imports</button>
+                <button type="button" onclick="askQuickQuestion('Show GDP growth trend.')">GDP trend</button>
+                <button type="button" onclick="askQuickQuestion('Which products have the largest shipping delays?')">Shipping delays</button>
+            </div>
+        </div>
+    </div>
 
-<div class="chatHeader">
-    <div class="chatTitle">🤖 AI Assistant</div>
-    <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
-</div>
-
-<div id="messages">
-
-</div>
-
-<div class="chatBottom">
-
-<input
-id="userInput"
-placeholder="Ask question..."
->
-
-<button onclick="sendMessage()">
-Send
-</button>
-
-</div>
-
-</div>
+    <div class="chatBottom">
+        <input id="userInput" placeholder="Ask a question about Egypt trade...">
+        <button onclick="sendMessage()" type="button">Send</button>
+    </div>
+</aside>
 
 <!-- TABLE FULL VIEW MODAL -->
 <div id="tableFullViewModal" class="tableFullViewModal" aria-hidden="true">
@@ -108,371 +112,153 @@ Send
     </div>
 </div>
 
-
-<!-- EMAIL -->
-
-<div id="emailModal">
-<div class="report-options">
-
-<label>
-
-<input
-type="checkbox"
-value="Full_Light_Mode_PowerBI">
-
-Dashboards
-
-</label>
-
-
-<label>
-
-<input
-type="checkbox"
-value="StrategicDependency">
-
-Strategic Dependency
-
-</label>
-
-
-<label>
-
-<input
-type="checkbox"
-value="TradeExecutive">
-
-Trade Executive
-
-</label>
-
+<!-- EMAIL MODAL -->
+<div id="emailModal" class="utilityModal">
+    <div class="modalTitle">Share Reports via Email</div>
+    <div class="report-options">
+        <label><input type="checkbox" value="Full_Light_Mode_PowerBI"> Dashboards</label>
+        <label><input type="checkbox" value="StrategicDependency"> Strategic Dependency</label>
+        <label><input type="checkbox" value="TradeExecutive"> Trade Executive</label>
+    </div>
+    <input type="email" id="email" placeholder="Enter email">
+    <button onclick="sendPDF()" type="button">Send PDF</button>
 </div>
 
-<input
-    type="email"
-    id="email"
-    placeholder="Enter email"
-/>
-
-<button onclick="sendPDF()">
-    Send PDF
-</button>
+<!-- UPDATE ALERTS MODAL -->
+<div id="updatesModal" class="utilityModal">
+    <div class="modalTitle">Report Update Alerts</div>
+    <div class="modal-note">Enter your email and choose whether you want to receive notifications when a dashboard/report name is updated.</div>
+    <input type="email" id="updatesEmail" placeholder="Enter email">
+    <label class="update-choice">
+        <input type="checkbox" id="updatesEnabled" checked>
+        <span>I want to receive dashboard update notifications</span>
+    </label>
+    <button onclick="saveUpdatePreference()" type="button">Save Preference</button>
+    <div id="updateStatus"></div>
 </div>
-
-
-
-
-<!-- UPDATE ALERTS -->
-
-<div id="updatesModal">
-
-<div style="font-size:18px;font-weight:bold;margin-bottom:10px">
-Report Update Alerts
-</div>
-
-<div class="modal-note">
-Enter your email and choose whether you want to receive notifications when a dashboard/report name is updated.
-</div>
-
-<input
-    type="email"
-    id="updatesEmail"
-    placeholder="Enter email"
-/>
-
-<label class="update-choice">
-<input
-    type="checkbox"
-    id="updatesEnabled"
-    checked
-/>
-<span>I want to receive dashboard update notifications</span>
-</label>
-
-<button onclick="saveUpdatePreference()">
-    Save Preference
-</button>
-
-<div id="updateStatus"></div>
-
-</div>
-
 
 <script>
+function showReport(id, btn){
+    document.querySelectorAll("iframe").forEach(function(frame){
+        frame.classList.remove("active");
+    });
 
-function showReport(id){
+    const target = document.getElementById(id);
+    if(target){
+        target.classList.add("active");
+    }
 
-document
-.querySelectorAll(
-"iframe"
-)
-.forEach(x=>{
+    document.querySelectorAll(".navBtn").forEach(function(navBtn){
+        navBtn.classList.remove("active");
+    });
 
-x.classList.remove(
-"active"
-)
-
-})
-
-document
-.getElementById(
-id
-)
-.classList.add(
-"active"
-)
-
+    if(btn){
+        btn.classList.add("active");
+    }
 }
 
 /* CHAT */
-
 function openChat(){
+    const c = document.getElementById("chatModal");
+    const b = document.getElementById("aiFloatingBtn");
+    const input = document.getElementById("userInput");
 
-const c = document.getElementById("chatModal");
-const b = document.getElementById("aiFloatingBtn");
-const input = document.getElementById("userInput");
+    c.classList.add("open");
+    if(b){ b.classList.add("active"); }
 
-c.classList.add("open");
-if(b){ b.classList.add("active"); }
-
-setTimeout(function(){
-    if(input){ input.focus(); }
-}, 80);
-
+    setTimeout(function(){
+        if(input){ input.focus(); }
+    }, 80);
 }
 
 function closeChat(){
+    const c = document.getElementById("chatModal");
+    const b = document.getElementById("aiFloatingBtn");
 
-const c = document.getElementById("chatModal");
-const b = document.getElementById("aiFloatingBtn");
-
-c.classList.remove("open");
-if(b){ b.classList.remove("active"); }
-
+    c.classList.remove("open");
+    if(b){ b.classList.remove("active"); }
 }
 
 function toggleChat(){
-
-const c = document.getElementById("chatModal");
-
-if(c.classList.contains("open")){
-    closeChat();
+    const c = document.getElementById("chatModal");
+    if(c.classList.contains("open")){
+        closeChat();
+    } else {
+        openChat();
+    }
 }
-else{
+
+function askQuickQuestion(question){
+    const input = document.getElementById("userInput");
+    input.value = question;
     openChat();
-}
-
+    sendMessage();
 }
 
 /* EMAIL */
-
 function toggleEmail(){
-
-let e=
-document.getElementById(
-"emailModal"
-)
-
-e.style.display=
-
-e.style.display=="block"
-?
-
-"none"
-
-:
-
-"block"
-
+    const e = document.getElementById("emailModal");
+    e.classList.toggle("open");
 }
 
-
-
 function toggleUpdates(){
-
-let u=
-document.getElementById(
-"updatesModal"
-)
-
-u.style.display=
-
-u.style.display=="block"
-?
-
-"none"
-
-:
-
-"block"
-
+    const u = document.getElementById("updatesModal");
+    u.classList.toggle("open");
 }
 
 async function saveUpdatePreference(){
+    const email = document.getElementById("updatesEmail").value.trim();
+    const enabled = document.getElementById("updatesEnabled").checked;
+    const statusBox = document.getElementById("updateStatus");
 
-const email=
-document.getElementById(
-"updatesEmail"
-).value.trim();
+    if(!email){
+        alert("Enter email");
+        return;
+    }
 
-const enabled=
-document.getElementById(
-"updatesEnabled"
-).checked;
+    const selectedReports = Array.from(document.querySelectorAll(".report-options input:checked")).map(x => x.value);
 
-const statusBox=
-document.getElementById(
-"updateStatus"
-);
+    const payload = {
+        email: email,
+        reports: selectedReports.length > 0 ? selectedReports : ["ALL"]
+    };
 
-if(!email){
+    const endpoint = enabled ? "/subscribe-updates" : "/unsubscribe-updates";
 
-alert(
-"Enter email"
-);
+    try{
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
 
-return;
-
+        const data = await response.json();
+        statusBox.style.color = response.ok ? "#16a34a" : "#dc2626";
+        statusBox.innerText = data.message || data.error || "Done";
+    }
+    catch(e){
+        console.log(e);
+        statusBox.style.color = "#dc2626";
+        statusBox.innerText = "Connection error";
+    }
 }
 
-const selectedReports=
+function addMessage(message, sender){
+    const chatBox = document.getElementById("messages");
+    const bubble = document.createElement("div");
 
-Array.from(
+    bubble.className = sender === "user" ? "user-message" : "bot-message";
+    bubble.innerHTML = message;
 
-document.querySelectorAll(
-".report-options input:checked"
-)
-
-)
-
-.map(
-
-x=>x.value
-
-);
-
-const payload={
-
-email:email,
-
-reports:
-selectedReports.length > 0
-?
-selectedReports
-:
-["ALL"]
-
-};
-
-const endpoint=
-enabled
-?
-"/subscribe-updates"
-:
-"/unsubscribe-updates";
-
-try{
-
-let response=
-
-await fetch(
-
-endpoint,
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify(
-payload
-)
-
-}
-
-);
-
-let data=
-await response.json();
-
-if(response.ok){
-
-statusBox.style.color="#86efac";
-
-}
-else{
-
-statusBox.style.color="#fecaca";
-
-}
-
-statusBox.innerText=
-data.message ||
-data.error ||
-"Done";
-
-}
-
-catch(e){
-
-console.log(e);
-
-statusBox.style.color="#fecaca";
-
-statusBox.innerText=
-"Connection error";
-
-}
-
-}
-
-function addMessage(message,sender){
-
-    const chatBox=
-    document.getElementById(
-        "messages"
-    );
-
-    const bubble=
-    document.createElement(
-        "div"
-    );
-
-    bubble.className=
-    sender==="user"
-    ?
-    "user-message"
-    :
-    "bot-message";
-
-    // يسمح بعرض HTML styling
-    bubble.innerHTML=
-    message;
-
-    chatBox.appendChild(
-        bubble
-    );
-
+    chatBox.appendChild(bubble);
     enhanceWideTables(bubble);
-
-    chatBox.scrollTop=
-    chatBox.scrollHeight;
-
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function enhanceWideTables(scope){
-
     const tables = scope.querySelectorAll(".ai-result-table");
 
     tables.forEach(function(table){
-
         if(table.closest(".ai-table-shell")){
             return;
         }
@@ -505,19 +291,14 @@ function enhanceWideTables(scope){
                 shell.classList.add("is-normal");
             }
         });
-
     });
-
 }
 
 function openTableFullView(table){
-
     const modal = document.getElementById("tableFullViewModal");
     const content = document.getElementById("tableFullViewContent");
 
-    if(!modal || !content){
-        return;
-    }
+    if(!modal || !content){ return; }
 
     content.innerHTML = "";
 
@@ -525,131 +306,63 @@ function openTableFullView(table){
     clonedTable.classList.add("ai-result-table-full");
 
     content.appendChild(clonedTable);
-
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
-
 }
 
 function closeTableFullView(){
-
     const modal = document.getElementById("tableFullViewModal");
     const content = document.getElementById("tableFullViewContent");
 
-    if(content){
-        content.innerHTML = "";
-    }
-
+    if(content){ content.innerHTML = ""; }
     if(modal){
         modal.classList.remove("open");
         modal.setAttribute("aria-hidden", "true");
     }
-
 }
 
-document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){
-        closeTableFullView();
-    }
-});
-
-
 async function sendMessage(){
+    const input = document.getElementById("userInput");
+    const msg = input.value.trim();
 
-    const input=
-    document.getElementById(
-        "userInput"
-    );
+    if(!msg){ return; }
 
-    const msg=
-    input.value.trim();
+    addMessage(msg, "user");
+    input.value = "";
 
-    if(!msg){
-
-        return;
-    }
-
-    addMessage(
-        msg,
-        "user"
-    );
-
-    input.value="";
+    const loadingId = "loading-" + Date.now();
+    addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Analyzing dashboard data...</div>", "bot");
 
     try{
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({message: msg})
+        });
 
-        const response=
-        await fetch(
-
-            "/chat",
-
-            {
-
-                method:"POST",
-
-                headers:{
-
-                    "Content-Type":
-                    "application/json"
-
-                },
-
-                body:
-                JSON.stringify({
-
-                    message:msg
-
-                })
-
-            }
-
-        );
-
-        const data=
-        await response.json();
-
+        const data = await response.json();
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl && loadingEl.closest(".bot-message")){
+            loadingEl.closest(".bot-message").remove();
+        }
 
         if(data.error){
-
-            addMessage(
-
-                "⚠️ "+data.error,
-
-                "bot"
-
-            );
-
+            addMessage("⚠️ " + data.error, "bot");
             return;
         }
 
-        addMessage(
-
-            data.answer,
-
-            "bot"
-
-        );
-
+        addMessage(data.answer, "bot");
     }
-
     catch(error){
-
         console.log(error);
-
-        addMessage(
-
-            "Connection Error",
-
-            "bot"
-
-        );
-
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl && loadingEl.closest(".bot-message")){
+            loadingEl.closest(".bot-message").remove();
+        }
+        addMessage("Connection Error", "bot");
     }
-
 }
 
-
-// send on Enter
 document.getElementById("userInput").addEventListener("keydown", function(e){
     if(e.key === "Enter"){
         e.preventDefault();
@@ -657,121 +370,48 @@ document.getElementById("userInput").addEventListener("keydown", function(e){
     }
 });
 
-// close chat with Escape
 document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
+        closeTableFullView();
         closeChat();
     }
 });
+
 async function sendPDF(){
+    const email = document.getElementById("email").value.trim();
 
-let email=
-document.getElementById(
-"email"
-).value.trim();
+    if(!email){
+        alert("Enter email");
+        return;
+    }
 
-if(!email){
+    const selectedReports = Array.from(document.querySelectorAll(".report-options input:checked")).map(x => x.value);
 
-alert(
-"Enter email"
-);
+    if(selectedReports.length === 0){
+        alert("Select at least one report");
+        return;
+    }
 
-return;
+    const payload = {
+        email: email,
+        title: "Dashboard Export",
+        reports: selectedReports
+    };
 
-}
+    try{
+        const response = await fetch("/send-dashboard-pdf", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
 
-let selectedReports=
-
-Array.from(
-
-document.querySelectorAll(
-".report-options input:checked"
-)
-
-)
-
-.map(
-
-x=>x.value
-
-);
-
-if(
-selectedReports.length===0
-){
-
-alert(
-"Select at least one report"
-);
-
-return;
-
-}
-
-const payload={
-
-email:email,
-
-title:
-"Dashboard Export",
-
-reports:
-selectedReports
-
-};
-
-console.log(
-payload
-);
-
-try{
-
-let response=
-
-await fetch(
-
-"/send-dashboard-pdf",
-
-{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify(
-payload
-)
-
-}
-
-);
-
-let data=
-await response.json();
-
-alert(
-data.message ||
-data.error
-);
-
-}
-
-catch(e){
-
-console.log(e);
-
-alert(
-"Connection error"
-);
-
-}
-
+        const data = await response.json();
+        alert(data.message || data.error);
+    }
+    catch(e){
+        console.log(e);
+        alert("Connection error");
+    }
 }
 </script>
 
