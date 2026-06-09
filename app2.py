@@ -145,19 +145,19 @@ REPORTS = [
         "url": "https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
     },
     {
-        "name": "StrategicDependency",
-        "url": "https://app.powerbi.com/rdlEmbed?reportId=71e8e860-6d44-4983-87ab-ca5ea954c090&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi"
+        "name": "Reportv1",
+        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/bf9ab0ce-95e2-4e28-9604-05bf746dacdf?experience=power-bi"
     },
     {
-        "name": "TradeExecutive",
-        "url": "https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d6f3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi"
+        "name": "report2",
+        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/c9fe7c7c-1381-4565-9b2a-e1500c30332a?experience=power-bi"
     }
 ]
 
 VALID_REPORTS = [
     "Full_Light_Mode_PowerBI",
-    "StrategicDependency",
-    "TradeExecutive"
+    "Reportv1",
+    "report2"
 ]
 
 # ======================
@@ -204,6 +204,106 @@ def _clean_sql(raw: str) -> str:
            .replace("```", "")
            .strip()
     )
+def _looks_like_sql_query(text_value: str) -> bool:
+    q = (text_value or "").strip().lower()
+
+    return (
+        q.startswith("select ")
+        or q.startswith("with ")
+    )
+
+# ======================
+# ARABIC QUESTION NORMALIZATION
+# ======================
+
+def _contains_arabic(text: str) -> bool:
+    """Return True when the user question contains Arabic characters."""
+    return bool(re.search(r"[\u0600-\u06FF]", text or ""))
+
+
+def _normalise_arabic_text(text: str) -> str:
+    """
+    Normalise Arabic text so common spellings map to the same keywords.
+    This helps the English SQL-generation prompt understand Arabic user questions.
+    """
+    text = text or ""
+
+    # Remove Arabic diacritics and tatweel
+    text = re.sub(r"[\u064B-\u0652]", "", text)
+    text = text.replace("ـ", "")
+
+    replacements = {
+        "أ": "ا",
+        "إ": "ا",
+        "آ": "ا",
+        "ة": "ه",
+        "ى": "ي",
+        "ؤ": "و",
+        "ئ": "ي",
+    }
+
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
+def normalise_question_for_ai(question: str) -> str:
+    """
+    Convert common Arabic BI questions into canonical English questions.
+    The database schema/prompt examples are English, so this prevents Arabic
+    questions from being incorrectly classified as unavailable data.
+    """
+    if not _contains_arabic(question):
+        return question
+
+    q = _normalise_arabic_text(question)
+
+    # Products with late shipping/delivery delay
+    if (
+        any(word in q for word in ["منتج", "المنتج", "المنتجات", "منتجات"])
+        and any(word in q for word in ["تاخير", "متاخر", "متاخره", "متاخرين", "الاكبر تاخير", "اكبر تاخير"])
+        and any(word in q for word in ["شحن", "الشحن", "تسليم", "التسليم", "توصيل", "التوصيل"])
+    ):
+        return "Which products have the highest late delivery rate?"
+
+    # Shipping delays without explicitly saying products
+    if (
+        any(word in q for word in ["تاخير", "متاخر", "متاخره", "متاخرين"])
+        and any(word in q for word in ["شحن", "الشحن", "تسليم", "التسليم", "توصيل", "التوصيل"])
+    ):
+        return "Which products have the highest late delivery rate?"
+
+    # Top selling / highest sales products
+    if (
+        any(word in q for word in ["منتج", "المنتج", "المنتجات", "منتجات"])
+        and any(word in q for word in ["مبيعات", "مبيعا", "مبيعاً", "الاكثر مبيعا", "اكثر مبيعا", "اعلي مبيعات", "اعلى مبيعات"])
+    ):
+        return "Which products have the highest sales?"
+
+    # Top countries by trade value
+    if (
+        any(word in q for word in ["دول", "الدول", "بلدان", "البلدان", "دوله", "الدوله"])
+        and any(word in q for word in ["تجاره", "التجاره", "تجارة", "قيمة", "قيمه", "صادرات", "واردات"])
+    ):
+        return "What are the top countries by trade value?"
+
+    # Exports/imports comparison
+    if (
+        any(word in q for word in ["صادرات", "الصادرات", "واردات", "الواردات"])
+        and any(word in q for word in ["قارن", "مقارنه", "مقارنة", "مقارنه بين", "مقارنة بين"])
+    ):
+        return "Compare exports and imports by year."
+
+    # GDP growth questions
+    if (
+        any(word in q for word in ["نمو", "النمو"])
+        and any(word in q for word in ["الناتج المحلي", "الناتج المحلى", "gdp"])
+    ):
+        return f"{question}\n\nTranslate this Arabic question to English first, then answer using the available schema."
+
+    # Generic Arabic fallback
+    return f"{question}\n\nTranslate this Arabic question to English first, then answer using the available schema."
 
 
 
@@ -500,6 +600,7 @@ def build_ai_answer(df: pd.DataFrame, summary: str, question: str = "") -> str:
     - List/descriptive results: show a clean table.
     - Single KPI result: show KPI card only.
     - Never treat keys, IDs, HS codes, years, or flags as money.
+    - Show a real text label for KPI/ranking results when available.
     """
     numeric_cols = df.select_dtypes(include=["number"]).columns
 
@@ -560,8 +661,26 @@ Analysis based on {len(df)} records
     if metric_col is not None:
         top = df.iloc[0]
         formatted_value = format_metric(top[metric_col], metric_col)
+        metric_lower = metric_col.lower()
 
         ranking_table_html = ""
+
+        has_real_label = (
+            label_col != metric_col
+            and label_col in df.columns
+            and not pd.api.types.is_numeric_dtype(df[label_col])
+        )
+
+        top_tied_count = 1
+        try:
+            top_tied_count = int((df[metric_col] == top[metric_col]).sum())
+        except Exception:
+            top_tied_count = 1
+
+        is_rate_ranking = (
+            len(df) > 1
+            and any(x in metric_lower for x in ["rate", "pct", "percent"])
+        )
 
         if len(df) > 1:
             ranking_table_html = f"""
@@ -574,6 +693,21 @@ Analysis based on {len(df)} records
 </div>
 """
 
+        label_html = ""
+
+        if is_rate_ranking and top_tied_count > 1:
+            label_html = f"""
+<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
+{top_tied_count} results tied at the highest rate
+</div>
+"""
+        elif has_real_label:
+            label_html = f"""
+<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
+{html.escape(str(top[label_col]))}
+</div>
+"""
+
         return f"""
 <div style='line-height:1.8'>
 
@@ -581,9 +715,7 @@ Analysis based on {len(df)} records
 📊 Business Insight
 </div>
 
-<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
-{html.escape(str(top[label_col]))}
-</div>
+{label_html}
 
 <div style='font-size:30px;font-weight:bold;color:#34d399;margin-top:15px'>
 {formatted_value}
@@ -637,6 +769,55 @@ Analysis based on {len(df)} records
 </div>
 """
 
+
+def build_sql_preview_answer(df: pd.DataFrame, sql: str) -> str:
+    """
+    Render direct SQL input as a table preview instead of forcing it into
+    the Business Insight/KPI card renderer.
+    """
+    display_cols = [
+        c for c in df.columns
+        if not _is_internal_display_col(c)
+    ]
+
+    if not display_cols:
+        display_cols = list(df.columns)
+
+    preview_df = df[display_cols].head(20)
+    table_html = build_formatted_table(
+        preview_df,
+        display_cols,
+        add_rank=False
+    )
+
+    shown_rows = min(len(df), 20)
+
+    return f"""
+<div style='line-height:1.8'>
+
+<div style='font-size:20px;font-weight:bold'>
+📋 SQL Result Preview
+</div>
+
+<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
+The SQL query was executed successfully. Showing the first {shown_rows} rows.
+</div>
+
+<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
+Query Result
+</div>
+
+<div style='margin-top:10px;overflow-x:auto'>
+{table_html}
+</div>
+
+<div style='margin-top:10px;color:#94a3b8;font-size:12px'>
+Raw SQL input was handled as a table preview, not as a KPI insight.
+</div>
+
+</div>
+"""
+
 # ======================
 # CHAT
 # ======================
@@ -647,16 +828,21 @@ def chat():
         total_start = time.time()
 
         data = request.json or {}
-        question = data.get("message", "").strip()
+        original_question = data.get("message", "").strip()
+        question = normalise_question_for_ai(original_question)
+
+        if original_question and question != original_question:
+            print("Original question:", original_question)
+            print("Normalized question:", question)
 
         # Empty question check
-        if not question:
+        if not original_question:
             return jsonify({"error": "Question is empty"}), 400
 
         # Small-talk intercept — no LLM or DB call
-        if question.lower() in _SMALL_TALK:
+        if original_question.lower() in _SMALL_TALK:
             return jsonify({
-                "answer": _SMALL_TALK[question.lower()],
+                "answer": _SMALL_TALK[original_question.lower()],
                 "sql": "",
                 "data": []
             })
@@ -668,6 +854,41 @@ def chat():
                 "sql": "",
                 "data": []
             }), 500
+
+        # ======================
+        # Direct SQL Preview Handler
+        # ======================
+        # If the user writes a SELECT/WITH query directly, execute it safely
+        # and render a table preview instead of a misleading KPI card.
+        if _looks_like_sql_query(original_question):
+            validation = validate_sql(original_question)
+
+            if not validation.is_valid:
+                return jsonify({
+                    "answer": "⚠️ This SQL query is not allowed or is unsafe.",
+                    "sql": original_question,
+                    "data": []
+                }), 400
+
+            try:
+                df = pd.read_sql(original_question, engine)
+                df = df.drop_duplicates()
+                df = df.head(20)
+                df = df.replace([np.nan, np.inf, -np.inf], None)
+                records = df.to_dict(orient="records")
+
+                return jsonify({
+                    "answer": build_sql_preview_answer(df, original_question),
+                    "sql": original_question,
+                    "data": records
+                })
+
+            except Exception as exc:
+                return jsonify({
+                    "answer": f"⚠️ SQL execution failed: {str(exc)}",
+                    "sql": original_question,
+                    "data": []
+                }), 500
 
         # OpenRouter availability check before spending DB work
         if client is None:
@@ -732,8 +953,19 @@ def chat():
         print("SQL Generation:", round(time.time() - sql_start, 2), "sec")
 
         if generated_sql.upper().startswith("CANNOT_ANSWER"):
+            fallback_message = (
+                "⚠️ I could not map this question to the available schema. "
+                "Try asking about trade values, countries, commodities, GDP, supply-chain KPIs, or late delivery rate."
+            )
+
+            if _contains_arabic(original_question):
+                fallback_message = (
+                    "⚠️ لم أستطع ربط السؤال بالأعمدة المتاحة في قاعدة البيانات. "
+                    "جرّب السؤال عن قيمة التجارة، الدول، المنتجات، GDP، مؤشرات سلسلة الإمداد، أو معدل تأخير التسليم."
+                )
+
             return jsonify({
-                "answer": "⚠️ This question requires data not available in the current schema.",
+                "answer": fallback_message,
                 "sql": "",
                 "data": []
             })
@@ -1089,7 +1321,7 @@ def send_dashboard_pdf():
             }), response.status_code
 
         return jsonify({
-            "message": "PDF sent successfully"
+            "message": "Report request submitted successfully. A download link will be sent by email."
         })
 
     except Exception as e:

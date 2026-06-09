@@ -24,10 +24,10 @@
             <span>▦</span> Dashboards
         </button>
         <button class="navBtn" data-report="rdl1" onclick="showReport('rdl1', this)" type="button">
-            <span>◇</span> Strategic Dependency
+            <span>◇</span> Reportv1
         </button>
         <button class="navBtn" data-report="rdl2" onclick="showReport('rdl2', this)" type="button">
-            <span>⇄</span> Trade Executive
+            <span>⇄</span> report2
         </button>
     </nav>
 
@@ -52,14 +52,14 @@
 
     <iframe
         id="rdl1"
-        title="Strategic Dependency"
-        src="https://app.powerbi.com/rdlEmbed?reportId=71e8e860-6d44-4983-87ab-ca5ea954c090&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+        title="Reportv1"
+        src="https://app.powerbi.com/rdlEmbed?reportId=bf9ab0ce-95e2-4e28-9604-05bf746dacdf&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
     </iframe>
-
+    
     <iframe
         id="rdl2"
-        title="Trade Executive"
-        src="https://app.powerbi.com/rdlEmbed?reportId=e0d8797e-4b9c-4598-8cce-4d422f55d6f3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
+        title="report2"
+        src="https://app.powerbi.com/rdlEmbed?reportId=c9fe7c7c-1381-4565-9b2a-e1500c30332a&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi">
     </iframe>
 </main>
 
@@ -117,8 +117,8 @@
     <div class="modalTitle">Share Reports via Email</div>
     <div class="report-options">
         <label><input type="checkbox" value="Full_Light_Mode_PowerBI"> Dashboards</label>
-        <label><input type="checkbox" value="StrategicDependency"> Strategic Dependency</label>
-        <label><input type="checkbox" value="TradeExecutive"> Trade Executive</label>
+        <label><input type="checkbox" value="Reportv1"> Reportv1</label>
+        <label><input type="checkbox" value="report2"> report2</label>
     </div>
     <input type="email" id="email" placeholder="Enter email">
     <button onclick="sendPDF()" type="button">Send PDF</button>
@@ -377,41 +377,94 @@ document.addEventListener("keydown", function(e){
     }
 });
 
+
+
 async function sendPDF(){
+
     const email = document.getElementById("email").value.trim();
 
+
+
     if(!email){
+
         alert("Enter email");
+
         return;
+
     }
 
-    const selectedReports = Array.from(document.querySelectorAll(".report-options input:checked")).map(x => x.value);
+
+
+    const checkedReports = Array.from(
+
+        document.querySelectorAll(".report-options input:checked")
+
+    );
+
+
+
+    const selectedReports = checkedReports.map(x => x.value);
+
+
+
+    const selectedReportLabels = checkedReports.map(function(x){
+
+        return x.parentElement.innerText.trim();
+
+    });
+
+
 
     if(selectedReports.length === 0){
+
         alert("Select at least one report");
+
         return;
+
     }
+
+
 
     const payload = {
+
         email: email,
-        title: "Dashboard Export",
+
+        title: selectedReportLabels.join(", "),
+
         reports: selectedReports
+
     };
 
+
+
     try{
+
         const response = await fetch("/send-dashboard-pdf", {
+
             method: "POST",
+
             headers: {"Content-Type": "application/json"},
+
             body: JSON.stringify(payload)
+
         });
 
+
+
         const data = await response.json();
+
         alert(data.message || data.error);
+
     }
+
     catch(e){
+
         console.log(e);
+
         alert("Connection error");
+
     }
+
 }
 </script>
 
