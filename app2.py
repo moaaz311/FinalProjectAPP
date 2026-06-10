@@ -108,14 +108,23 @@ try:
 
     if SQL_USERNAME and SQL_PASSWORD:
         # Remote connection (Microsoft Fabric / Azure SQL) using Azure AD Password
+        
+        # Format server for Linux ODBC driver to prevent timeouts
+        formatted_server = SQL_SERVER
+        if not formatted_server.startswith("tcp:"):
+            formatted_server = f"tcp:{formatted_server}"
+        if "," not in formatted_server:
+            formatted_server = f"{formatted_server},1433"
+            
         connection_string = (
             "DRIVER={ODBC Driver 17 for SQL Server};"
-            f"SERVER={SQL_SERVER};"
+            f"SERVER={formatted_server};"
             f"DATABASE={SQL_DATABASE};"
             "Authentication=ActiveDirectoryPassword;"
             f"UID={SQL_USERNAME};"
             f"PWD={SQL_PASSWORD};"
-            "TrustServerCertificate=yes;"
+            "Encrypt=yes;"
+            "TrustServerCertificate=no;"
         )
         engine = create_engine(
             f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
