@@ -102,20 +102,40 @@ mail = Mail(app)
 try:
     if not SQL_SERVER or not SQL_DATABASE:
         raise ValueError("SQL_SERVER or SQL_DATABASE is missing in .env file")
+        
+    SQL_USERNAME = os.getenv("SQL_USERNAME")
+    SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 
-    connection_string = (
-        "DRIVER={ODBC Driver 17 for SQL Server};"
-        f"SERVER={SQL_SERVER};"
-        f"DATABASE={SQL_DATABASE};"
-        "Trusted_Connection=yes;"
-        "TrustServerCertificate=yes;"
-    )
-
-    engine = create_engine(
-        f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
-        pool_pre_ping=True,
-        pool_recycle=3600
-    )
+    if SQL_USERNAME and SQL_PASSWORD:
+        # Remote connection (Microsoft Fabric / Azure SQL) using Azure AD Password
+        connection_string = (
+            "DRIVER={ODBC Driver 17 for SQL Server};"
+            f"SERVER={SQL_SERVER};"
+            f"DATABASE={SQL_DATABASE};"
+            "Authentication=ActiveDirectoryPassword;"
+            f"UID={SQL_USERNAME};"
+            f"PWD={SQL_PASSWORD};"
+            "TrustServerCertificate=yes;"
+        )
+        engine = create_engine(
+            f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
+            pool_pre_ping=True,
+            pool_recycle=3600
+        )
+    else:
+        # Fallback to local Windows Authentication
+        connection_string = (
+            "DRIVER={ODBC Driver 17 for SQL Server};"
+            f"SERVER={SQL_SERVER};"
+            f"DATABASE={SQL_DATABASE};"
+            "Trusted_Connection=yes;"
+            "TrustServerCertificate=yes;"
+        )
+        engine = create_engine(
+            f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
+            pool_pre_ping=True,
+            pool_recycle=3600
+        )
 
     # Test real database connection
     with engine.connect() as conn:
