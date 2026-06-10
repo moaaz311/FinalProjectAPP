@@ -145,7 +145,7 @@ try:
 
 except Exception as e:
     print("Database Error:", e)
-    db_error_msg = str(e)
+    db_error_msg = f"Server: '{SQL_SERVER}' | DB: '{SQL_DATABASE}' | User: '{SQL_USERNAME}' | Exception: {str(e)}"
     engine = None
 
 # ======================
