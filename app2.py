@@ -106,8 +106,8 @@ try:
     SQL_USERNAME = os.getenv("SQL_USERNAME")
     SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 
-    if SQL_USERNAME and SQL_PASSWORD:
-        # Remote connection (Microsoft Fabric / Azure SQL) using Azure AD Password
+    if SQL_USERNAME:
+        # Remote connection (Microsoft Fabric / Azure SQL) using Managed Identity
         
         # Format server for Linux ODBC driver to prevent timeouts
         formatted_server = SQL_SERVER
@@ -120,9 +120,7 @@ try:
             "DRIVER={ODBC Driver 17 for SQL Server};"
             f"SERVER={formatted_server};"
             f"DATABASE={SQL_DATABASE};"
-            "Authentication=ActiveDirectoryPassword;"
-            f"UID={SQL_USERNAME};"
-            f"PWD={SQL_PASSWORD};"
+            "Authentication=ActiveDirectoryMsi;"
             "Encrypt=yes;"
             "TrustServerCertificate=no;"
         )
