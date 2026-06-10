@@ -137,14 +137,15 @@ try:
             pool_recycle=3600
         )
 
-    # Test real database connection
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
 
     print("Database Connected")
+    db_error_msg = None
 
 except Exception as e:
     print("Database Error:", e)
+    db_error_msg = str(e)
     engine = None
 
 # ======================
@@ -870,7 +871,7 @@ def chat():
         # Database availability check before spending AI tokens
         if engine is None:
             return jsonify({
-                "answer": "⚠️ Database connection is not available. Please check SQL_SERVER and SQL_DATABASE in your .env file.",
+                "answer": f"⚠️ Database connection is not available. Error: {db_error_msg}",
                 "sql": "",
                 "data": []
             }), 500
