@@ -5253,3 +5253,315 @@ body.sidebar-collapsed {
         --sidebar-collapsed: 106px !important;
     }
 }
+
+/* =========================================================
+   NEW REPORTS PATCH — keeps yesterday functionality and adds rdl3
+   ========================================================= */
+#rdl3 {
+    --report-h-extra: 0px;
+    --report-scale: 1;
+}
+
+#rdl3 {
+    width: calc((100% - 16px) / .88) !important;
+    height: calc((100% - 16px) / .88) !important;
+    transform: scale(.88) !important;
+    transform-origin: top left !important;
+}
+
+@media (max-width: 720px) {
+    .mobileBottomDock {
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+
+    .reportList {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    #rdl3 {
+        width: calc((100% - 10px) / .72) !important;
+        height: calc((100% - 10px) / .72) !important;
+        transform: scale(.72) !important;
+        transform-origin: top left !important;
+    }
+}
+
+/* Forecasting RDL export parameters in Share Reports modal */
+.reportParameterBlock {
+    display: none;
+    margin: -4px 0 16px;
+    padding: 14px;
+    border-radius: 18px;
+    background: var(--surface-strong);
+    border: 1px solid var(--line-strong);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.reportParameterBlock.show {
+    display: block;
+    animation: modalRise .20s ease;
+}
+
+.paramBlockHeader {
+    margin-bottom: 12px;
+}
+
+.paramBlockHeader strong,
+.paramBlockHeader small {
+    display: block;
+}
+
+.paramBlockHeader strong {
+    font-size: 14px;
+    font-weight: 950;
+    color: var(--ink);
+}
+
+.paramBlockHeader small {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.paramField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.paramField:last-child {
+    margin-bottom: 0;
+}
+
+.paramField select,
+.paramField input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 13px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-solid);
+    color: var(--ink);
+    outline: none;
+    font-weight: 750;
+}
+
+.paramField select:focus,
+.paramField input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(31, 131, 207, 0.13);
+}
+
+:root[data-theme="dark"] .reportParameterBlock {
+    background: rgba(255,255,255,.07) !important;
+    border-color: rgba(105,164,255,.22) !important;
+}
+
+:root[data-theme="dark"] .paramField select,
+.paramField input {
+    background: #081729 !important;
+    color: #f5fbff !important;
+    border-color: rgba(98,207,255,0.26) !important;
+}
+
+/* =========================================================
+   V11 PATCH — Share Email side-by-side parameters layout
+   Shows the selected RDL parameter forms beside the report list.
+   ========================================================= */
+#emailModal.utilityModal {
+    width: min(860px, calc(100vw - var(--sidebar-width) - 72px)) !important;
+    max-height: calc(100vh - var(--nav-height) - 60px) !important;
+}
+
+.emailModalGrid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.92fr) minmax(320px, 1.08fr);
+    gap: 16px;
+    align-items: start;
+    margin: 14px 0 16px;
+}
+
+.emailReportsPanel,
+.emailParamsPanel {
+    min-width: 0;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.42);
+    padding: 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.emailParamsPanel {
+    max-height: min(58vh, 520px);
+    overflow: auto;
+}
+
+.sidePanelTitle {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+}
+
+#emailModal .reportCheckboxGroup {
+    margin: 0;
+}
+
+#emailModal .reportCheckboxGroup label {
+    padding: 11px;
+}
+
+.paramsEmptyState {
+    min-height: 158px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 18px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 18px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.32);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.paramsEmptyState.hidden {
+    display: none;
+}
+
+#emailModal .reportParameterBlock {
+    margin: 0 0 12px;
+}
+
+#emailModal .reportParameterBlock:last-child {
+    margin-bottom: 0;
+}
+
+#emailModal > input[type="email"],
+#emailModal > button {
+    margin-top: 0;
+}
+
+:root[data-theme="dark"] .emailReportsPanel,
+:root[data-theme="dark"] .emailParamsPanel {
+    background: rgba(255,255,255,0.055) !important;
+    border-color: rgba(105,164,255,.20) !important;
+}
+
+:root[data-theme="dark"] .paramsEmptyState {
+    background: rgba(255,255,255,0.045) !important;
+    border-color: rgba(105,164,255,.26) !important;
+    color: #b6c7db !important;
+}
+
+@media (max-width: 980px) {
+    #emailModal.utilityModal,
+    body.sidebar-collapsed #emailModal.utilityModal {
+        width: calc(100vw - var(--sidebar-width) - 32px) !important;
+        left: calc(var(--sidebar-width) + 16px) !important;
+    }
+
+    .emailModalGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .emailParamsPanel {
+        max-height: 42vh;
+    }
+}
+
+@media (max-width: 720px) {
+    #emailModal.utilityModal,
+    body.sidebar-collapsed #emailModal.utilityModal {
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+    }
+
+    .emailReportsPanel,
+    .emailParamsPanel {
+        padding: 10px;
+        border-radius: 18px;
+    }
+
+    .emailParamsPanel {
+        max-height: 36vh;
+    }
+}
+
+
+/* =========================================================
+   V12 PATCH — Procurement multi-value RDL parameters
+   Power BI ExportToFile expects repeated name/value entries for
+   multi-value parameters; these controls let the app collect them.
+   ========================================================= */
+.paramHint {
+    margin: -2px 0 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    color: var(--muted);
+    background: rgba(31, 131, 207, 0.08);
+    border: 1px dashed var(--line-strong);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.paramQuickActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: -2px;
+}
+
+.paramQuickActions button {
+    width: auto !important;
+    height: 28px !important;
+    padding: 0 10px !important;
+    border-radius: 999px !important;
+    background: var(--accent-soft) !important;
+    color: var(--accent-dark) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: none !important;
+    font-size: 11px !important;
+    font-weight: 950 !important;
+}
+
+.paramQuickActions button:hover {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+}
+
+.paramField.multiParamField select[multiple] {
+    height: auto !important;
+    min-height: 138px;
+    padding: 8px !important;
+    line-height: 1.45;
+}
+
+.paramField.multiParamField select[multiple] option {
+    padding: 6px 8px;
+    border-radius: 8px;
+}
+
+:root[data-theme="dark"] .paramHint {
+    background: rgba(70, 199, 255, 0.09) !important;
+    border-color: rgba(98, 207, 255, 0.26) !important;
+    color: #b6c7db !important;
+}
+
+:root[data-theme="dark"] .paramQuickActions button {
+    background: rgba(70, 199, 255, 0.13) !important;
+    color: #8edfff !important;
+    border-color: rgba(98, 207, 255, 0.24) !important;
+}

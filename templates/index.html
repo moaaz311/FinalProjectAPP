@@ -53,7 +53,7 @@
         <span id="activeReportType" class="statusBadge">PBIX</span>
         <div>
             <div class="statusLabel">Currently viewing</div>
-            <div id="activeReportName" class="statusTitle">Trade Flow Dashboard</div>
+            <div id="activeReportName" class="statusTitle">Full Light Mode PowerBI Dashboard</div>
         </div>
     </div>
 
@@ -94,41 +94,52 @@
     <div class="sideSectionLabel">Embedded Reports</div>
 
     <div class="sideMicroStats" aria-label="Report workspace summary">
-        <div><strong>3</strong><span>Reports</span></div>
+        <div><strong>4</strong><span>Reports</span></div>
         <div><strong>Live</strong><span>Embed</span></div>
     </div>
 
 
     <div class="reportList">
-        <button class="reportNavItem active" aria-label="Open Trade Flow Dashboard" data-report="pbix1" data-title="Trade Flow Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)" type="button">
+        <button class="reportNavItem active" aria-label="Open Full Light Mode PowerBI Dashboard" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" data-title-tooltip="Full Light Mode PowerBI Dashboard" onclick="showReport('pbix1', this)" type="button">
             <span class="reportIcon dashboardIcon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" role="img" aria-label="Trade flow icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg>
+                <svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg>
             </span>
             <span class="reportText">
-                <strong>Trade Flow Dashboard</strong>
+                <strong>Full Light Mode PowerBI Dashboard</strong>
                 <small>Power BI dashboard</small>
             </span>
             <span class="reportChip">PBIX</span><span class="reportAura" aria-hidden="true"></span>
         </button>
 
-        <button class="reportNavItem" aria-label="Open Procurement Risk Monitoring report" data-report="rdl1" data-title="Procurement Risk Monitoring" data-type="RDL" onclick="showReport('rdl1', this)" type="button">
+        <button class="reportNavItem" aria-label="Open Procurement Risk &amp;Fraud Monitoring Report" data-report="rdl1" data-title="Procurement Risk &amp;Fraud Monitoring Report" data-type="RDL" data-title-tooltip="Procurement Risk &amp;Fraud Monitoring Report" onclick="showReport('rdl1', this)" type="button">
             <span class="reportIcon riskIcon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img" aria-label="Procurement risk shield icon"><path d="M12 2 4 5.2v6.5c0 4.9 3.3 8.6 8 10.3 4.7-1.7 8-5.4 8-10.3V5.2L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/><path d="M5.7 18.4 3 21.1l1.4 1.4 3.1-3.1c-.65-.28-1.25-.62-1.8-1Z" opacity=".7"/></svg>
             </span>
             <span class="reportText">
-                <strong>Procurement Risk Monitoring</strong>
-                <small>Paginated report v1</small>
+                <strong>Procurement Risk &amp;Fraud Monitoring Report</strong>
+                <small>Paginated report</small>
             </span>
             <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
         </button>
 
-        <button class="reportNavItem" aria-label="Open Supply Chain Operations report" data-report="rdl2" data-title="Supply Chain Operations" data-type="RDL" onclick="showReport('rdl2', this)" type="button">
+        <button class="reportNavItem" aria-label="Open Forecasting &amp; Strategic Planning Report" data-report="rdl2" data-title="Forecasting &amp; Strategic Planning Report" data-type="RDL" data-title-tooltip="Forecasting &amp; Strategic Planning Report" onclick="showReport('rdl2', this)" type="button">
             <span class="reportIcon opsIcon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" role="img" aria-label="Supply chain operations truck icon"><path d="M3 5h11v9H3V5Zm13 3h3.2L22 11.5V16h-2.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3v-1.5h12V8h1Zm1 1.7v3.1h3.2l-1.5-3.1H17ZM7 20a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm10 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"/><path d="M5 8h7v1.8H5V8Zm0 3h5v1.8H5V11Z" opacity=".75"/></svg>
+                <svg viewBox="0 0 24 24" role="img" aria-label="Forecasting strategic planning icon"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z"/><path d="M5 6.5 10 8l4-4 5 2.5-.9 1.8-3.7-1.85-3.8 3.8L4.5 8.4 5 6.5Z" opacity=".78"/></svg>
             </span>
             <span class="reportText">
-                <strong>Supply Chain Operations</strong>
-                <small>Paginated report v2</small>
+                <strong>Forecasting &amp; Strategic Planning Report</strong>
+                <small>Paginated report</small>
+            </span>
+            <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
+        </button>
+
+        <button class="reportNavItem" aria-label="Open Executive Trade &amp; Supply Chain Summary" data-report="rdl3" data-title="Executive Trade &amp; Supply Chain Summary" data-type="RDL" data-title-tooltip="Executive Trade &amp; Supply Chain Summary" onclick="showReport('rdl3', this)" type="button">
+            <span class="reportIcon dashboardIcon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg>
+            </span>
+            <span class="reportText">
+                <strong>Executive Trade &amp; Supply Chain Summary</strong>
+                <small>Paginated report</small>
             </span>
             <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
         </button>
@@ -169,17 +180,21 @@
         <button type="button" class="btn-close mobileCanvasClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mobileCanvasBody">
-        <button class="mobileReportOption active" data-bs-dismiss="offcanvas" data-report="pbix1" data-title="Trade Flow Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)" type="button">
-            <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg></span>
-            <span><strong>Trade Flow Dashboard</strong><small>Power BI dashboard</small></span><em>PBIX</em>
+                <button class="mobileReportOption active" data-bs-dismiss="offcanvas" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)" type="button">
+            <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg></span>
+            <span><strong>Full Light Mode PowerBI Dashboard</strong><small>Power BI dashboard</small></span><em>PBIX</em>
         </button>
-        <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl1" data-title="Procurement Risk Monitoring" data-type="RDL" onclick="showReport('rdl1', this)" type="button">
-            <span class="mobileReportIcon riskIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2 4 5.2v6.5c0 4.9 3.3 8.6 8 10.3 4.7-1.7 8-5.4 8-10.3V5.2L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/></svg></span>
-            <span><strong>Procurement Risk Monitoring</strong><small>Paginated report v1</small></span><em>RDL</em>
+        <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl1" data-title="Procurement Risk &amp;Fraud Monitoring Report" data-type="RDL" onclick="showReport('rdl1', this)" type="button">
+            <span class="mobileReportIcon riskIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Procurement risk shield icon"><path d="M12 2 4 5.2v6.5c0 4.9 3.3 8.6 8 10.3 4.7-1.7 8-5.4 8-10.3V5.2L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/><path d="M5.7 18.4 3 21.1l1.4 1.4 3.1-3.1c-.65-.28-1.25-.62-1.8-1Z" opacity=".7"/></svg></span>
+            <span><strong>Procurement Risk &amp;Fraud Monitoring Report</strong><small>Paginated report</small></span><em>RDL</em>
         </button>
-        <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl2" data-title="Supply Chain Operations" data-type="RDL" onclick="showReport('rdl2', this)" type="button">
-            <span class="mobileReportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5h11v9H3V5Zm13 3h3.2L22 11.5V16h-2.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3v-1.5h12V8h1Zm1 1.7v3.1h3.2l-1.5-3.1H17ZM7 20a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm10 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"/></svg></span>
-            <span><strong>Supply Chain Operations</strong><small>Paginated report v2</small></span><em>RDL</em>
+        <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl2" data-title="Forecasting &amp; Strategic Planning Report" data-type="RDL" onclick="showReport('rdl2', this)" type="button">
+            <span class="mobileReportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Forecasting strategic planning icon"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z"/><path d="M5 6.5 10 8l4-4 5 2.5-.9 1.8-3.7-1.85-3.8 3.8L4.5 8.4 5 6.5Z" opacity=".78"/></svg></span>
+            <span><strong>Forecasting &amp; Strategic Planning Report</strong><small>Paginated report</small></span><em>RDL</em>
+        </button>
+        <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl3" data-title="Executive Trade &amp; Supply Chain Summary" data-type="RDL" onclick="showReport('rdl3', this)" type="button">
+            <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg></span>
+            <span><strong>Executive Trade &amp; Supply Chain Summary</strong><small>Paginated report</small></span><em>RDL</em>
         </button>
 
         <div class="mobileCanvasDivider"></div>
@@ -191,17 +206,21 @@
 
 <!-- MOBILE BOOTSTRAP BOTTOM DOCK -->
 <nav class="mobileBottomDock d-lg-none" aria-label="Mobile report switcher">
-    <button class="mobileDockBtn active" data-report="pbix1" data-title="Trade Flow Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)" type="button" aria-label="Trade Flow Dashboard">
-        <span class="dockIcon"><svg viewBox="0 0 24 24"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/></svg></span>
-        <small>Trade</small>
+    <button class="mobileDockBtn active" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)" type="button" aria-label="Full Light Mode PowerBI Dashboard">
+        <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg></span>
+        <small>PBIX</small>
     </button>
-    <button class="mobileDockBtn" data-report="rdl1" data-title="Procurement Risk Monitoring" data-type="RDL" onclick="showReport('rdl1', this)" type="button" aria-label="Procurement Risk Monitoring">
-        <span class="dockIcon"><svg viewBox="0 0 24 24"><path d="M12 2 4 5.2v6.5c0 4.9 3.3 8.6 8 10.3 4.7-1.7 8-5.4 8-10.3V5.2L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/></svg></span>
+    <button class="mobileDockBtn" data-report="rdl1" data-title="Procurement Risk &amp;Fraud Monitoring Report" data-type="RDL" onclick="showReport('rdl1', this)" type="button" aria-label="Procurement Risk &amp;Fraud Monitoring Report">
+        <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Procurement risk shield icon"><path d="M12 2 4 5.2v6.5c0 4.9 3.3 8.6 8 10.3 4.7-1.7 8-5.4 8-10.3V5.2L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/><path d="M5.7 18.4 3 21.1l1.4 1.4 3.1-3.1c-.65-.28-1.25-.62-1.8-1Z" opacity=".7"/></svg></span>
         <small>Risk</small>
     </button>
-    <button class="mobileDockBtn" data-report="rdl2" data-title="Supply Chain Operations" data-type="RDL" onclick="showReport('rdl2', this)" type="button" aria-label="Supply Chain Operations">
-        <span class="dockIcon"><svg viewBox="0 0 24 24"><path d="M3 5h11v9H3V5Zm13 3h3.2L22 11.5V16h-2.1a3 3 0 0 0-5.8 0H9.9a3 3 0 0 0-5.8 0H3v-1.5h12V8h1Zm1 1.7v3.1h3.2l-1.5-3.1H17ZM7 20a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm10 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z"/></svg></span>
-        <small>Ops</small>
+    <button class="mobileDockBtn" data-report="rdl2" data-title="Forecasting &amp; Strategic Planning Report" data-type="RDL" onclick="showReport('rdl2', this)" type="button" aria-label="Forecasting &amp; Strategic Planning Report">
+        <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Forecasting strategic planning icon"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V4h3v13h-3Zm5 0v-6h3v6h-3Z"/><path d="M5 6.5 10 8l4-4 5 2.5-.9 1.8-3.7-1.85-3.8 3.8L4.5 8.4 5 6.5Z" opacity=".78"/></svg></span>
+        <small>Plan</small>
+    </button>
+    <button class="mobileDockBtn" data-report="rdl3" data-title="Executive Trade &amp; Supply Chain Summary" data-type="RDL" onclick="showReport('rdl3', this)" type="button" aria-label="Executive Trade &amp; Supply Chain Summary Report">
+        <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Executive dashboard icon"><path d="M5 5h8.4l-2.2-2.2L12.6 1 18 6.4l-5.4 5.4-1.4-1.8L13.4 8H5V5Zm14 14h-8.4l2.2 2.2L11.4 23 6 17.6l5.4-5.4 1.4 1.8-2.2 2H19v3Z"/><path d="M4 15h3v5H4v-5Zm5-3h3v8H9v-8Zm5-2h3v10h-3V10Z" opacity=".88"/></svg></span>
+        <small>Exec</small>
     </button>
     <button class="mobileDockBtn menuDockBtn" onclick="handleReportsMenu()" type="button" aria-label="Open full reports menu">
         <span class="dockIcon"><svg viewBox="0 0 24 24"><path d="M4 6.5h16v2H4v-2Zm0 4.75h16v2H4v-2ZM4 16h16v2H4v-2Z"/></svg></span>
@@ -212,23 +231,38 @@
 <!-- DASHBOARD VIEWER -->
 <main id="viewer" class="dashboardShell">
     <div class="dashboardChrome" aria-hidden="true"><span></span><span></span><span></span></div>
+
     <iframe
         id="pbix1"
         class="active"
-        title="Trade Flow Dashboard"
-        src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e">
+        title="Full Light Mode PowerBI Dashboard"
+        src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
+        frameborder="0"
+        allowFullScreen="true">
     </iframe>
 
     <iframe
         id="rdl1"
-        title="Procurement Risk Monitoring"
-        src="https://app.powerbi.com/rdlEmbed?reportId=bf9ab0ce-95e2-4e28-9604-05bf746dacdf&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed">
+        title="Procurement Risk &amp;Fraud Monitoring Report"
+        src="https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
+        frameborder="0"
+        allowFullScreen="true">
     </iframe>
-    
+
     <iframe
         id="rdl2"
-        title="Supply Chain Operations"
-        src="https://app.powerbi.com/rdlEmbed?reportId=c9fe7c7c-1381-4565-9b2a-e1500c30332a&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed">
+        title="Forecasting &amp; Strategic Planning Report"
+        src="https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
+        frameborder="0"
+        allowFullScreen="true">
+    </iframe>
+
+    <iframe
+        id="rdl3"
+        title="Executive Trade &amp; Supply Chain Summary"
+        src="https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
+        frameborder="0"
+        allowFullScreen="true">
     </iframe>
 </main>
 
@@ -289,10 +323,132 @@
 <div id="emailModal" class="utilityModal" aria-label="Share reports via email">
     <div class="modalTitle">Share Reports via Email</div>
     <div class="modal-note">Choose one or more reports, then send the exported PDF to the selected email.</div>
-    <div class="report-options reportCheckboxGroup">
-        <label><input type="checkbox" value="Full_Light_Mode_PowerBI"> <span>Trade Flow Dashboard</span></label>
-        <label><input type="checkbox" value="Reportv1"> <span>Procurement Risk Monitoring</span></label>
-        <label><input type="checkbox" value="report2"> <span>Supply Chain Operations</span></label>
+    <div class="emailModalGrid">
+        <section class="emailReportsPanel" aria-label="Reports to export">
+            <div class="sidePanelTitle">Reports</div>
+            <div class="report-options reportCheckboxGroup">
+                <label><input type="checkbox" value="Full_Light_Mode_PowerBI"> <span>Full Light Mode PowerBI Dashboard</span></label>
+                <label><input type="checkbox" value="Procurement Risk &amp;Fraud Monitoring Report " data-parameter-toggle="procurementParams"> <span>Procurement Risk &amp;Fraud Monitoring Report</span></label>
+                <label><input type="checkbox" value="Forecasting &amp; Strategic Planning Report" data-parameter-toggle="forecastingParams"> <span>Forecasting &amp; Strategic Planning Report</span></label>
+                <label><input type="checkbox" value="Executive Trade &amp; Supply Chain Summary" data-parameter-toggle="executiveParams"> <span>Executive Trade &amp; Supply Chain Summary Report</span></label>
+            </div>
+        </section>
+
+        <section class="emailParamsPanel" aria-label="Selected report parameters">
+            <div class="sidePanelTitle">Selected Report Parameters</div>
+            <div id="paramsEmptyState" class="paramsEmptyState">
+                Select an RDL report to show its export parameters here.
+            </div>
+
+            <div id="procurementParams" class="reportParameterBlock" data-param-report="Procurement Risk &amp;Fraud Monitoring Report ">
+                <div class="paramBlockHeader">
+                    <strong>Procurement Report Parameters</strong>
+                    <small>Sent to the RDL export as Year and Month.</small>
+                </div>
+                <div class="paramHint">Year and Month are multi-value RDL parameters. Use Ctrl/Shift click to select multiple values, or use the quick buttons.</div>
+                <label class="paramField multiParamField">
+                    <span>Year</span>
+                    <div class="paramQuickActions">
+                        <button type="button" onclick="selectAllOptions('procurementParamYear')">Select all</button>
+                        <button type="button" onclick="clearAllOptions('procurementParamYear')">Clear</button>
+                    </div>
+                    <select id="procurementParamYear" multiple size="7">
+                        <option value="2025" selected>2025</option>
+                        <option value="2024" selected>2024</option>
+                        <option value="2023" selected>2023</option>
+                        <option value="2022" selected>2022</option>
+                        <option value="2021" selected>2021</option>
+                        <option value="2020" selected>2020</option>
+                        <option value="2019" selected>2019</option>
+                    </select>
+                </label>
+                <label class="paramField multiParamField">
+                    <span>Month</span>
+                    <div class="paramQuickActions">
+                        <button type="button" onclick="selectAllOptions('procurementParamMonth')">Select all</button>
+                        <button type="button" onclick="clearAllOptions('procurementParamMonth')">Clear</button>
+                    </div>
+                    <select id="procurementParamMonth" multiple size="8">
+                        <option value="1" selected>01 - January</option>
+                        <option value="2" selected>02 - February</option>
+                        <option value="3" selected>03 - March</option>
+                        <option value="4" selected>04 - April</option>
+                        <option value="5" selected>05 - May</option>
+                        <option value="6" selected>06 - June</option>
+                        <option value="7" selected>07 - July</option>
+                        <option value="8" selected>08 - August</option>
+                        <option value="9" selected>09 - September</option>
+                        <option value="10" selected>10 - October</option>
+                        <option value="11" selected>11 - November</option>
+                        <option value="12" selected>12 - December</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="forecastingParams" class="reportParameterBlock" data-param-report="Forecasting &amp; Strategic Planning Report">
+                <div class="paramBlockHeader">
+                    <strong>Forecasting Report Parameters</strong>
+                    <small>These values are sent to Power Automate for RDL PDF export.</small>
+                </div>
+                <label class="paramField">
+                    <span>Forecast Base Year</span>
+                    <select id="forecastParamBaseYear">
+                        <option value="2025">2025</option>
+                    </select>
+                </label>
+                <label class="paramField">
+                    <span>Forecast Scenario</span>
+                    <select id="forecastParamScenario">
+                        <option value="Base">Base Scenario</option>
+                        <option value="Optimistic">Optimistic Scenario</option>
+                        <option value="Stress">Stress Scenario</option>
+                    </select>
+                </label>
+                <label class="paramField">
+                    <span>Forecast Horizon Years</span>
+                    <select id="forecastParamHorizon">
+                        <option value="1">Next 1 Year</option>
+                        <option value="2">Next 2 Years</option>
+                        <option value="3">Next 3 Years</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="executiveParams" class="reportParameterBlock" data-param-report="Executive Trade &amp; Supply Chain Summary">
+                <div class="paramBlockHeader">
+                    <strong>Executive Summary Parameters</strong>
+                    <small>Country must match the country name in the semantic model.</small>
+                </div>
+                <label class="paramField">
+                    <span>Year</span>
+                    <select id="executiveParamYear">
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                    </select>
+                </label>
+                <label class="paramField">
+                    <span>Country</span>
+                    <input id="executiveParamCountry" list="executiveCountryList" value="United States" placeholder="United States">
+                    <datalist id="executiveCountryList">
+                        <option value="United States"></option>
+                        <option value="China"></option>
+                        <option value="Germany"></option>
+                        <option value="Italy"></option>
+                        <option value="Turkey"></option>
+                        <option value="Saudi Arabia"></option>
+                        <option value="United Arab Emirates"></option>
+                        <option value="India"></option>
+                        <option value="Russia"></option>
+                        <option value="France"></option>
+                    </datalist>
+                </label>
+            </div>
+        </section>
     </div>
     <input type="email" id="email" placeholder="Enter email">
     <button onclick="sendPDF()" type="button">Send PDF</button>
@@ -367,7 +523,7 @@ function toggleSidebar(){
 
 function showReport(id, btn){
     document.body.setAttribute("data-active-report", id);
-    document.body.classList.toggle("rdl-active", id === "rdl1" || id === "rdl2");
+    document.body.classList.toggle("rdl-active", id === "rdl1" || id === "rdl2" || id === "rdl3");
     document.body.classList.toggle("pbix-active", id === "pbix1");
 
     document.querySelectorAll("#viewer iframe").forEach(function(frame){
@@ -528,6 +684,11 @@ function addSuggestedQuestions(currentQuestion){
 
 function askSuggestedQuestion(question){
     if(chatBusy){ return; }
+    document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function(checkbox){
+        checkbox.addEventListener("change", syncReportParamsVisibility);
+    });
+    syncReportParamsVisibility();
+
     const input = document.getElementById("userInput");
     if(input){ input.value = question; }
     openChat();
@@ -538,6 +699,11 @@ function askSuggestedQuestion(question){
 function openChat(){
     const c = document.getElementById("chatModal");
     const b = document.getElementById("aiFloatingBtn");
+    document.querySelectorAll('#emailModal input[data-parameter-toggle="forecastingParams"]').forEach(function(checkbox){
+        checkbox.addEventListener("change", syncForecastingParamsVisibility);
+    });
+    syncForecastingParamsVisibility();
+
     const input = document.getElementById("userInput");
 
     document.body.classList.add("chat-open");
@@ -569,6 +735,11 @@ function toggleChat(){
 
 function askQuickQuestion(question){
     if(chatBusy){ return; }
+    document.querySelectorAll('#emailModal input[data-parameter-toggle="forecastingParams"]').forEach(function(checkbox){
+        checkbox.addEventListener("change", syncForecastingParamsVisibility);
+    });
+    syncForecastingParamsVisibility();
+
     const input = document.getElementById("userInput");
     input.value = question;
     openChat();
@@ -589,6 +760,7 @@ function toggleEmail(){
     const e = document.getElementById("emailModal");
     closeUtilityModals("emailModal");
     e.classList.toggle("open");
+    syncReportParamsVisibility();
 }
 
 function toggleUpdates(){
@@ -713,6 +885,11 @@ function closeTableFullView(){
 async function sendMessage(){
     if(chatBusy){ return; }
 
+    document.querySelectorAll('#emailModal input[data-parameter-toggle="forecastingParams"]').forEach(function(checkbox){
+        checkbox.addEventListener("change", syncForecastingParamsVisibility);
+    });
+    syncForecastingParamsVisibility();
+
     const input = document.getElementById("userInput");
     const msg = input.value.trim();
 
@@ -762,6 +939,102 @@ async function sendMessage(){
     }
 }
 
+function syncReportParamsVisibility(){
+    let visibleCount = 0;
+
+    document.querySelectorAll("#emailModal .reportParameterBlock").forEach(function(block){
+        block.classList.remove("show");
+    });
+
+    document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function(checkbox){
+        const targetId = checkbox.getAttribute("data-parameter-toggle");
+        const target = document.getElementById(targetId);
+        if(target && checkbox.checked){
+            target.classList.add("show");
+            visibleCount += 1;
+        }
+    });
+
+    const emptyState = document.getElementById("paramsEmptyState");
+    if(emptyState){
+        emptyState.classList.toggle("hidden", visibleCount > 0);
+    }
+}
+
+function syncForecastingParamsVisibility(){
+    /* Backward-compatible wrapper used by older event hooks in this file. */
+    syncReportParamsVisibility();
+}
+
+function getSelectedValues(selectId){
+    const select = document.getElementById(selectId);
+    if(!select){ return []; }
+    return Array.from(select.selectedOptions).map(function(option){
+        return option.value;
+    }).filter(Boolean);
+}
+
+function selectAllOptions(selectId){
+    const select = document.getElementById(selectId);
+    if(!select){ return; }
+    Array.from(select.options).forEach(function(option){ option.selected = true; });
+}
+
+function clearAllOptions(selectId){
+    const select = document.getElementById(selectId);
+    if(!select){ return; }
+    Array.from(select.options).forEach(function(option){ option.selected = false; });
+}
+
+function buildRepeatedParameterValues(parameterName, selectedValues){
+    return selectedValues.map(function(value){
+        return {
+            name: parameterName,
+            value: String(value)
+        };
+    });
+}
+
+function getProcurementParameterValues(){
+    const selectedYears = getSelectedValues("procurementParamYear");
+    const selectedMonths = getSelectedValues("procurementParamMonth");
+
+    return [
+        ...buildRepeatedParameterValues("Year", selectedYears),
+        ...buildRepeatedParameterValues("Month", selectedMonths)
+    ];
+}
+
+function getForecastingParameterValues(){
+    return [
+        {
+            name: "ForecastBaseYear",
+            value: document.getElementById("forecastParamBaseYear").value
+        },
+        {
+            name: "ForecastScenario",
+            value: document.getElementById("forecastParamScenario").value
+        },
+        {
+            name: "ForecastHorizonYears",
+            value: document.getElementById("forecastParamHorizon").value
+        }
+    ];
+}
+
+function getExecutiveParameterValues(){
+    return [
+        {
+            name: "Year",
+            value: document.getElementById("executiveParamYear").value
+        },
+        {
+            name: "Country",
+            value: document.getElementById("executiveParamCountry").value.trim()
+        }
+    ];
+}
+
 async function sendPDF(){
     const email = document.getElementById("email").value.trim();
 
@@ -781,10 +1054,45 @@ async function sendPDF(){
         return;
     }
 
+    const parameters = {};
+    const parametersById = {};
+
+    if(selectedReports.includes("Procurement Risk &Fraud Monitoring Report ")){
+        const procurementParams = getProcurementParameterValues();
+        const hasYear = procurementParams.some(function(parameter){ return parameter.name === "Year"; });
+        const hasMonth = procurementParams.some(function(parameter){ return parameter.name === "Month"; });
+
+        if(!hasYear || !hasMonth){
+            alert("Select at least one Year and one Month for Procurement report");
+            return;
+        }
+
+        parameters["Procurement Risk &Fraud Monitoring Report "] = procurementParams;
+        parametersById["470349ed-7f49-494f-b62e-4c5325073e8e"] = procurementParams;
+    }
+
+    if(selectedReports.includes("Forecasting & Strategic Planning Report")){
+        const forecastParams = getForecastingParameterValues();
+        parameters["Forecasting & Strategic Planning Report"] = forecastParams;
+        parametersById["f816875a-4fd8-44b9-a8f4-c22c536920d4"] = forecastParams;
+    }
+
+    if(selectedReports.includes("Executive Trade & Supply Chain Summary")){
+        const executiveParams = getExecutiveParameterValues();
+        if(!executiveParams[1].value){
+            alert("Enter country for Executive report");
+            return;
+        }
+        parameters["Executive Trade & Supply Chain Summary"] = executiveParams;
+        parametersById["23b137ec-dc44-4de8-ba30-93eca6c0631e"] = executiveParams;
+    }
+
     const payload = {
         email: email,
         title: selectedReportLabels.join(", "),
-        reports: selectedReports
+        reports: selectedReports,
+        parameters: parameters,
+        parametersById: parametersById
     };
 
     try{
@@ -824,6 +1132,11 @@ document.addEventListener("DOMContentLoaded", function(){
             window.setTimeout(function(){ ripple.remove(); }, 620);
         });
     });
+
+    document.querySelectorAll('#emailModal input[data-parameter-toggle="forecastingParams"]').forEach(function(checkbox){
+        checkbox.addEventListener("change", syncForecastingParamsVisibility);
+    });
+    syncForecastingParamsVisibility();
 
     const input = document.getElementById("userInput");
     if(input){

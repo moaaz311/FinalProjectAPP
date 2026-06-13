@@ -142,23 +142,206 @@ def home():
 REPORTS = [
     {
         "name": "Full_Light_Mode_PowerBI",
+        "title": "Full Light Mode PowerBI Dashboard",
+        "type": "PBIX",
+        "format": "PBIR",
+        "id": "fd74639c-26b8-4245-927c-f5e5f7bfa1e4",
         "url": "https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
     },
     {
-        "name": "Reportv1",
-        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/bf9ab0ce-95e2-4e28-9604-05bf746dacdf?experience=power-bi"
+        # IMPORTANT: Power BI API returns this name with a trailing space.
+        # Keep it exactly as-is so the old Filter array can match item()?['name'].
+        "name": "Procurement Risk &Fraud Monitoring Report ",
+        "title": "Procurement Risk &Fraud Monitoring Report",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "470349ed-7f49-494f-b62e-4c5325073e8e",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
     },
     {
-        "name": "report2",
-        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/c9fe7c7c-1381-4565-9b2a-e1500c30332a?experience=power-bi"
+        "name": "Forecasting & Strategic Planning Report",
+        "title": "Forecasting & Strategic Planning Report",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "f816875a-4fd8-44b9-a8f4-c22c536920d4",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Executive Trade & Supply Chain Summary",
+        "title": "Executive Trade & Supply Chain Summary",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "23b137ec-dc44-4de8-ba30-93eca6c0631e",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
     }
 ]
 
-VALID_REPORTS = [
-    "Full_Light_Mode_PowerBI",
-    "Reportv1",
-    "report2"
-]
+VALID_REPORTS = [report["name"] for report in REPORTS]
+REPORT_BY_NAME = {report["name"]: report for report in REPORTS}
+REPORT_BY_ID = {report["id"]: report for report in REPORTS}
+REPORT_TITLES = {report["name"]: report.get("title", report["name"]) for report in REPORTS}
+
+# Backward compatibility for cached/older front-end values.
+# Values here map any old UI/report names to the exact names returned by the Power BI API.
+REPORT_ALIASES = {
+    "Reportv1": "Procurement Risk &Fraud Monitoring Report ",
+    "report2": "Forecasting & Strategic Planning Report",
+    "report1perfectwidth": "Executive Trade & Supply Chain Summary",
+    "Executive_Trade_Supply_Chain_Summary_Report": "Executive Trade & Supply Chain Summary",
+    "Executive Trade & Supply Chain Summary Report": "Executive Trade & Supply Chain Summary",
+    "Executive Trade & Supply Chain Summary": "Executive Trade & Supply Chain Summary",
+    "Procurement_Risk_Fraud_Monitoring_Report": "Procurement Risk &Fraud Monitoring Report ",
+    "Procurement Risk &Fraud Monitoring Report": "Procurement Risk &Fraud Monitoring Report ",
+    "Procurement Risk &Fraud Monitoring Report ": "Procurement Risk &Fraud Monitoring Report ",
+    "Forecasting_Strategic_Planning_Report": "Forecasting & Strategic Planning Report",
+    "Forecasting & Strategic Planning_Report": "Forecasting & Strategic Planning Report",
+    "Forecasting & Strategic Planning Report": "Forecasting & Strategic Planning Report",
+    "Full Light Mode PowerBI Dashboard": "Full_Light_Mode_PowerBI",
+}
+
+
+# Normalize/repair RDL parameter names and internal values.
+# Power BI export expects internal parameter names/values, not UI labels.
+FORECASTING_REPORT_ID = "f816875a-4fd8-44b9-a8f4-c22c536920d4"
+FORECASTING_REPORT_NAME = "Forecasting & Strategic Planning Report"
+
+PROCUREMENT_REPORT_ID = "470349ed-7f49-494f-b62e-4c5325073e8e"
+PROCUREMENT_REPORT_NAME = "Procurement Risk &Fraud Monitoring Report "
+
+EXECUTIVE_REPORT_ID = "23b137ec-dc44-4de8-ba30-93eca6c0631e"
+EXECUTIVE_REPORT_NAME = "Executive Trade & Supply Chain Summary"
+
+FORECASTING_PARAMETER_ALIASES = {
+    "ReportParameter1": "ForecastScenario",
+    "ForecastScenario": "ForecastScenario",
+    "ForecastBaseYear": "ForecastBaseYear",
+    "ForecastHorizonYears": "ForecastHorizonYears",
+}
+
+FORECAST_SCENARIO_VALUE_MAP = {
+    "Base Scenario": "Base",
+    "Optimistic Scenario": "Optimistic",
+    "Stress Scenario": "Stress",
+    "Base": "Base",
+    "Optimistic": "Optimistic",
+    "Stress": "Stress",
+}
+
+FORECAST_HORIZON_VALUE_MAP = {
+    "Next 1 Year": "1",
+    "Next 2 Years": "2",
+    "Next 3 Years": "3",
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    1: "1",
+    2: "2",
+    3: "3",
+}
+
+PROCUREMENT_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Month": "Month",
+    "ProcurementYear": "Year",
+    "ProcurementMonth": "Month",
+}
+
+EXECUTIVE_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Country": "Country",
+    "ExecutiveYear": "Year",
+    "ExecutiveCountry": "Country",
+}
+
+
+def _normalize_simple_parameters(parameter_values, aliases: dict[str, str]) -> list:
+    """Normalize basic RDL parameters while preserving the selected order.
+
+    Multi-value paginated report parameters are represented as repeated
+    name/value entries. This function also accepts a list in the value field
+    and expands it into repeated entries for safety.
+    """
+    if not isinstance(parameter_values, list):
+        return []
+
+    normalized = []
+    for parameter in parameter_values:
+        if not isinstance(parameter, dict):
+            continue
+
+        raw_name = str(parameter.get("name", "")).strip()
+        name = aliases.get(raw_name, raw_name)
+        raw_value = parameter.get("value", "")
+
+        if not name:
+            continue
+
+        values = raw_value if isinstance(raw_value, list) else [raw_value]
+
+        for value in values:
+            value = str(value).strip()
+            if value == "":
+                continue
+
+            normalized.append({
+                "name": name,
+                "value": value
+            })
+
+    return normalized
+
+
+def _normalize_forecasting_parameters(parameter_values):
+    """Return Power BI export-ready parameter values for the Forecasting RDL."""
+    if not isinstance(parameter_values, list):
+        return []
+
+    normalized = []
+    for parameter in parameter_values:
+        if not isinstance(parameter, dict):
+            continue
+
+        raw_name = str(parameter.get("name", "")).strip()
+        name = FORECASTING_PARAMETER_ALIASES.get(raw_name, raw_name)
+        value = parameter.get("value", "")
+
+        if name == "ForecastScenario":
+            value = FORECAST_SCENARIO_VALUE_MAP.get(value, value)
+        elif name == "ForecastHorizonYears":
+            value = FORECAST_HORIZON_VALUE_MAP.get(value, value)
+        elif name == "ForecastBaseYear":
+            value = str(value).strip()
+
+        value = str(value).strip()
+        if not name or value == "":
+            continue
+
+        normalized.append({
+            "name": name,
+            "value": value
+        })
+
+    return normalized
+
+
+def _normalize_procurement_parameters(parameter_values):
+    """Return Power BI export-ready Year/Month values for the Procurement RDL."""
+    return _normalize_simple_parameters(parameter_values, PROCUREMENT_PARAMETER_ALIASES)
+
+
+def _normalize_executive_parameters(parameter_values):
+    """Return Power BI export-ready Year/Country values for the Executive RDL."""
+    return _normalize_simple_parameters(parameter_values, EXECUTIVE_PARAMETER_ALIASES)
+
+
+def _normalize_report_parameters(report_name: str, report_id: str, parameter_values: list) -> list:
+    if report_name == FORECASTING_REPORT_NAME or report_id == FORECASTING_REPORT_ID:
+        return _normalize_forecasting_parameters(parameter_values)
+    if report_name == PROCUREMENT_REPORT_NAME or report_id == PROCUREMENT_REPORT_ID:
+        return _normalize_procurement_parameters(parameter_values)
+    if report_name == EXECUTIVE_REPORT_NAME or report_id == EXECUTIVE_REPORT_ID:
+        return _normalize_executive_parameters(parameter_values)
+    return parameter_values if isinstance(parameter_values, list) else []
 
 # ======================
 # CHAT PIPELINE CONFIG
@@ -1268,6 +1451,8 @@ def send_dashboard_pdf():
         email = data.get("email")
         reports = data.get("reports", [])
         title = data.get("title", "Dashboard Export")
+        raw_parameters = data.get("parameters") or {}
+        raw_parameters_by_id = data.get("parametersById") or {}
 
         if not email:
             return jsonify({
@@ -1279,11 +1464,25 @@ def send_dashboard_pdf():
                 "error": "Select at least one report"
             }), 400
 
-        reports = [
-            r.strip()
-            for r in reports
-            if r.strip() in VALID_REPORTS
-        ]
+        canonical_reports = []
+        for raw_report in reports:
+            raw_report = str(raw_report)
+            raw_report_trimmed = raw_report.strip()
+
+            canonical_report = (
+                REPORT_ALIASES.get(raw_report)
+                or REPORT_ALIASES.get(raw_report_trimmed)
+                or raw_report
+                or raw_report_trimmed
+            )
+
+            if canonical_report in VALID_REPORTS:
+                canonical_reports.append(canonical_report)
+
+        reports = canonical_reports
+
+        # Remove duplicates while preserving the user's selected order.
+        reports = list(dict.fromkeys(reports))
 
         if len(reports) == 0:
             return jsonify({
@@ -1295,10 +1494,81 @@ def send_dashboard_pdf():
                 "error": "POWER_AUTOMATE_URL is missing in .env file"
             }), 500
 
+        selected_report_objects = [REPORT_BY_NAME[report_name] for report_name in reports]
+
+        # Keep report parameters aligned with the canonical Power BI API names and IDs.
+        # The iframe parameter selections are not readable by Flask, so the front-end
+        # sends parameter values explicitly from the Share Reports modal.
+        canonical_parameters_by_name = {}
+        canonical_parameters_by_id = {}
+
+        if isinstance(raw_parameters, dict):
+            for raw_report_name, parameter_values in raw_parameters.items():
+                canonical_name = (
+                    REPORT_ALIASES.get(str(raw_report_name))
+                    or REPORT_ALIASES.get(str(raw_report_name).strip())
+                    or str(raw_report_name)
+                )
+
+                if canonical_name in REPORT_BY_NAME and isinstance(parameter_values, list):
+                    normalized_parameters = _normalize_report_parameters(
+                        canonical_name,
+                        REPORT_BY_NAME[canonical_name]["id"],
+                        parameter_values
+                    )
+                    canonical_parameters_by_name[canonical_name] = normalized_parameters
+                    canonical_parameters_by_id[REPORT_BY_NAME[canonical_name]["id"]] = normalized_parameters
+
+        if isinstance(raw_parameters_by_id, dict):
+            for raw_report_id, parameter_values in raw_parameters_by_id.items():
+                raw_report_id = str(raw_report_id).strip()
+
+                if raw_report_id in REPORT_BY_ID and isinstance(parameter_values, list):
+                    report_name = REPORT_BY_ID[raw_report_id]["name"]
+                    normalized_parameters = _normalize_report_parameters(
+                        report_name,
+                        raw_report_id,
+                        parameter_values
+                    )
+                    canonical_parameters_by_name[report_name] = normalized_parameters
+                    canonical_parameters_by_id[raw_report_id] = normalized_parameters
+
+        # Only keep parameters for reports selected in this request.
+        selected_report_ids = {report["id"] for report in selected_report_objects}
+        selected_report_names = {report["name"] for report in selected_report_objects}
+        canonical_parameters_by_name = {
+            report_name: params
+            for report_name, params in canonical_parameters_by_name.items()
+            if report_name in selected_report_names
+        }
+        canonical_parameters_by_id = {
+            report_id: params
+            for report_id, params in canonical_parameters_by_id.items()
+            if report_id in selected_report_ids
+        }
+
         payload = {
             "email": email,
             "title": title,
-            "reports": reports
+            # Kept for backward compatibility with the old working flow.
+            "reports": reports,
+            # Use this in Power Automate Filter array for stable matching.
+            "reportIds": [report["id"] for report in selected_report_objects],
+            # RDL parameter values to be used by Power Automate during export.
+            "parameters": canonical_parameters_by_name,
+            "parametersById": canonical_parameters_by_id,
+            # Optional metadata if the flow needs type/name without another API lookup.
+            "reportMeta": [
+                {
+                    "id": report["id"],
+                    "name": report["name"],
+                    "title": report["title"],
+                    "type": report["type"],
+                    "format": report["format"],
+                    "parameters": canonical_parameters_by_id.get(report["id"], [])
+                }
+                for report in selected_report_objects
+            ]
         }
 
         print("Payload:")
