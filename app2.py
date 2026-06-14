@@ -170,23 +170,319 @@ def home():
 REPORTS = [
     {
         "name": "Full_Light_Mode_PowerBI",
+        "title": "Full Light Mode PowerBI Dashboard",
+        "type": "PBIX",
+        "format": "PBIR",
+        "id": "fd74639c-26b8-4245-927c-f5e5f7bfa1e4",
         "url": "https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
     },
     {
-        "name": "Reportv1",
-        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/bf9ab0ce-95e2-4e28-9604-05bf746dacdf?experience=power-bi"
+        # IMPORTANT: Power BI API returns this name with a trailing space.
+        # Keep it exactly as-is so the existing Flow can match item()?['name'].
+        "name": "Procurement Risk &Fraud Monitoring Report ",
+        "title": "Procurement Risk &Fraud Monitoring Report",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "470349ed-7f49-494f-b62e-4c5325073e8e",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
     },
     {
-        "name": "report2",
-        "url": "https://app.powerbi.com/groups/9e1acf4e-e428-48a5-9f49-ca6c3bff92c3/rdlreports/c9fe7c7c-1381-4565-9b2a-e1500c30332a?experience=power-bi"
+        "name": "Forecasting & Strategic Planning Report",
+        "title": "Forecasting & Strategic Planning Report",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "f816875a-4fd8-44b9-a8f4-c22c536920d4",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Executive Trade & Supply Chain Summary",
+        "title": "Executive Trade & Supply Chain Summary",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "23b137ec-dc44-4de8-ba30-93eca6c0631e",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Supply Chain Operations Performance",
+        "title": "Supply Chain Operations Performance",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "f4757103-3ab4-44c7-af32-399a2e4129da",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=f4757103-3ab4-44c7-af32-399a2e4129da&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Macro Currency & Cost Exposure",
+        "title": "Macro Currency & Cost Exposure",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "5e2f5bc7-5fc9-4119-8d58-04162bb2a3da",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=5e2f5bc7-5fc9-4119-8d58-04162bb2a3da&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Trade Partners",
+        "title": "Trade Partners",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "c4753a9e-52ac-41e3-8b4b-fd72cdf79f50",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=c4753a9e-52ac-41e3-8b4b-fd72cdf79f50&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&clientSideAuth=0"
     }
 ]
 
-VALID_REPORTS = [
-    "Full_Light_Mode_PowerBI",
-    "Reportv1",
-    "report2"
-]
+VALID_REPORTS = [report["name"] for report in REPORTS]
+REPORT_BY_NAME = {report["name"]: report for report in REPORTS}
+REPORT_BY_ID = {report["id"]: report for report in REPORTS}
+REPORT_TITLES = {report["name"]: report.get("title", report["name"]) for report in REPORTS}
+
+# Backward compatibility for cached/older front-end values.
+# Values here map any old UI/report names to the exact names returned by the Power BI API.
+REPORT_ALIASES = {
+    "Reportv1": "Procurement Risk &Fraud Monitoring Report ",
+    "report2": "Forecasting & Strategic Planning Report",
+    "report1perfectwidth": "Executive Trade & Supply Chain Summary",
+    "Executive_Trade_Supply_Chain_Summary_Report": "Executive Trade & Supply Chain Summary",
+    "Executive Trade & Supply Chain Summary Report": "Executive Trade & Supply Chain Summary",
+    "Executive Trade & Supply Chain Summary": "Executive Trade & Supply Chain Summary",
+    "Procurement_Risk_Fraud_Monitoring_Report": "Procurement Risk &Fraud Monitoring Report ",
+    "Procurement Risk &Fraud Monitoring Report": "Procurement Risk &Fraud Monitoring Report ",
+    "Procurement Risk &Fraud Monitoring Report ": "Procurement Risk &Fraud Monitoring Report ",
+    "Forecasting_Strategic_Planning_Report": "Forecasting & Strategic Planning Report",
+    "Forecasting & Strategic Planning_Report": "Forecasting & Strategic Planning Report",
+    "Forecasting & Strategic Planning Report": "Forecasting & Strategic Planning Report",
+    "Full Light Mode PowerBI Dashboard": "Full_Light_Mode_PowerBI",
+    "Full_Light_Mode_PowerBI": "Full_Light_Mode_PowerBI",
+    "Supply Chain Operations": "Supply Chain Operations Performance",
+    "Supply Chain Operations Performance": "Supply Chain Operations Performance",
+    "Supply_Chain_Operations_Performance": "Supply Chain Operations Performance",
+    "Macro Currency & Cost Exposure": "Macro Currency & Cost Exposure",
+    "Macro Currency Cost Exposure": "Macro Currency & Cost Exposure",
+    "Macro_Currency_Cost_Exposure": "Macro Currency & Cost Exposure",
+    "Trade Partners": "Trade Partners",
+    "Trade_Partners": "Trade Partners",
+    "Trade Balance by Partner": "Trade Partners",
+}
+
+# Normalize/repair RDL parameter names and internal values.
+# Power BI export expects internal parameter names/values, not UI labels.
+FORECASTING_REPORT_ID = "f816875a-4fd8-44b9-a8f4-c22c536920d4"
+FORECASTING_REPORT_NAME = "Forecasting & Strategic Planning Report"
+
+PROCUREMENT_REPORT_ID = "470349ed-7f49-494f-b62e-4c5325073e8e"
+PROCUREMENT_REPORT_NAME = "Procurement Risk &Fraud Monitoring Report "
+
+EXECUTIVE_REPORT_ID = "23b137ec-dc44-4de8-ba30-93eca6c0631e"
+EXECUTIVE_REPORT_NAME = "Executive Trade & Supply Chain Summary"
+
+SUPPLY_OPS_REPORT_ID = "f4757103-3ab4-44c7-af32-399a2e4129da"
+SUPPLY_OPS_REPORT_NAME = "Supply Chain Operations Performance"
+
+MACRO_REPORT_ID = "5e2f5bc7-5fc9-4119-8d58-04162bb2a3da"
+MACRO_REPORT_NAME = "Macro Currency & Cost Exposure"
+
+TRADE_PARTNERS_REPORT_ID = "c4753a9e-52ac-41e3-8b4b-fd72cdf79f50"
+TRADE_PARTNERS_REPORT_NAME = "Trade Partners"
+
+FORECASTING_PARAMETER_ALIASES = {
+    "ReportParameter1": "ForecastScenario",
+    "ForecastScenario": "ForecastScenario",
+    "ForecastBaseYear": "ForecastBaseYear",
+    "ForecastHorizonYears": "ForecastHorizonYears",
+}
+
+FORECAST_SCENARIO_VALUE_MAP = {
+    "Base Scenario": "Base",
+    "Optimistic Scenario": "Optimistic",
+    "Stress Scenario": "Stress",
+    "Base": "Base",
+    "Optimistic": "Optimistic",
+    "Stress": "Stress",
+}
+
+FORECAST_HORIZON_VALUE_MAP = {
+    "Next 1 Year": "1",
+    "Next 2 Years": "2",
+    "Next 3 Years": "3",
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    1: "1",
+    2: "2",
+    3: "3",
+}
+
+PROCUREMENT_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Month": "Month",
+    "ProcurementYear": "Year",
+    "ProcurementMonth": "Month",
+}
+
+EXECUTIVE_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Country": "Country",
+    "ExecutiveYear": "Year",
+    "ExecutiveCountry": "Country",
+}
+
+SUPPLY_OPS_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Month": "Month",
+    "SupplyYear": "Year",
+    "SupplyMonth": "Month",
+    "OperationsYear": "Year",
+    "OperationsMonth": "Month",
+}
+
+MACRO_PARAMETER_ALIASES = {
+    "MacroYear": "MacroYear",
+    "Year": "MacroYear",
+    "Macro_Year": "MacroYear",
+}
+
+TRADE_PARTNERS_PARAMETER_ALIASES = {
+    "P_year": "P_year",
+    "P_Country": "P_Country",
+    "Year": "P_year",
+    "Country": "P_Country",
+    "TradePartnerYear": "P_year",
+    "TradePartnerCountry": "P_Country",
+}
+
+
+SUPPLY_OPS_MONTH_VALUE_MAP = {
+    "Jan": "1", "January": "1", "01 - January": "1", "1": "1", "01": "1", 1: "1",
+    "Feb": "2", "February": "2", "02 - February": "2", "2": "2", "02": "2", 2: "2",
+    "Mar": "3", "March": "3", "03 - March": "3", "3": "3", "03": "3", 3: "3",
+    "Apr": "4", "April": "4", "04 - April": "4", "4": "4", "04": "4", 4: "4",
+    "May": "5", "05 - May": "5", "5": "5", "05": "5", 5: "5",
+    "Jun": "6", "June": "6", "06 - June": "6", "6": "6", "06": "6", 6: "6",
+    "Jul": "7", "July": "7", "07 - July": "7", "7": "7", "07": "7", 7: "7",
+    "Aug": "8", "August": "8", "08 - August": "8", "8": "8", "08": "8", 8: "8",
+    "Sep": "9", "September": "9", "09 - September": "9", "9": "9", "09": "9", 9: "9",
+    "Oct": "10", "October": "10", "10 - October": "10", "10": "10", 10: "10",
+    "Nov": "11", "November": "11", "11 - November": "11", "11": "11", 11: "11",
+    "Dec": "12", "December": "12", "12 - December": "12", "12": "12", 12: "12",
+}
+
+
+def _normalize_simple_parameters(parameter_values, aliases: dict[str, str]) -> list:
+    """Normalize basic RDL parameters while preserving the selected order.
+
+    Multi-value paginated report parameters are represented as repeated
+    name/value entries. This function also accepts a list in the value field
+    and expands it into repeated entries for safety.
+    """
+    if not isinstance(parameter_values, list):
+        return []
+
+    normalized = []
+    for parameter in parameter_values:
+        if not isinstance(parameter, dict):
+            continue
+
+        raw_name = str(parameter.get("name", "")).strip()
+        name = aliases.get(raw_name, raw_name)
+        raw_value = parameter.get("value", "")
+
+        if not name:
+            continue
+
+        values = raw_value if isinstance(raw_value, list) else [raw_value]
+
+        for value in values:
+            value = str(value).strip()
+            if value == "":
+                continue
+
+            normalized.append({
+                "name": name,
+                "value": value
+            })
+
+    return normalized
+
+
+def _normalize_forecasting_parameters(parameter_values):
+    """Return Power BI export-ready parameter values for the Forecasting RDL."""
+    if not isinstance(parameter_values, list):
+        return []
+
+    normalized = []
+    for parameter in parameter_values:
+        if not isinstance(parameter, dict):
+            continue
+
+        raw_name = str(parameter.get("name", "")).strip()
+        name = FORECASTING_PARAMETER_ALIASES.get(raw_name, raw_name)
+        value = parameter.get("value", "")
+
+        if name == "ForecastScenario":
+            value = FORECAST_SCENARIO_VALUE_MAP.get(value, value)
+        elif name == "ForecastHorizonYears":
+            value = FORECAST_HORIZON_VALUE_MAP.get(value, value)
+        elif name == "ForecastBaseYear":
+            value = str(value).strip()
+
+        value = str(value).strip()
+        if not name or value == "":
+            continue
+
+        normalized.append({
+            "name": name,
+            "value": value
+        })
+
+    return normalized
+
+
+def _normalize_procurement_parameters(parameter_values):
+    """Return Power BI export-ready Year/Month values for the Procurement RDL."""
+    return _normalize_simple_parameters(parameter_values, PROCUREMENT_PARAMETER_ALIASES)
+
+
+def _normalize_executive_parameters(parameter_values):
+    """Return Power BI export-ready Year/Country values for the Executive RDL."""
+    return _normalize_simple_parameters(parameter_values, EXECUTIVE_PARAMETER_ALIASES)
+
+
+def _normalize_supply_ops_parameters(parameter_values):
+    """Return Power BI export-ready Year/Month values for Supply Chain Operations Performance.
+
+    The RDL shows month labels such as Jan/Feb, but the export API expects
+    the internal numeric Month values. This also repairs cached old front-end
+    payloads that still send text month labels.
+    """
+    normalized = _normalize_simple_parameters(parameter_values, SUPPLY_OPS_PARAMETER_ALIASES)
+    for parameter in normalized:
+        if parameter.get("name") == "Month":
+            raw_value = parameter.get("value", "")
+            parameter["value"] = SUPPLY_OPS_MONTH_VALUE_MAP.get(raw_value, str(raw_value).strip())
+    return normalized
+
+
+def _normalize_macro_parameters(parameter_values):
+    """Return Power BI export-ready MacroYear values for Macro Currency & Cost Exposure."""
+    return _normalize_simple_parameters(parameter_values, MACRO_PARAMETER_ALIASES)
+
+
+def _normalize_trade_partners_parameters(parameter_values):
+    """Return Power BI export-ready P_year/P_Country values for Trade Partners."""
+    return _normalize_simple_parameters(parameter_values, TRADE_PARTNERS_PARAMETER_ALIASES)
+
+
+def _normalize_report_parameters(report_name: str, report_id: str, parameter_values: list) -> list:
+    if report_name == FORECASTING_REPORT_NAME or report_id == FORECASTING_REPORT_ID:
+        return _normalize_forecasting_parameters(parameter_values)
+    if report_name == PROCUREMENT_REPORT_NAME or report_id == PROCUREMENT_REPORT_ID:
+        return _normalize_procurement_parameters(parameter_values)
+    if report_name == EXECUTIVE_REPORT_NAME or report_id == EXECUTIVE_REPORT_ID:
+        return _normalize_executive_parameters(parameter_values)
+    if report_name == SUPPLY_OPS_REPORT_NAME or report_id == SUPPLY_OPS_REPORT_ID:
+        return _normalize_supply_ops_parameters(parameter_values)
+    if report_name == MACRO_REPORT_NAME or report_id == MACRO_REPORT_ID:
+        return _normalize_macro_parameters(parameter_values)
+    if report_name == TRADE_PARTNERS_REPORT_NAME or report_id == TRADE_PARTNERS_REPORT_ID:
+        return _normalize_trade_partners_parameters(parameter_values)
+    return parameter_values if isinstance(parameter_values, list) else []
 
 # ======================
 # CHAT PIPELINE CONFIG
@@ -1296,6 +1592,8 @@ def send_dashboard_pdf():
         email = data.get("email")
         reports = data.get("reports", [])
         title = data.get("title", "Dashboard Export")
+        raw_parameters = data.get("parameters") or {}
+        raw_parameters_by_id = data.get("parametersById") or {}
 
         if not email:
             return jsonify({
@@ -1307,11 +1605,25 @@ def send_dashboard_pdf():
                 "error": "Select at least one report"
             }), 400
 
-        reports = [
-            r.strip()
-            for r in reports
-            if r.strip() in VALID_REPORTS
-        ]
+        canonical_reports = []
+        for raw_report in reports:
+            raw_report = str(raw_report)
+            raw_report_trimmed = raw_report.strip()
+
+            canonical_report = (
+                REPORT_ALIASES.get(raw_report)
+                or REPORT_ALIASES.get(raw_report_trimmed)
+                or raw_report
+                or raw_report_trimmed
+            )
+
+            if canonical_report in VALID_REPORTS:
+                canonical_reports.append(canonical_report)
+
+        reports = canonical_reports
+
+        # Remove duplicates while preserving the user's selected order.
+        reports = list(dict.fromkeys(reports))
 
         if len(reports) == 0:
             return jsonify({
@@ -1323,10 +1635,81 @@ def send_dashboard_pdf():
                 "error": "POWER_AUTOMATE_URL is missing in .env file"
             }), 500
 
+        selected_report_objects = [REPORT_BY_NAME[report_name] for report_name in reports]
+
+        # Keep report parameters aligned with the canonical Power BI API names and IDs.
+        # The iframe parameter selections are not readable by Flask, so the front-end
+        # sends parameter values explicitly from the Share Reports modal.
+        canonical_parameters_by_name = {}
+        canonical_parameters_by_id = {}
+
+        if isinstance(raw_parameters, dict):
+            for raw_report_name, parameter_values in raw_parameters.items():
+                canonical_name = (
+                    REPORT_ALIASES.get(str(raw_report_name))
+                    or REPORT_ALIASES.get(str(raw_report_name).strip())
+                    or str(raw_report_name)
+                )
+
+                if canonical_name in REPORT_BY_NAME and isinstance(parameter_values, list):
+                    normalized_parameters = _normalize_report_parameters(
+                        canonical_name,
+                        REPORT_BY_NAME[canonical_name]["id"],
+                        parameter_values
+                    )
+                    canonical_parameters_by_name[canonical_name] = normalized_parameters
+                    canonical_parameters_by_id[REPORT_BY_NAME[canonical_name]["id"]] = normalized_parameters
+
+        if isinstance(raw_parameters_by_id, dict):
+            for raw_report_id, parameter_values in raw_parameters_by_id.items():
+                raw_report_id = str(raw_report_id).strip()
+
+                if raw_report_id in REPORT_BY_ID and isinstance(parameter_values, list):
+                    report_name = REPORT_BY_ID[raw_report_id]["name"]
+                    normalized_parameters = _normalize_report_parameters(
+                        report_name,
+                        raw_report_id,
+                        parameter_values
+                    )
+                    canonical_parameters_by_name[report_name] = normalized_parameters
+                    canonical_parameters_by_id[raw_report_id] = normalized_parameters
+
+        # Only keep parameters for reports selected in this request.
+        selected_report_ids = {report["id"] for report in selected_report_objects}
+        selected_report_names = {report["name"] for report in selected_report_objects}
+        canonical_parameters_by_name = {
+            report_name: params
+            for report_name, params in canonical_parameters_by_name.items()
+            if report_name in selected_report_names
+        }
+        canonical_parameters_by_id = {
+            report_id: params
+            for report_id, params in canonical_parameters_by_id.items()
+            if report_id in selected_report_ids
+        }
+
         payload = {
             "email": email,
             "title": title,
-            "reports": reports
+            # Kept for backward compatibility with the old working flow.
+            "reports": reports,
+            # Use this in Power Automate Filter array for stable matching.
+            "reportIds": [report["id"] for report in selected_report_objects],
+            # RDL parameter values to be used by Power Automate during export.
+            "parameters": canonical_parameters_by_name,
+            "parametersById": canonical_parameters_by_id,
+            # Optional metadata if the flow needs type/name without another API lookup.
+            "reportMeta": [
+                {
+                    "id": report["id"],
+                    "name": report["name"],
+                    "title": report["title"],
+                    "type": report["type"],
+                    "format": report["format"],
+                    "parameters": canonical_parameters_by_id.get(report["id"], [])
+                }
+                for report in selected_report_objects
+            ]
         }
 
         print("Payload:")
