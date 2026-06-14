@@ -150,13 +150,13 @@ REPORTS = [
     },
     {
         # IMPORTANT: Power BI API returns this name with a trailing space.
-        # Keep it exactly as-is so the old Filter array can match item()?['name'].
+        # Keep it exactly as-is so the existing Flow can match item()?['name'].
         "name": "Procurement Risk &Fraud Monitoring Report ",
         "title": "Procurement Risk &Fraud Monitoring Report",
         "type": "RDL",
         "format": "RDL",
         "id": "470349ed-7f49-494f-b62e-4c5325073e8e",
-        "url": "https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
     },
     {
         "name": "Forecasting & Strategic Planning Report",
@@ -164,7 +164,7 @@ REPORTS = [
         "type": "RDL",
         "format": "RDL",
         "id": "f816875a-4fd8-44b9-a8f4-c22c536920d4",
-        "url": "https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
     },
     {
         "name": "Executive Trade & Supply Chain Summary",
@@ -172,7 +172,31 @@ REPORTS = [
         "type": "RDL",
         "format": "RDL",
         "id": "23b137ec-dc44-4de8-ba30-93eca6c0631e",
-        "url": "https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Supply Chain Operations Performance",
+        "title": "Supply Chain Operations Performance",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "f4757103-3ab4-44c7-af32-399a2e4129da",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=f4757103-3ab4-44c7-af32-399a2e4129da&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Macro Currency & Cost Exposure",
+        "title": "Macro Currency & Cost Exposure",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "5e2f5bc7-5fc9-4119-8d58-04162bb2a3da",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=5e2f5bc7-5fc9-4119-8d58-04162bb2a3da&groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&rdl:parameterPanel=collapsed"
+    },
+    {
+        "name": "Trade Partners",
+        "title": "Trade Partners",
+        "type": "RDL",
+        "format": "RDL",
+        "id": "c4753a9e-52ac-41e3-8b4b-fd72cdf79f50",
+        "url": "https://app.powerbi.com/rdlEmbed?reportId=c4753a9e-52ac-41e3-8b4b-fd72cdf79f50&autoAuth=true&ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&experience=power-bi&clientSideAuth=0"
     }
 ]
 
@@ -197,8 +221,17 @@ REPORT_ALIASES = {
     "Forecasting & Strategic Planning_Report": "Forecasting & Strategic Planning Report",
     "Forecasting & Strategic Planning Report": "Forecasting & Strategic Planning Report",
     "Full Light Mode PowerBI Dashboard": "Full_Light_Mode_PowerBI",
+    "Full_Light_Mode_PowerBI": "Full_Light_Mode_PowerBI",
+    "Supply Chain Operations": "Supply Chain Operations Performance",
+    "Supply Chain Operations Performance": "Supply Chain Operations Performance",
+    "Supply_Chain_Operations_Performance": "Supply Chain Operations Performance",
+    "Macro Currency & Cost Exposure": "Macro Currency & Cost Exposure",
+    "Macro Currency Cost Exposure": "Macro Currency & Cost Exposure",
+    "Macro_Currency_Cost_Exposure": "Macro Currency & Cost Exposure",
+    "Trade Partners": "Trade Partners",
+    "Trade_Partners": "Trade Partners",
+    "Trade Balance by Partner": "Trade Partners",
 }
-
 
 # Normalize/repair RDL parameter names and internal values.
 # Power BI export expects internal parameter names/values, not UI labels.
@@ -210,6 +243,15 @@ PROCUREMENT_REPORT_NAME = "Procurement Risk &Fraud Monitoring Report "
 
 EXECUTIVE_REPORT_ID = "23b137ec-dc44-4de8-ba30-93eca6c0631e"
 EXECUTIVE_REPORT_NAME = "Executive Trade & Supply Chain Summary"
+
+SUPPLY_OPS_REPORT_ID = "f4757103-3ab4-44c7-af32-399a2e4129da"
+SUPPLY_OPS_REPORT_NAME = "Supply Chain Operations Performance"
+
+MACRO_REPORT_ID = "5e2f5bc7-5fc9-4119-8d58-04162bb2a3da"
+MACRO_REPORT_NAME = "Macro Currency & Cost Exposure"
+
+TRADE_PARTNERS_REPORT_ID = "c4753a9e-52ac-41e3-8b4b-fd72cdf79f50"
+TRADE_PARTNERS_REPORT_NAME = "Trade Partners"
 
 FORECASTING_PARAMETER_ALIASES = {
     "ReportParameter1": "ForecastScenario",
@@ -251,6 +293,46 @@ EXECUTIVE_PARAMETER_ALIASES = {
     "Country": "Country",
     "ExecutiveYear": "Year",
     "ExecutiveCountry": "Country",
+}
+
+SUPPLY_OPS_PARAMETER_ALIASES = {
+    "Year": "Year",
+    "Month": "Month",
+    "SupplyYear": "Year",
+    "SupplyMonth": "Month",
+    "OperationsYear": "Year",
+    "OperationsMonth": "Month",
+}
+
+MACRO_PARAMETER_ALIASES = {
+    "MacroYear": "MacroYear",
+    "Year": "MacroYear",
+    "Macro_Year": "MacroYear",
+}
+
+TRADE_PARTNERS_PARAMETER_ALIASES = {
+    "P_year": "P_year",
+    "P_Country": "P_Country",
+    "Year": "P_year",
+    "Country": "P_Country",
+    "TradePartnerYear": "P_year",
+    "TradePartnerCountry": "P_Country",
+}
+
+
+SUPPLY_OPS_MONTH_VALUE_MAP = {
+    "Jan": "1", "January": "1", "01 - January": "1", "1": "1", "01": "1", 1: "1",
+    "Feb": "2", "February": "2", "02 - February": "2", "2": "2", "02": "2", 2: "2",
+    "Mar": "3", "March": "3", "03 - March": "3", "3": "3", "03": "3", 3: "3",
+    "Apr": "4", "April": "4", "04 - April": "4", "4": "4", "04": "4", 4: "4",
+    "May": "5", "05 - May": "5", "5": "5", "05": "5", 5: "5",
+    "Jun": "6", "June": "6", "06 - June": "6", "6": "6", "06": "6", 6: "6",
+    "Jul": "7", "July": "7", "07 - July": "7", "7": "7", "07": "7", 7: "7",
+    "Aug": "8", "August": "8", "08 - August": "8", "8": "8", "08": "8", 8: "8",
+    "Sep": "9", "September": "9", "09 - September": "9", "9": "9", "09": "9", 9: "9",
+    "Oct": "10", "October": "10", "10 - October": "10", "10": "10", 10: "10",
+    "Nov": "11", "November": "11", "11 - November": "11", "11": "11", 11: "11",
+    "Dec": "12", "December": "12", "12 - December": "12", "12": "12", 12: "12",
 }
 
 
@@ -334,6 +416,31 @@ def _normalize_executive_parameters(parameter_values):
     return _normalize_simple_parameters(parameter_values, EXECUTIVE_PARAMETER_ALIASES)
 
 
+def _normalize_supply_ops_parameters(parameter_values):
+    """Return Power BI export-ready Year/Month values for Supply Chain Operations Performance.
+
+    The RDL shows month labels such as Jan/Feb, but the export API expects
+    the internal numeric Month values. This also repairs cached old front-end
+    payloads that still send text month labels.
+    """
+    normalized = _normalize_simple_parameters(parameter_values, SUPPLY_OPS_PARAMETER_ALIASES)
+    for parameter in normalized:
+        if parameter.get("name") == "Month":
+            raw_value = parameter.get("value", "")
+            parameter["value"] = SUPPLY_OPS_MONTH_VALUE_MAP.get(raw_value, str(raw_value).strip())
+    return normalized
+
+
+def _normalize_macro_parameters(parameter_values):
+    """Return Power BI export-ready MacroYear values for Macro Currency & Cost Exposure."""
+    return _normalize_simple_parameters(parameter_values, MACRO_PARAMETER_ALIASES)
+
+
+def _normalize_trade_partners_parameters(parameter_values):
+    """Return Power BI export-ready P_year/P_Country values for Trade Partners."""
+    return _normalize_simple_parameters(parameter_values, TRADE_PARTNERS_PARAMETER_ALIASES)
+
+
 def _normalize_report_parameters(report_name: str, report_id: str, parameter_values: list) -> list:
     if report_name == FORECASTING_REPORT_NAME or report_id == FORECASTING_REPORT_ID:
         return _normalize_forecasting_parameters(parameter_values)
@@ -341,6 +448,12 @@ def _normalize_report_parameters(report_name: str, report_id: str, parameter_val
         return _normalize_procurement_parameters(parameter_values)
     if report_name == EXECUTIVE_REPORT_NAME or report_id == EXECUTIVE_REPORT_ID:
         return _normalize_executive_parameters(parameter_values)
+    if report_name == SUPPLY_OPS_REPORT_NAME or report_id == SUPPLY_OPS_REPORT_ID:
+        return _normalize_supply_ops_parameters(parameter_values)
+    if report_name == MACRO_REPORT_NAME or report_id == MACRO_REPORT_ID:
+        return _normalize_macro_parameters(parameter_values)
+    if report_name == TRADE_PARTNERS_REPORT_NAME or report_id == TRADE_PARTNERS_REPORT_ID:
+        return _normalize_trade_partners_parameters(parameter_values)
     return parameter_values if isinstance(parameter_values, list) else []
 
 # ======================
