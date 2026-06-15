@@ -1732,7 +1732,7 @@ def send_dashboard_pdf():
             }), response.status_code
 
         return jsonify({
-                "message": "Report request submitted successfully. A download link will be sent to your email shortly.",
+                "message": "Report request submitted successfully. A download link will be sent to your email within 2–4 minutes.",
                 "note": "If you do not see the email in your inbox, please check your Spam or Junk folder."
                         })
 
