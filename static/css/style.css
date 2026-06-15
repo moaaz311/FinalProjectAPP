@@ -6920,3 +6920,543 @@ body.sidebar-collapsed .sideAction:hover::before {
     content: none !important;
     display: none !important;
 }
+
+/* =========================================================
+   CUSTOM REPORT EMAIL ALERT — Gmail CTA + dismiss action
+   Replaces the browser alert after report export submission.
+   ========================================================= */
+.reportEmailAlertBackdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 65000 !important;
+    display: none !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: calc(var(--nav-height, 68px) + 28px) 18px 18px !important;
+    background: rgba(2, 6, 23, 0.38) !important;
+    backdrop-filter: blur(12px) saturate(130%) !important;
+}
+
+.reportEmailAlertBackdrop.show {
+    display: flex !important;
+    animation: reportAlertBackdropIn 180ms ease both;
+}
+
+.reportEmailAlertCard {
+    width: min(690px, calc(100vw - 32px)) !important;
+    background: #1e1e1e !important;
+    color: #e5e7eb !important;
+    border-radius: 22px !important;
+    cursor: default !important;
+    border: 1.5px solid #2a2a2a !important;
+    box-shadow:
+        1em 1em 1em rgba(0, 0, 0, 0.22),
+        -0.75em -0.75em 1em rgba(255, 255, 255, 0.035),
+        0 30px 80px rgba(0, 0, 0, 0.34) !important;
+    transform: translateY(-10px) scale(.985);
+    animation: reportAlertCardIn 260ms cubic-bezier(.2,.9,.22,1) both;
+}
+
+.reportEmailAlertCard:hover {
+    background-color: #242424 !important;
+    border-color: #3a8bff !important;
+}
+
+.reportEmailAlertBody {
+    margin: 24px 28px 26px 26px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 16px !important;
+}
+
+.reportEmailAlertLeft {
+    padding-top: 8px !important;
+    flex: 0 0 auto !important;
+}
+
+.reportEmailAlertDot {
+    width: 12px !important;
+    height: 12px !important;
+    background-color: #ff3333 !important;
+    border-radius: 999px !important;
+    box-shadow: 0 0 0 0 rgba(255, 51, 51, .46) !important;
+    animation: reportAlertDotPulse 1.7s ease-out infinite !important;
+}
+
+.reportEmailAlertRight {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+    min-width: 0 !important;
+}
+
+.reportEmailAlertTextWrap {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 7px !important;
+}
+
+.reportEmailAlertTitle {
+    color: #ffffff !important;
+    font-size: clamp(19px, 2vw, 25px) !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.02em !important;
+}
+
+.reportEmailAlertMessage {
+    margin: 0 !important;
+    color: #f3f4f6 !important;
+    font-size: clamp(15px, 1.35vw, 18px) !important;
+    line-height: 1.55 !important;
+    font-weight: 500 !important;
+}
+
+.reportEmailAlertNote {
+    margin: 2px 0 0 0 !important;
+    color: #a0a0a0 !important;
+    font-size: clamp(13px, 1.1vw, 15px) !important;
+    line-height: 1.55 !important;
+}
+
+.reportEmailAlertActions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+}
+
+.reportEmailPrimaryCta,
+.reportEmailSecondaryCta {
+    background-color: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    min-height: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+.reportEmailPrimaryCta {
+    font-weight: 700 !important;
+    color: #3a8bff !important;
+}
+
+.reportEmailSecondaryCta {
+    font-weight: 500 !important;
+    color: #b0b0b0 !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.reportEmailPrimaryCta:hover,
+.reportEmailSecondaryCta:hover {
+    text-decoration: underline !important;
+}
+
+:root[data-theme="light"] .reportEmailAlertCard {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border-color: rgba(31, 131, 207, .18) !important;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, .22), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+:root[data-theme="light"] .reportEmailAlertCard:hover {
+    background: #f8fafc !important;
+    border-color: #3a8bff !important;
+}
+
+:root[data-theme="light"] .reportEmailAlertTitle,
+:root[data-theme="light"] .reportEmailAlertMessage {
+    color: #111827 !important;
+}
+
+:root[data-theme="light"] .reportEmailAlertNote,
+:root[data-theme="light"] .reportEmailSecondaryCta {
+    color: #64748b !important;
+}
+
+@keyframes reportAlertBackdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes reportAlertCardIn {
+    from { opacity: 0; transform: translateY(-18px) scale(.965); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes reportAlertDotPulse {
+    70% { box-shadow: 0 0 0 10px rgba(255, 51, 51, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0); }
+}
+
+@media (max-width: 720px) {
+    .reportEmailAlertBackdrop {
+        align-items: center !important;
+        padding: 18px !important;
+    }
+
+    .reportEmailAlertBody {
+        margin: 20px !important;
+        gap: 13px !important;
+    }
+
+    .reportEmailAlertActions {
+        gap: 16px !important;
+    }
+
+    .reportEmailPrimaryCta,
+    .reportEmailSecondaryCta {
+        font-size: 15px !important;
+    }
+}
+
+/* =========================================================
+   EGYPT ECONLENS WELCOME / FAKE LOADING SCREEN
+   ========================================================= */
+body.app-locked {
+    overflow: hidden !important;
+}
+
+body.app-locked .appHeader,
+body.app-locked .reportSidebar,
+body.app-locked .dashboardShell,
+body.app-locked .mobileBottomDock,
+body.app-locked .aiFloatingBtn,
+body.app-locked .utilityModal {
+    filter: blur(10px) saturate(.85);
+    transform: scale(.985);
+    pointer-events: none;
+}
+
+.welcomeScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 60000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #f8fbff;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(45, 212, 255, .20), transparent 30%),
+        radial-gradient(circle at 82% 18%, rgba(112, 93, 251, .18), transparent 32%),
+        linear-gradient(135deg, rgba(3, 10, 24, .96), rgba(7, 23, 48, .96) 48%, rgba(4, 35, 57, .96));
+    overflow: hidden;
+    transition: opacity .7s ease, visibility .7s ease, transform .7s ease;
+}
+
+.welcomeScreen.hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.025);
+    pointer-events: none;
+}
+
+.welcomeAurora {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.welcomeAurora span {
+    position: absolute;
+    width: 380px;
+    height: 380px;
+    border-radius: 999px;
+    filter: blur(50px);
+    opacity: .55;
+    animation: welcomeFloat 9s ease-in-out infinite alternate;
+}
+
+.welcomeAurora span:nth-child(1) {
+    left: -110px;
+    top: 70px;
+    background: rgba(35, 167, 242, .55);
+}
+
+.welcomeAurora span:nth-child(2) {
+    right: -130px;
+    bottom: -90px;
+    background: rgba(112, 93, 251, .48);
+    animation-delay: -2.7s;
+}
+
+.welcomeAurora span:nth-child(3) {
+    left: 42%;
+    top: -160px;
+    background: rgba(45, 212, 255, .32);
+    animation-delay: -5s;
+}
+
+@keyframes welcomeFloat {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(46px, 34px, 0) scale(1.12); }
+}
+
+.welcomePanel {
+    position: relative;
+    width: min(620px, calc(100vw - 34px));
+    min-height: 430px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: clamp(28px, 5vw, 54px);
+    border-radius: 34px;
+    background:
+        linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.06)),
+        radial-gradient(circle at 50% 0%, rgba(45,212,255,.20), transparent 40%);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow:
+        0 34px 90px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.20);
+    backdrop-filter: blur(24px) saturate(150%);
+    animation: welcomePanelIn .8s cubic-bezier(.18,1.18,.34,1) both;
+}
+
+@keyframes welcomePanelIn {
+    from { opacity: 0; transform: translateY(18px) scale(.975); filter: blur(8px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.welcomeKicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 0 14px;
+    margin-bottom: 24px;
+    border-radius: 999px;
+    background: rgba(45, 212, 255, .14);
+    border: 1px solid rgba(45, 212, 255, .28);
+    color: #c8f5ff;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.welcomePanel h1 {
+    max-width: 560px;
+    margin: 26px 0 0;
+    color: #ffffff;
+    font-size: clamp(30px, 5.4vw, 58px);
+    font-weight: 950;
+    line-height: .98;
+    letter-spacing: -1.6px;
+    text-shadow: 0 18px 38px rgba(0,0,0,.35);
+}
+
+.welcomePanel p {
+    max-width: 500px;
+    margin: 18px auto 30px;
+    color: rgba(226, 242, 255, .78);
+    font-size: clamp(14px, 1.5vw, 16px);
+    line-height: 1.7;
+}
+
+.welcomeHandLoader {
+    --skin-color: #e4c560;
+    --tap-speed: .6s;
+    --tap-stagger: .1s;
+    position: relative;
+    width: 80px;
+    height: 60px;
+    transform: scale(1.08);
+    margin: 0 auto;
+}
+
+.welcomeHandLoader::before {
+    content: "";
+    display: block;
+    width: 180%;
+    height: 75%;
+    position: absolute;
+    top: 70%;
+    right: 20%;
+    background-color: #000000;
+    border-radius: 40px 10px;
+    filter: blur(10px);
+    opacity: .32;
+}
+
+.welcomePalm {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--skin-color);
+    border-radius: 10px 40px;
+}
+
+.welcomeThumb {
+    position: absolute;
+    width: 120%;
+    height: 38px;
+    background-color: var(--skin-color);
+    bottom: -18%;
+    right: 1%;
+    transform-origin: calc(100% - 20px) 20px;
+    transform: rotate(-20deg);
+    border-radius: 30px 20px 20px 10px;
+    border-bottom: 2px solid rgba(0,0,0,.1);
+    border-left: 2px solid rgba(0,0,0,.1);
+}
+
+.welcomeThumb::after {
+    width: 20%;
+    height: 60%;
+    content: "";
+    background-color: rgba(255,255,255,.3);
+    position: absolute;
+    bottom: -8%;
+    left: 5px;
+    border-radius: 60% 10% 10% 30%;
+    border-right: 2px solid rgba(0,0,0,.05);
+}
+
+.welcomeFinger {
+    position: absolute;
+    width: 80%;
+    height: 35px;
+    background-color: var(--skin-color);
+    bottom: 32%;
+    right: 64%;
+    transform-origin: 100% 20px;
+    animation-duration: calc(var(--tap-speed) * 2);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    transform: rotate(10deg);
+}
+
+.welcomeFinger::before {
+    content: "";
+    position: absolute;
+    width: 140%;
+    height: 30px;
+    background-color: var(--skin-color);
+    bottom: 8%;
+    right: 65%;
+    transform-origin: calc(100% - 20px) 20px;
+    transform: rotate(-60deg);
+    border-radius: 20px;
+}
+
+.welcomeFinger:nth-child(1) {
+    animation-delay: 0;
+    filter: brightness(70%);
+    animation-name: welcomeTapUpper1;
+}
+
+.welcomeFinger:nth-child(2) {
+    animation-delay: var(--tap-stagger);
+    filter: brightness(80%);
+    animation-name: welcomeTapUpper2;
+}
+
+.welcomeFinger:nth-child(3) {
+    animation-delay: calc(var(--tap-stagger) * 2);
+    filter: brightness(90%);
+    animation-name: welcomeTapUpper3;
+}
+
+.welcomeFinger:nth-child(4) {
+    animation-delay: calc(var(--tap-stagger) * 3);
+    filter: brightness(100%);
+    animation-name: welcomeTapUpper4;
+}
+
+@keyframes welcomeTapUpper1 {
+    0%, 50%, 100% { transform: rotate(10deg) scale(.4); }
+    40% { transform: rotate(50deg) scale(.4); }
+}
+
+@keyframes welcomeTapUpper2 {
+    0%, 50%, 100% { transform: rotate(10deg) scale(.6); }
+    40% { transform: rotate(50deg) scale(.6); }
+}
+
+@keyframes welcomeTapUpper3 {
+    0%, 50%, 100% { transform: rotate(10deg) scale(.8); }
+    40% { transform: rotate(50deg) scale(.8); }
+}
+
+@keyframes welcomeTapUpper4 {
+    0%, 50%, 100% { transform: rotate(10deg) scale(1); }
+    40% { transform: rotate(50deg) scale(1); }
+}
+
+.welcomeStartSwitch {
+    position: relative;
+    width: fit-content;
+    min-width: 178px;
+    min-height: 52px;
+    padding: 0 22px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 999px;
+    z-index: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    color: #ffffff;
+    font-size: .95rem;
+    font-weight: 900;
+    transition: transform .28s cubic-bezier(.18,1.18,.34,1), background .28s ease, box-shadow .28s ease, opacity .28s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 18px 40px rgba(0,0,0,.18);
+}
+
+.welcomeStartSwitch svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.welcomeStartSwitch:not(:disabled):hover {
+    transform: translateY(-4px) scale(1.03);
+    background: rgb(31, 131, 207);
+    box-shadow: 0 0 40px rgba(45, 212, 255, .28), 0 18px 42px rgba(0,0,0,.24);
+}
+
+.welcomeStartSwitch:disabled {
+    cursor: wait;
+    opacity: .68;
+}
+
+body.welcome-ready .welcomeStartSwitch {
+    background: linear-gradient(135deg, rgb(47, 93, 242), rgb(31, 199, 231));
+    border-color: rgba(255,255,255,.30);
+    box-shadow: 0 0 40px rgba(45, 212, 255, .24), 0 18px 42px rgba(0,0,0,.24);
+}
+
+@media (max-width: 640px) {
+    .welcomePanel {
+        min-height: 390px;
+        border-radius: 26px;
+        padding: 30px 22px;
+    }
+
+    .welcomeHandLoader {
+        transform: scale(.92);
+    }
+
+    .welcomePanel h1 {
+        letter-spacing: -.9px;
+    }
+}
+

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supply Sphere Egypt — Premium UI V9</title>
+<title>Egypt EconLens — Premium UI</title>
 <script>
 (function(){
     try {
@@ -18,7 +18,42 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body>
+<body class="app-locked">
+
+<!-- WELCOME / FAKE LOADING SCREEN -->
+<div id="welcomeScreen" class="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" aria-describedby="welcomeSubtitle">
+    <div class="welcomeAurora" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <section class="welcomePanel">
+        <div class="welcomeKicker">Egypt EconLens</div>
+
+        <div class="welcomeHandLoader" aria-hidden="true">
+            <div class="welcomeFinger"></div>
+            <div class="welcomeFinger"></div>
+            <div class="welcomeFinger"></div>
+            <div class="welcomeFinger"></div>
+            <div class="welcomePalm"></div>
+            <div class="welcomeThumb"></div>
+        </div>
+
+        <h1 id="welcomeTitle">Welcome to our app Egypt EconLens</h1>
+        <p id="welcomeSubtitle">
+            Preparing your economic intelligence workspace, Power BI reports, and AI analytics assistant.
+        </p>
+
+        <button id="welcomeExploreBtn" class="welcomeStartSwitch" type="button" disabled>
+            <span class="welcomeStartText">Preparing workspace</span>
+            <svg class="welcomeStartIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V256c0 17.7 14.3 32 32 32s32-14.3 32-32V32zM143.5 120.6c13.6-11.3 15.4-31.5 4.1-45.1s-31.5-15.4-45.1-4.1C49.7 115.4 16 181.8 16 256c0 132.5 107.5 240 240 240s240-107.5 240-240c0-74.2-33.8-140.6-86.6-184.6c-13.6-11.3-33.8-9.4-45.1 4.1s-9.4 33.8 4.1 45.1c38.9 32.3 63.5 81 63.5 135.4c0 97.2-78.8 176-176 176s-176-78.8-176-176c0-54.4 24.7-103.1 63.5-135.4z"></path>
+            </svg>
+        </button>
+    </section>
+</div>
+
 
 <div class="appAmbient" aria-hidden="true">
     <span class="ambientOrb orbOne"></span>
@@ -31,7 +66,7 @@
         <span class="switchSpinner"></span>
         <div>
             <strong id="switchTitle">Opening report</strong>
-            <small id="switchType">Supply Sphere workspace</small>
+            <small id="switchType">Egypt EconLens workspace</small>
         </div>
     </div>
 </div>
@@ -44,8 +79,8 @@
             <span class="brandMarkInner">△</span>
         </div>
         <div class="brandText">
-            <div class="brandTitle">Supply Sphere Egypt</div>
-            <div class="brandSub">Trade &amp; Supply Chain Intelligence</div>
+            <div class="brandTitle">Egypt EconLens</div>
+            <div class="brandSub">Egypt Economic Intelligence</div>
         </div>
     </div>
 
@@ -84,7 +119,7 @@
         <div class="sideLogo">
             <div class="sideLogoMark">△</div>
             <div class="sideLogoText">
-                <div>Supply Sphere</div>
+                <div>Egypt EconLens</div>
                 <span>Report Center</span>
             </div>
         </div>
@@ -196,7 +231,7 @@
             <span class="metricDot"></span>
             <div>
                 <strong>Live workspace</strong>
-                <small>Power BI embedded viewer</small>
+                <small>Egypt EconLens viewer</small>
             </div>
         </div>
     </div>
@@ -365,7 +400,7 @@
             <span class="chatIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a1.4 1.4 0 0 1 1.4 1.4V5H17a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4h3.6V3.4A1.4 1.4 0 0 1 12 2ZM8 10.7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm-7.2 5.1c.8.9 1.9 1.3 3.2 1.3s2.4-.4 3.2-1.3"/></svg></span>
             <div>
                 <div class="chatTitleMain">AI Assistant</div>
-                <div class="chatTitleSub">Supply Sphere analytics companion</div>
+                <div class="chatTitleSub">Egypt EconLens analytics companion</div>
             </div>
         </div>
         <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
@@ -399,6 +434,38 @@
             <button id="closeTableFullViewBtn" class="tableFullViewClose" type="button" onclick="closeTableFullView()">×</button>
         </div>
         <div id="tableFullViewContent" class="tableFullViewContent"></div>
+    </div>
+</div>
+
+<!-- REPORT EMAIL SUBMISSION ALERT -->
+<div id="reportEmailAlert" class="reportEmailAlertBackdrop" aria-hidden="true">
+    <div class="reportEmailAlertCard" role="alertdialog" aria-labelledby="reportEmailAlertTitle" aria-describedby="reportEmailAlertMessage">
+        <div class="reportEmailAlertBody">
+            <div class="reportEmailAlertLeft">
+                <div class="reportEmailAlertDot" aria-hidden="true"></div>
+            </div>
+
+            <div class="reportEmailAlertRight">
+                <div class="reportEmailAlertTextWrap">
+                    <div id="reportEmailAlertTitle" class="reportEmailAlertTitle">Report request submitted</div>
+                    <p id="reportEmailAlertMessage" class="reportEmailAlertMessage">
+                        Report request submitted successfully. A download link will be sent to your email shortly.
+                    </p>
+                    <p id="reportEmailAlertNote" class="reportEmailAlertNote">
+                        If you do not see the email in your inbox, please check your Spam or Junk folder.
+                    </p>
+                </div>
+
+                <div class="reportEmailAlertActions">
+                    <a id="reportEmailGmailLink"
+                       class="reportEmailPrimaryCta"
+                       href="https://mail.google.com/mail/u/0/#inbox"
+                       target="_blank"
+                       rel="noopener noreferrer">Check Gmail</a>
+                    <button class="reportEmailSecondaryCta" type="button" onclick="closeReportEmailAlert()">Mark as read</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -711,6 +778,38 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+function initWelcomeScreen(){
+    const screen = document.getElementById("welcomeScreen");
+    const btn = document.getElementById("welcomeExploreBtn");
+    const text = btn ? btn.querySelector(".welcomeStartText") : null;
+
+    if(!screen || !btn){
+        document.body.classList.remove("app-locked");
+        return;
+    }
+
+    function markReady(){
+        document.body.classList.add("welcome-ready");
+        btn.disabled = false;
+        if(text){ text.textContent = "Explore App"; }
+    }
+
+    function enterApp(){
+        screen.classList.add("hide");
+        document.body.classList.remove("app-locked");
+        document.body.classList.add("app-entered");
+        window.setTimeout(function(){
+            if(screen && screen.parentNode){ screen.parentNode.removeChild(screen); }
+        }, 720);
+    }
+
+    btn.addEventListener("click", enterApp);
+
+    window.setTimeout(markReady, 1100);
+    window.addEventListener("load", markReady, {once: true});
+}
+
 function initUiState(){
     try {
         if(localStorage.getItem("sse-sidebar") === "collapsed") {
@@ -803,7 +902,7 @@ function runReportTransition(title, type){
     const switchType = document.getElementById("switchType");
 
     if(switchTitle){ switchTitle.innerText = title || "Opening report"; }
-    if(switchType){ switchType.innerText = (type || "Report") + " · Supply Sphere workspace"; }
+    if(switchType){ switchType.innerText = (type || "Report") + " · Egypt EconLens workspace"; }
 
     if(!overlay){ return; }
     overlay.classList.remove("show");
@@ -1159,7 +1258,7 @@ async function sendMessage(){
     input.value = "";
 
     const loadingId = "loading-" + Date.now();
-    addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Analyzing Supply Sphere data...</div>", "bot");
+    addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Analyzing Egypt EconLens data...</div>", "bot");
 
     try{
         const response = await fetch("/chat", {
@@ -1397,6 +1496,44 @@ function getTradePartnersParameterValues(){
     ];
 }
 
+const REPORT_GMAIL_INBOX_URL = "https://mail.google.com/mail/u/0/#inbox";
+
+function showReportEmailAlert(message, note){
+    const alertBox = document.getElementById("reportEmailAlert");
+    const messageEl = document.getElementById("reportEmailAlertMessage");
+    const noteEl = document.getElementById("reportEmailAlertNote");
+    const gmailLink = document.getElementById("reportEmailGmailLink");
+
+    if(!alertBox){
+        alert(message || "Report request submitted successfully. A download link will be sent to your email shortly.");
+        return;
+    }
+
+    if(messageEl){
+        messageEl.textContent = message || "Report request submitted successfully. A download link will be sent to your email shortly.";
+    }
+
+    if(noteEl){
+        noteEl.textContent = note || "If you do not see the email in your inbox, please check your Spam or Junk folder.";
+    }
+
+    if(gmailLink){
+        gmailLink.href = REPORT_GMAIL_INBOX_URL;
+    }
+
+    alertBox.classList.add("show");
+    alertBox.setAttribute("aria-hidden", "false");
+}
+
+function closeReportEmailAlert(){
+    const alertBox = document.getElementById("reportEmailAlert");
+
+    if(alertBox){
+        alertBox.classList.remove("show");
+        alertBox.setAttribute("aria-hidden", "true");
+    }
+}
+
 async function sendPDF(){
     const email = document.getElementById("email").value.trim();
 
@@ -1505,7 +1642,16 @@ async function sendPDF(){
         });
 
         const data = await response.json();
-        alert(data.message || data.error);
+
+        if(!response.ok || data.error){
+            alert(data.error || "Power Automate failed");
+            return;
+        }
+
+        showReportEmailAlert(
+            data.message || "Report request submitted successfully. A download link will be sent to your email shortly.",
+            data.note || "If you do not see the email in your inbox, please check your Spam or Junk folder."
+        );
     }
     catch(e){
         console.log(e);
@@ -1514,6 +1660,7 @@ async function sendPDF(){
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+    initWelcomeScreen();
     initUiState();
 
     document.addEventListener("pointermove", function(e){
@@ -1558,7 +1705,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
 document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const welcomeBtn = document.getElementById("welcomeExploreBtn");
+        if(welcomeScreen && welcomeBtn && !welcomeBtn.disabled){ welcomeBtn.click(); }
         closeTableFullView();
+        closeReportEmailAlert();
         closeChat();
         closeUtilityModals();
     }
