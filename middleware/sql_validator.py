@@ -5,16 +5,25 @@ Multi-stage SQL validation layer that sits between generation and execution.
 
 This validator:
   1. Blocks dangerous patterns.
-  2. Checks referenced views exist in the schema.
-  3. Checks referenced columns heuristically.
-  4. Warns about likely GROUP BY issues.
-  5. Allows missing TOP for time-series trend queries.
+  2. Forces exact view names without database/schema prefixes.
+  3. Checks referenced views exist in the schema.
+  4. Checks referenced columns heuristically.
+  5. Uses sqlglot when installed for stronger parse/tree validation.
+  6. Warns about likely GROUP BY issues.
+  7. Allows missing TOP for time-series trend queries.
 """
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+
+try:
+    import sqlglot
+    from sqlglot import exp
+except Exception:  # sqlglot is optional but recommended for production
+    sqlglot = None
+    exp = None
 
 from .schema_retriever import get_all_valid_views, get_all_valid_columns
 
@@ -122,7 +131,28 @@ def _check_structure(sql: str, result: ValidationResult) -> None:
 
 
 # ──────────────────────────────────────────────
-# 3. View existence check
+# 3. Exact view-name check
+# ──────────────────────────────────────────────
+
+_QUALIFIED_VIEW_RE = re.compile(
+    r"\b(?:(?:\[[^\]]+\]|\w+)\.)+\[?vw_\w+\]?",
+    re.IGNORECASE,
+)
+
+
+def _check_exact_view_names(sql: str, result: ValidationResult) -> None:
+    """Reject EgyptBI_DWH1.vw_x, dbo.vw_x, or any qualified view name."""
+    match = _QUALIFIED_VIEW_RE.search(sql)
+
+    if match:
+        result.fail(
+            "Use exact view names only. Do not prefix views with database or schema names: "
+            f"'{match.group()}'"
+        )
+
+
+# ──────────────────────────────────────────────
+# 4. View existence check
 # ──────────────────────────────────────────────
 
 _FROM_JOIN_RE = re.compile(
@@ -143,7 +173,7 @@ def _check_views(sql: str, result: ValidationResult) -> None:
 
 
 # ──────────────────────────────────────────────
-# 4. Column existence check (heuristic)
+# 5. Column existence check (heuristic)
 # ──────────────────────────────────────────────
 
 _COL_RE = re.compile(
@@ -183,7 +213,62 @@ def _check_columns(sql: str, result: ValidationResult) -> None:
 
 
 # ──────────────────────────────────────────────
-# 5. GROUP BY completeness check
+# 6. Optional sqlglot parse/tree validation
+# ──────────────────────────────────────────────
+
+
+def _check_sqlglot(sql: str, result: ValidationResult) -> None:
+    """Use sqlglot for stronger validation when the dependency is installed."""
+    if sqlglot is None or exp is None:
+        result.warn(
+            "sqlglot is not installed — using regex validation only. "
+            "Install sqlglot for stronger production validation."
+        )
+        return
+
+    try:
+        parsed = sqlglot.parse_one(sql, read="tsql")
+    except Exception as exc:
+        result.fail(f"SQL parse failed: {exc}")
+        return
+
+    if parsed is None:
+        result.fail("SQL parse failed: empty parse tree")
+        return
+
+    # The structure regex already requires SELECT/WITH. This tree check catches
+    # non-query statements that may be hidden in unusual syntax.
+    if not isinstance(parsed, (exp.Select, exp.With, exp.Subquery, exp.Union)):
+        if parsed.find(exp.Select) is None:
+            result.fail("Only SELECT/WITH query statements are allowed")
+            return
+
+    valid_views = get_all_valid_views()
+    cte_names = {cte.alias for cte in parsed.find_all(exp.CTE) if cte.alias}
+
+    for table in parsed.find_all(exp.Table):
+        table_name = table.name
+
+        if table_name in cte_names:
+            continue
+
+        if table.db or table.catalog:
+            result.fail(
+                "Use exact view names only. Do not prefix views with database or schema names: "
+                f"'{table.sql(dialect='tsql')}'"
+            )
+            continue
+
+        if not table_name.startswith("vw_"):
+            result.fail(f"Only vw_* views are allowed, found: '{table_name}'")
+            continue
+
+        if table_name not in valid_views:
+            result.fail(f"Unknown view: '{table_name}' — not in schema")
+
+
+# ──────────────────────────────────────────────
+# 7. GROUP BY completeness check
 # ──────────────────────────────────────────────
 
 _AGG_RE = re.compile(r"\b(SUM|COUNT|AVG|MAX|MIN)\s*\(", re.IGNORECASE)
@@ -202,7 +287,7 @@ def _check_group_by(sql: str, result: ValidationResult) -> None:
 
 
 # ──────────────────────────────────────────────
-# 6. Public interface
+# 8. Public interface
 # ──────────────────────────────────────────────
 
 def validate_sql(sql: str) -> ValidationResult:
@@ -215,7 +300,17 @@ def validate_sql(sql: str) -> ValidationResult:
         return result
 
     _check_structure(sql, result)
+    _check_exact_view_names(sql, result)
+
+    if not result.is_valid:
+        return result
+
     _check_views(sql, result)
+    _check_sqlglot(sql, result)
+
+    if not result.is_valid:
+        return result
+
     _check_columns(sql, result)
     _check_group_by(sql, result)
 

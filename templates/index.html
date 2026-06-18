@@ -885,6 +885,13 @@ function showReport(id, btn){
         reportBtn.classList.add("active");
     });
 
+    if(window.matchMedia && window.matchMedia("(max-width: 720px)").matches){
+        const activeDockBtn = document.querySelector('.mobileBottomDock .mobileDockBtn[data-report="' + id + '"]');
+        if(activeDockBtn && activeDockBtn.scrollIntoView){
+            activeDockBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
+    }
+
     if(activeBtn){
         const title = activeBtn.getAttribute("data-title") || target?.title || "Report";
         const type = activeBtn.getAttribute("data-type") || "Report";
@@ -1110,7 +1117,25 @@ function closeUtilityModals(exceptId){
 function toggleEmail(){
     const e = document.getElementById("emailModal");
     closeUtilityModals("emailModal");
-    e.classList.toggle("open");
+    const isOpen = e.classList.toggle("open");
+
+    if(isOpen && window.bootstrap){
+        const canvas = document.getElementById("mobileReportsOffcanvas");
+        if(canvas){
+            const instance = bootstrap.Offcanvas.getInstance(canvas);
+            if(instance){ instance.hide(); }
+        }
+    }
+
+    if(isOpen){
+        window.setTimeout(function(){
+            const emailInput = document.getElementById("email");
+            if(emailInput && window.matchMedia && window.matchMedia("(max-width: 720px)").matches){
+                emailInput.scrollIntoView({ block: "nearest", inline: "nearest" });
+            }
+        }, 120);
+    }
+
     syncReportParamsVisibility();
 }
 
@@ -1233,6 +1258,304 @@ function closeTableFullView(){
     }
 }
 
+function addBotAnswer(answerHtml, chart){
+    const safeAnswer = answerHtml || "No answer returned.";
+    const chartHtml = buildAiChartHtml(chart);
+    addMessage(safeAnswer + chartHtml, "bot");
+}
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function escapeAttr(value){
+    return escapeHtml(value).replace(/`/g, "&#096;");
+}
+
+function isNumericChartValue(value){
+    if(value === null || value === undefined || value === ""){ return false; }
+    return Number.isFinite(Number(value));
+}
+
+function getChartNumericKeys(records){
+    if(!Array.isArray(records) || !records.length){ return []; }
+    const keys = Object.keys(records[0] || {});
+    return keys.filter(function(key){
+        const lower = key.toLowerCase();
+        if(["year", "month", "quarter", "hs_code"].includes(lower)){ return false; }
+        if(lower.endsWith("_key") || lower.endsWith("_id")){ return false; }
+        return records.some(function(row){ return isNumericChartValue(row[key]); });
+    });
+}
+
+function getChartDimensionKeys(records){
+    if(!Array.isArray(records) || !records.length){ return []; }
+    const keys = Object.keys(records[0] || {});
+    return keys.filter(function(key){
+        const lower = key.toLowerCase();
+        if(lower.endsWith("_key") || lower.endsWith("_id")){ return false; }
+        return !getChartNumericKeys(records).includes(key);
+    });
+}
+
+function guessChartX(records){
+    const dimensions = getChartDimensionKeys(records);
+    const preferred = ["year", "month", "quarter", "country_name", "product_name", "category", "description", "region", "shipping_mode"];
+    for(const key of preferred){
+        const found = Object.keys(records[0] || {}).find(function(col){ return col.toLowerCase() === key; });
+        if(found){ return found; }
+    }
+    return dimensions[0] || Object.keys(records[0] || {})[0] || "";
+}
+
+function guessChartY(records){
+    const numeric = getChartNumericKeys(records);
+    const preferredHints = ["total", "value", "usd", "sales", "profit", "rate", "pct", "growth", "inflation", "delay", "days", "count"];
+    for(const hint of preferredHints){
+        const found = numeric.find(function(col){ return col.toLowerCase().includes(hint); });
+        if(found){ return found; }
+    }
+    return numeric[0] || "";
+}
+
+function buildFallbackChart(records, question){
+    if(!Array.isArray(records) || records.length < 2){ return null; }
+
+    const x = guessChartX(records);
+    const y = guessChartY(records);
+    if(!x || !y){ return null; }
+
+    const xLower = x.toLowerCase();
+    const questionLower = String(question || "").toLowerCase();
+    const isTrend = ["year", "month", "quarter"].includes(xLower) || questionLower.includes("trend") || questionLower.includes("over time") || questionLower.includes("by year");
+
+    return {
+        available: true,
+        type: isTrend ? "line" : "bar",
+        title: isTrend ? "Trend Preview" : "Visual Preview",
+        x: x,
+        y: y,
+        data: records
+    };
+}
+
+function normaliseChart(chart){
+    if(!chart || typeof chart !== "object"){ return null; }
+    if(chart.available === false){ return null; }
+
+    const data = Array.isArray(chart.data) ? chart.data : [];
+    const x = chart.x || guessChartX(data);
+    const y = chart.y || guessChartY(data);
+    const type = String(chart.type || "bar").toLowerCase();
+
+    if(type !== "kpi" && (!data.length || !x || !y)){ return null; }
+
+    return {
+        available: true,
+        type: type,
+        title: chart.title || "AI Visual",
+        x: x,
+        y: y,
+        data: data
+    };
+}
+
+function formatCompactNumber(value){
+    const n = Number(value);
+    if(!Number.isFinite(n)){ return escapeHtml(value); }
+
+    const abs = Math.abs(n);
+    const sign = n < 0 ? "-" : "";
+
+    if(abs >= 1000000000){ return sign + (abs / 1000000000).toFixed(2) + "B"; }
+    if(abs >= 1000000){ return sign + (abs / 1000000).toFixed(2) + "M"; }
+    if(abs >= 1000){ return sign + (abs / 1000).toFixed(2) + "K"; }
+
+    if(abs % 1 === 0){ return sign + abs.toLocaleString(); }
+    return sign + abs.toLocaleString(undefined, {maximumFractionDigits: 2});
+}
+
+function cleanChartLabel(value, maxLength){
+    const text = String(value ?? "N/A").trim() || "N/A";
+    const limit = maxLength || 28;
+    return text.length > limit ? text.slice(0, limit - 1) + "…" : text;
+}
+
+function getChartRows(chart, limit){
+    const rows = Array.isArray(chart.data) ? chart.data.slice(0, limit || 12) : [];
+    return rows
+        .map(function(row){
+            return {
+                label: row[chart.x],
+                value: Number(row[chart.y])
+            };
+        })
+        .filter(function(row){ return Number.isFinite(row.value); });
+}
+
+function buildAiChartHtml(chartInput){
+    const chart = normaliseChart(chartInput);
+    if(!chart){ return ""; }
+
+    if(chart.type === "line" || chart.type === "trend"){
+        return buildAiLineChart(chart);
+    }
+
+    if(chart.type === "donut" || chart.type === "pie"){
+        return buildAiDonutChart(chart);
+    }
+
+    if(chart.type === "kpi"){
+        return buildAiKpiChart(chart);
+    }
+
+    return buildAiBarChart(chart);
+}
+
+function buildAiChartHeader(chart, icon){
+    return `
+<div class="ai-chart-header">
+    <div>
+        <div class="ai-chart-kicker">${escapeHtml(icon || "Chart-ready JSON")}</div>
+        <div class="ai-chart-title">${escapeHtml(chart.title || "AI Visual")}</div>
+    </div>
+    <div class="ai-chart-axis">${escapeHtml(chart.x || "")}${chart.y ? " → " + escapeHtml(chart.y) : ""}</div>
+</div>`;
+}
+
+function buildAiBarChart(chart){
+    const rows = getChartRows(chart, 10);
+    if(!rows.length){ return ""; }
+
+    const maxAbs = Math.max.apply(null, rows.map(function(row){ return Math.abs(row.value); })) || 1;
+    const bars = rows.map(function(row){
+        const pct = Math.max(3, Math.min(100, Math.abs(row.value) / maxAbs * 100));
+        const label = cleanChartLabel(row.label, 30);
+
+        return `
+<div class="ai-bar-row">
+    <div class="ai-bar-label" title="${escapeAttr(row.label)}">${escapeHtml(label)}</div>
+    <div class="ai-bar-track"><span style="width:${pct.toFixed(2)}%"></span></div>
+    <div class="ai-bar-value">${escapeHtml(formatCompactNumber(row.value))}</div>
+</div>`;
+    }).join("");
+
+    return `
+<div class="ai-chart-card ai-chart-bar-card">
+    ${buildAiChartHeader(chart, "Bar chart")}
+    <div class="ai-bar-chart">${bars}</div>
+</div>`;
+}
+
+function buildAiLineChart(chart){
+    const rows = getChartRows(chart, 12);
+    if(rows.length < 2){ return buildAiBarChart(chart); }
+
+    const width = 520;
+    const height = 190;
+    const padX = 28;
+    const padY = 24;
+    const values = rows.map(function(row){ return row.value; });
+    const min = Math.min.apply(null, values);
+    const max = Math.max.apply(null, values);
+    const range = max - min || 1;
+
+    const points = rows.map(function(row, index){
+        const x = padX + (index * ((width - padX * 2) / Math.max(1, rows.length - 1)));
+        const y = height - padY - ((row.value - min) / range * (height - padY * 2));
+        return {x: x, y: y, row: row};
+    });
+
+    const polyline = points.map(function(point){ return point.x.toFixed(1) + "," + point.y.toFixed(1); }).join(" ");
+    const circles = points.map(function(point){
+        return `<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4"><title>${escapeHtml(point.row.label)}: ${escapeHtml(formatCompactNumber(point.row.value))}</title></circle>`;
+    }).join("");
+
+    const firstLabel = cleanChartLabel(rows[0].label, 12);
+    const lastLabel = cleanChartLabel(rows[rows.length - 1].label, 12);
+
+    return `
+<div class="ai-chart-card ai-chart-line-card">
+    ${buildAiChartHeader(chart, "Line chart")}
+    <div class="ai-line-wrap">
+        <svg class="ai-line-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeAttr(chart.title)}">
+            <line x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}" class="ai-line-grid"></line>
+            <line x1="${padX}" y1="${height / 2}" x2="${width - padX}" y2="${height / 2}" class="ai-line-grid"></line>
+            <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" class="ai-line-grid"></line>
+            <polyline points="${polyline}" class="ai-line-path"></polyline>
+            <g class="ai-line-points">${circles}</g>
+        </svg>
+        <div class="ai-line-footer">
+            <span>${escapeHtml(firstLabel)}</span>
+            <strong>${escapeHtml(formatCompactNumber(min))} — ${escapeHtml(formatCompactNumber(max))}</strong>
+            <span>${escapeHtml(lastLabel)}</span>
+        </div>
+    </div>
+</div>`;
+}
+
+function buildAiDonutChart(chart){
+    const rows = getChartRows(chart, 6);
+    if(!rows.length){ return ""; }
+
+    const total = rows.reduce(function(sum, row){ return sum + Math.abs(row.value); }, 0) || 1;
+    let current = 0;
+    const colors = ["var(--ai-chart-c1)", "var(--ai-chart-c2)", "var(--ai-chart-c3)", "var(--ai-chart-c4)", "var(--ai-chart-c5)", "var(--ai-chart-c6)"];
+
+    const gradientParts = rows.map(function(row, index){
+        const start = current;
+        const degrees = Math.abs(row.value) / total * 360;
+        current += degrees;
+        return `${colors[index % colors.length]} ${start.toFixed(2)}deg ${current.toFixed(2)}deg`;
+    }).join(", ");
+
+    const legend = rows.map(function(row, index){
+        const pct = Math.abs(row.value) / total * 100;
+        return `
+<div class="ai-donut-legend-row">
+    <span class="ai-donut-dot dot-${index + 1}"></span>
+    <span title="${escapeAttr(row.label)}">${escapeHtml(cleanChartLabel(row.label, 24))}</span>
+    <strong>${pct.toFixed(1)}%</strong>
+</div>`;
+    }).join("");
+
+    return `
+<div class="ai-chart-card ai-chart-donut-card">
+    ${buildAiChartHeader(chart, "Donut chart")}
+    <div class="ai-donut-layout">
+        <div class="ai-donut" style="background: conic-gradient(${gradientParts});">
+            <div>${escapeHtml(formatCompactNumber(total))}<small>Total</small></div>
+        </div>
+        <div class="ai-donut-legend">${legend}</div>
+    </div>
+</div>`;
+}
+
+function buildAiKpiChart(chart){
+    const rows = Array.isArray(chart.data) ? chart.data : [];
+    const row = rows[0] || {};
+    const y = chart.y || guessChartY(rows);
+    const x = chart.x || guessChartX(rows);
+    const value = y ? row[y] : "";
+    const label = x ? row[x] : chart.title;
+
+    if(value === "" || value === undefined || value === null){ return ""; }
+
+    return `
+<div class="ai-chart-card ai-chart-kpi-card">
+    ${buildAiChartHeader(chart, "KPI card")}
+    <div class="ai-kpi-visual">
+        <div class="ai-kpi-value">${escapeHtml(formatCompactNumber(value))}</div>
+        <div class="ai-kpi-label">${escapeHtml(label || y || "Result")}</div>
+    </div>
+</div>`;
+}
+
 async function sendMessage(){
     if(chatBusy){ return; }
 
@@ -1278,7 +1601,8 @@ async function sendMessage(){
             return;
         }
 
-        addMessage(data.answer, "bot");
+        const chartPayload = data.chart || buildFallbackChart(data.data, msg);
+        addBotAnswer(data.answer, chartPayload);
         addSuggestedQuestions(msg);
     }
     catch(error){

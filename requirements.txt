@@ -11,3 +11,4 @@ numpy
 sqlalchemy
 cachetools
 gunicorn
+sqlglot>=25.0.0

@@ -6,6 +6,7 @@ from flask_mail import Mail
 
 import hashlib
 import html
+import logging
 import os
 import re
 import time
@@ -35,6 +36,13 @@ from middleware.prompt_builder import (
 # ======================
 
 load_dotenv()
+
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logger = logging.getLogger("egypt_trade_ai")
 
 # ======================
 # APP
@@ -80,7 +88,7 @@ try:
     )
 
 except Exception as e:
-    print("OpenRouter Error:", e)
+    logger.warning("OpenRouter client initialization failed: %s", e)
     client = None
 
 # ======================
@@ -147,11 +155,11 @@ try:
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
 
-    print("Database Connected")
+    logger.info("Database connected")
     db_error_msg = None
 
 except Exception as e:
-    print("Database Error:", e)
+    logger.error("Database connection failed: %s", e)
     db_error_msg = f"Server: '{SQL_SERVER}' | DB: '{SQL_DATABASE}' | User: '{SQL_USERNAME}' | Exception: {str(e)}"
     engine = None
 
@@ -498,6 +506,9 @@ _CACHE_TTL = int(os.getenv("CACHE_TTL", 300))
 
 _cache: TTLCache = TTLCache(maxsize=500, ttl=_CACHE_TTL)
 
+_SESSION_TTL = int(os.getenv("SESSION_TTL", 1800))
+_sessions: TTLCache = TTLCache(maxsize=1000, ttl=_SESSION_TTL)
+
 _SMALL_TALK = {
     "hi": "👋 Hi! I'm your Egypt Trade AI Assistant.",
     "hello": "👋 Hello! I'm your Egypt Trade AI Assistant.",
@@ -535,6 +546,103 @@ def _looks_like_sql_query(text_value: str) -> bool:
         q.startswith("select ")
         or q.startswith("with ")
     )
+
+
+def _hash_text(value: str) -> str:
+    """Return a short hash for safe logs without exposing the raw value."""
+    return hashlib.sha256((value or "").encode("utf-8")).hexdigest()[:12]
+
+
+def _safe_log_sql(event: str, sql: str, **fields) -> None:
+    """Log SQL metadata only; never print raw SQL, emails, or secrets."""
+    safe_fields = {
+        "sql_hash": _hash_text(sql),
+        "sql_length": len(sql or ""),
+        **fields,
+    }
+    logger.info("%s | %s", event, safe_fields)
+
+
+def _get_session_id(data: dict) -> str:
+    """Resolve a stable session key for follow-up question memory."""
+    raw_session = (
+        data.get("session_id")
+        or data.get("conversation_id")
+        or request.headers.get("X-Session-ID")
+        or f"{request.remote_addr}:{request.headers.get('User-Agent', '')}"
+    )
+    return hashlib.sha256(str(raw_session).encode("utf-8")).hexdigest()[:24]
+
+
+_FOLLOW_UP_RE = re.compile(
+    r"\b(same|again|previous|last|that|it|those|them|what about|compare with|for\s+\d{4}|in\s+\d{4})\b",
+    re.IGNORECASE,
+)
+_ARABIC_FOLLOW_UP_HINTS = (
+    "نفس", "زي", "السابق", "اللي فات", "الماضي", "كمان", "برضو",
+    "طب", "طيب", "ماذا عن", "قارن", "لسنة", "للسنة", "سنة", "في 20", "لـ20"
+)
+
+
+def _is_follow_up_question(question: str) -> bool:
+    q = (question or "").strip().lower()
+    if not q:
+        return False
+
+    if _FOLLOW_UP_RE.search(q):
+        return True
+
+    if _contains_arabic(question) and any(hint in q for hint in _ARABIC_FOLLOW_UP_HINTS):
+        return True
+
+    # Very short questions with a year are usually follow-ups, e.g. "2025?".
+    if len(q.split()) <= 5 and re.search(r"\b20\d{2}\b", q):
+        return True
+
+    return False
+
+
+def _hydrate_follow_up_question(session_id: str, original_question: str, question: str) -> str:
+    """Turn follow-up wording into a context-aware standalone BI request."""
+    memory = _sessions.get(session_id)
+
+    if not memory or not _is_follow_up_question(original_question):
+        return question
+
+    return f"""
+Current follow-up question: {question}
+
+Previous user question: {memory.get('original_question', '')}
+Previous resolved BI question: {memory.get('resolved_question', '')}
+Previous intent: {memory.get('intent', '')}
+Previous SQL: {memory.get('sql', '')}
+
+Resolve the current follow-up as a standalone BI question. Preserve the previous domain, metric, grouping, and filters unless the current question explicitly changes them.
+""".strip()
+
+
+def _remember_conversation(
+    session_id: str,
+    original_question: str,
+    resolved_question: str,
+    intent: str,
+    sql: str,
+    records: list[dict] | None = None,
+    chart: dict | None = None,
+) -> None:
+    """Store the last successful analytical turn for follow-up questions."""
+    if not session_id or not sql:
+        return
+
+    _sessions[session_id] = {
+        "original_question": original_question,
+        "resolved_question": resolved_question,
+        "intent": intent,
+        "sql": sql,
+        "records_sample": (records or [])[:5],
+        "chart": chart or {},
+        "saved_at": time.time(),
+    }
 
 # ======================
 # ARABIC QUESTION NORMALIZATION
@@ -663,6 +771,51 @@ def _llm(system: str, user: str, model: str, max_tokens: int = 600) -> str:
     )
 
     return response.choices[0].message.content.strip()
+
+
+_ARABIC_TRANSLATION_SYSTEM = """
+You translate Arabic business-intelligence questions into one clear English BI question.
+Return ONLY the translated English question.
+Preserve numbers, years, countries, products, SQL/business terms, and metric intent.
+Do not answer the question and do not generate SQL.
+""".strip()
+
+
+def translate_arabic_question_for_ai(original_question: str, fallback_question: str) -> str:
+    """Dedicated Arabic → English step before intent detection."""
+    if not _contains_arabic(original_question):
+        return fallback_question
+
+    prompt = f"""
+Arabic user question:
+{original_question}
+
+Fallback canonical meaning if useful:
+{fallback_question}
+""".strip()
+
+    try:
+        translated = _llm(
+            _ARABIC_TRANSLATION_SYSTEM,
+            prompt,
+            _INTENT_MODEL,
+            max_tokens=120,
+        ).strip()
+
+        if translated:
+            logger.info(
+                "Arabic question translated | %s",
+                {
+                    "original_hash": _hash_text(original_question),
+                    "translated_hash": _hash_text(translated),
+                },
+            )
+            return translated
+
+    except Exception as exc:
+        logger.warning("Arabic translation step failed; using fallback normalization: %s", exc)
+
+    return fallback_question
 
 
 def clean_label(col_name: str) -> str:
@@ -1142,6 +1295,144 @@ Raw SQL input was handled as a table preview, not as a KPI insight.
 </div>
 """
 
+
+def _json_safe_value(value):
+    """Convert pandas/numpy scalar values into JSON-safe Python values."""
+    if pd.isna(value):
+        return None
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
+def _first_existing_column(columns: list[str], candidates: list[str]) -> str | None:
+    lower_map = {str(col).lower(): col for col in columns}
+    for candidate in candidates:
+        if candidate.lower() in lower_map:
+            return lower_map[candidate.lower()]
+    return None
+
+
+def _pick_metric_column_for_chart(df: pd.DataFrame) -> str | None:
+    numeric_cols = [
+        col for col in df.columns
+        if pd.api.types.is_numeric_dtype(df[col]) and _is_measure_col(col)
+    ]
+
+    if numeric_cols:
+        return numeric_cols[0]
+
+    # Fallback for numeric-looking object columns after JSON/None conversion.
+    for col in df.columns:
+        if _is_measure_col(col):
+            coerced = pd.to_numeric(df[col], errors="coerce")
+            if coerced.notna().any():
+                return col
+
+    return None
+
+
+def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
+    """
+    Return chart-ready JSON metadata for the front-end.
+
+    The API still returns the full table in `data`; this object tells the UI
+    how to visualize the same rows as a KPI, line chart, bar chart, or table.
+    """
+    if df is None or df.empty:
+        return {
+            "available": False,
+            "type": "none",
+            "title": "No chart available",
+            "x": None,
+            "y": None,
+            "data": [],
+        }
+
+    columns = list(df.columns)
+    metric_col = _pick_metric_column_for_chart(df)
+    result_type = _detect_result_type(question, df, metric_col)
+
+    time_col = _first_existing_column(
+        columns,
+        ["year", "trade_year", "order_year", "date_year", "month", "quarter", "month_name", "quarter_name"],
+    )
+
+    label_candidates = [
+        col for col in columns
+        if col != metric_col and not _is_internal_display_col(col)
+    ]
+    label_col = next(
+        (col for col in label_candidates if not pd.api.types.is_numeric_dtype(df[col])),
+        label_candidates[0] if label_candidates else None,
+    )
+
+    if metric_col is None:
+        return {
+            "available": False,
+            "type": "table",
+            "title": "Table Result",
+            "x": None,
+            "y": None,
+            "data": [
+                {col: _json_safe_value(row[col]) for col in columns}
+                for _, row in df.head(20).iterrows()
+            ],
+        }
+
+    if result_type == "trend" and time_col:
+        x_col = time_col
+        chart_type = "line"
+        title = f"{clean_label(metric_col)} Trend"
+    elif len(df) == 1:
+        top = df.iloc[0]
+        return {
+            "available": True,
+            "type": "kpi",
+            "title": clean_label(metric_col),
+            "metric": metric_col,
+            "label": label_col,
+            "value": _json_safe_value(top[metric_col]),
+            "label_value": _json_safe_value(top[label_col]) if label_col else None,
+            "data": [{
+                "metric": metric_col,
+                "value": _json_safe_value(top[metric_col]),
+                "label": _json_safe_value(top[label_col]) if label_col else None,
+            }],
+        }
+    elif label_col:
+        x_col = label_col
+        chart_type = "bar"
+        title = f"{clean_label(metric_col)} by {clean_label(label_col)}"
+    else:
+        return {
+            "available": False,
+            "type": "table",
+            "title": "Table Result",
+            "x": None,
+            "y": None,
+            "data": [
+                {col: _json_safe_value(row[col]) for col in columns}
+                for _, row in df.head(20).iterrows()
+            ],
+        }
+
+    chart_rows = []
+    for _, row in df[[x_col, metric_col]].head(20).iterrows():
+        chart_rows.append({
+            x_col: _json_safe_value(row[x_col]),
+            metric_col: _json_safe_value(row[metric_col]),
+        })
+
+    return {
+        "available": True,
+        "type": chart_type,
+        "title": title,
+        "x": x_col,
+        "y": metric_col,
+        "data": chart_rows,
+    }
+
 # ======================
 # CHAT
 # ======================
@@ -1154,10 +1445,17 @@ def chat():
         data = request.json or {}
         original_question = data.get("message", "").strip()
         question = normalise_question_for_ai(original_question)
+        session_id = _get_session_id(data)
 
         if original_question and question != original_question:
-            print("Original question:", original_question)
-            print("Normalized question:", question)
+            logger.info(
+                "Question normalized | %s",
+                {
+                    "original_hash": _hash_text(original_question),
+                    "normalized_hash": _hash_text(question),
+                    "session_id": session_id,
+                },
+            )
 
         # Empty question check
         if not original_question:
@@ -1201,10 +1499,13 @@ def chat():
                 df = df.replace([np.nan, np.inf, -np.inf], None)
                 records = df.to_dict(orient="records")
 
+                chart = build_chart_metadata(df, original_question)
+
                 return jsonify({
                     "answer": build_sql_preview_answer(df, original_question),
                     "sql": original_question,
-                    "data": records
+                    "data": records,
+                    "chart": chart
                 })
 
             except Exception as exc:
@@ -1222,12 +1523,28 @@ def chat():
                 "data": []
             }), 500
 
+        # Dedicated Arabic translation step before intent detection
+        if _contains_arabic(original_question):
+            question = translate_arabic_question_for_ai(original_question, question)
+
+        # Resolve follow-up questions using the previous successful turn
+        question = _hydrate_follow_up_question(session_id, original_question, question)
+
         # Cache check
         cache_key = hashlib.md5(question.lower().strip().encode()).hexdigest()
 
         if cache_key in _cache:
             cached = dict(_cache[cache_key])
             cached["cached"] = True
+            _remember_conversation(
+                session_id,
+                original_question,
+                question,
+                cached.get("intent", "UNKNOWN"),
+                cached.get("sql", ""),
+                cached.get("data", []),
+                cached.get("chart", {}),
+            )
             return jsonify(cached)
 
         # ======================
@@ -1273,8 +1590,13 @@ def chat():
             )
         )
 
-        print("\nGenerated SQL:\n", generated_sql)
-        print("SQL Generation:", round(time.time() - sql_start, 2), "sec")
+        _safe_log_sql(
+            "SQL generated",
+            generated_sql,
+            intent=intent,
+            duration_sec=round(time.time() - sql_start, 2),
+            session_id=session_id,
+        )
 
         if generated_sql.upper().startswith("CANNOT_ANSWER"):
             fallback_message = (
@@ -1301,7 +1623,7 @@ def chat():
         validation = validate_sql(generated_sql)
 
         if not validation.is_valid:
-            print("Validation errors:", validation.errors)
+            logger.warning("SQL validation failed | %s", {"errors": validation.errors, "session_id": session_id})
 
             repaired = _clean_sql(
                 _llm(
@@ -1321,7 +1643,7 @@ def chat():
 
                 if re_val.is_valid:
                     generated_sql = repaired
-                    print("SQL repaired after validation failure")
+                    logger.info("SQL repaired after validation failure | %s", {"session_id": session_id})
                 else:
                     return jsonify({
                         "answer": "⚠️ Unable to generate a safe query for this question.",
@@ -1336,7 +1658,7 @@ def chat():
                 })
 
         if validation.warnings:
-            print("SQL warnings:", validation.warnings)
+            logger.info("SQL validation warnings | %s", {"warnings": validation.warnings, "session_id": session_id})
 
         # ======================
         # Stage 4: SQL Execution
@@ -1351,12 +1673,12 @@ def chat():
 
                 df = pd.read_sql(generated_sql, engine)
 
-                print("SQL Execution:", round(time.time() - query_start, 2), "sec")
+                logger.info("SQL executed | %s", {"duration_sec": round(time.time() - query_start, 2), "session_id": session_id})
                 break
 
             except Exception as exc:
                 exec_error = str(exc)
-                print(f"Execution error (attempt {attempt + 1}):", exec_error)
+                logger.warning("SQL execution failed | %s", {"attempt": attempt + 1, "error": exec_error, "session_id": session_id})
 
                 if attempt < _MAX_RETRIES:
                     repaired = _clean_sql(
@@ -1375,7 +1697,7 @@ def chat():
                     if repaired and not repaired.upper().startswith("CANNOT_REPAIR"):
                         if validate_sql(repaired).is_valid:
                             generated_sql = repaired
-                            print("SQL repaired, retrying execution")
+                            logger.info("SQL repaired, retrying execution | %s", {"session_id": session_id})
                         else:
                             break
                     else:
@@ -1393,7 +1715,8 @@ def chat():
             return jsonify({
                 "answer": "No data found",
                 "sql": generated_sql,
-                "data": []
+                "data": [],
+                "chart": build_chart_metadata(pd.DataFrame(), question)
             })
 
         # ======================
@@ -1406,6 +1729,7 @@ def chat():
         df = df.head(20)
         df = df.replace([np.nan, np.inf, -np.inf], None)
         records = df.to_dict(orient="records")
+        chart = build_chart_metadata(df, question)
 
         # ======================
         # Stage 6: Summarization
@@ -1424,20 +1748,32 @@ def chat():
 
         answer = build_ai_answer(df, summary, question)
 
-        print("TOTAL:", round(time.time() - total_start, 2), "sec")
+        logger.info("Chat request completed | %s", {"duration_sec": round(time.time() - total_start, 2), "session_id": session_id})
 
         response_payload = {
             "answer": answer,
             "sql": generated_sql,
-            "data": records
+            "data": records,
+            "chart": chart,
+            "intent": intent
         }
+
+        _remember_conversation(
+            session_id,
+            original_question,
+            question,
+            intent,
+            generated_sql,
+            records,
+            chart,
+        )
 
         _cache[cache_key] = response_payload
 
         return jsonify(response_payload)
 
     except Exception as e:
-        print(str(e))
+        logger.exception("Chat request failed")
 
         return jsonify({
             "error": str(e)
@@ -1712,8 +2048,15 @@ def send_dashboard_pdf():
             ]
         }
 
-        print("Payload:")
-        print(payload)
+        logger.info(
+            "Power Automate export requested | %s",
+            {
+                "email_hash": _hash_text(email),
+                "title_hash": _hash_text(title),
+                "report_count": len(selected_report_objects),
+                "report_ids": [report["id"] for report in selected_report_objects],
+            },
+        )
 
         response = requests.post(
             POWER_AUTOMATE_URL,
@@ -1723,7 +2066,7 @@ def send_dashboard_pdf():
             }
         )
 
-        print(response.text)
+        logger.info("Power Automate response | %s", {"status_code": response.status_code, "body_hash": _hash_text(response.text)})
 
         if response.status_code not in [200, 202]:
             return jsonify({
