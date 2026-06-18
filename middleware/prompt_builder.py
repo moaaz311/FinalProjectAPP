@@ -70,13 +70,17 @@ def build_sql_prompt(question: str, intent: str) -> str:
 2. Use TOP N only for ranking/list questions such as top/highest/lowest/most/least. Do NOT use TOP for time-series trend queries that group/order by year, month, or quarter.
 3. Never use LIMIT.
 4. Query ONLY the views listed above — never raw tables.
-5. Never SELECT * — always name every column you use.
-6. Always alias every column (e.g. SUM(trade_value_usd) AS total_trade_usd).
-7. Always alias every view (e.g. FROM vw_fact_trade_flows AS tf).
-8. Always include GROUP BY when SELECT contains non-aggregate columns.
-9. Join dimension views whenever a human-readable name is needed.
-10. Use INNER JOIN unless a LEFT JOIN is semantically required.
-11. Output starts with SELECT or WITH — nothing else before it.
+5. Use exact view names only. Do NOT prefix views with database names, schema names, or dbo.
+   Correct: FROM vw_fact_trade_flows AS tf
+   Wrong: FROM EgyptBI_DWH1.vw_fact_trade_flows AS tf
+   Wrong: FROM dbo.vw_fact_trade_flows AS tf
+6. Never SELECT * — always name every column you use.
+7. Always alias every column (e.g. SUM(trade_value_usd) AS total_trade_usd).
+8. Always alias every view (e.g. FROM vw_fact_trade_flows AS tf).
+9. Always include GROUP BY when SELECT contains non-aggregate columns.
+10. Join dimension views whenever a human-readable name is needed.
+11. Use INNER JOIN unless a LEFT JOIN is semantically required.
+12. Output starts with SELECT or WITH — nothing else before it.
 
 === REFUSAL RULE ===
 If the question asks about data, columns, or views NOT listed in the schema above,
@@ -173,7 +177,8 @@ Fix the SQL so it:
 2. Uses only the views and columns listed in the schema above.
 3. Answers the original question: "{question}".
 4. Follows all T-SQL rules: use TOP only for ranking/list queries, never LIMIT, no SELECT *, proper GROUP BY.
-5. Uses flow_type code 'X' for exports and 'M' for imports when trade flow direction is needed.
+5. Uses exact view names only; do not prefix views with database names, schema names, or dbo.
+6. Uses flow_type code 'X' for exports and 'M' for imports when trade flow direction is needed.
 
 === REPAIRED SQL ===
 """.strip()
