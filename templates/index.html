@@ -17,7 +17,82 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+<div id="demoModal" class="demo-modal">
 
+    <div class="demo-modal-content">
+
+        <button class="close-modal"
+                onclick="closeDemoModal()">
+            &times;
+        </button>
+
+        <h2>Demo Account Credentials</h2>
+
+        <p class="modal-subtitle">
+            Use the following account to access all dashboards and reports.
+        </p>
+
+        <!-- Email -->
+
+        <div class="credential-box">
+
+            <label>Email</label>
+
+            <div class="credential-row">
+
+                <span id="demoEmail">
+                    Demo112004@outlook.com
+                </span>
+
+                <button class="copy-btn"
+                        onclick="copyText('demoEmail', this)">
+
+                    <svg viewBox="0 0 24 24" class="copy-icon">
+                        <path fill="currentColor"
+                        d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z"/>
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Password -->
+
+        <div class="credential-box">
+
+            <label>Password</label>
+
+            <div class="credential-row">
+
+                <span id="demoPassword">
+                    Demo@112004#
+                </span>
+
+                <button class="copy-btn"
+                        onclick="copyText('demoPassword', this)">
+
+                    <svg viewBox="0 0 24 24" class="copy-icon">
+                        <path fill="currentColor"
+                        d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z"/>
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Toast -->
+
+<div id="copyToast" class="copy-toast">
+    ✓ Copied Successfully
+</div>
 <body class="app-locked">
 
 <!-- WELCOME / FAKE LOADING SCREEN -->
@@ -104,6 +179,10 @@
     </nav>
 
     <div class="headerActions">
+        <button class="actionBtn" onclick="openDemoModal()" type="button">
+            <span class="actionIcon svgIcon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="rgb(170, 20, 67)" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+</span> Account credentials
+        </button>
         <button class="actionBtn" onclick="toggleEmail()" type="button">
             <span class="actionIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm8 7.1L4.4 7.2 4 7.9v.5l8 5.1 8-5.1v-.5l-.4-.7L12 12.1Z"/></svg></span> Share Reports via Email
         </button>
@@ -112,7 +191,132 @@
         </button>
     </div>
 </header>
+<div id="demoAlert" class="demo-alert">
 
+    <div class="demo-alert-icon">
+        <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+    </div>
+
+    <div class="demo-alert-content">
+        <h4>Demo Access Required</h4>
+
+        <p>
+            Use the Demo Account credentials to access
+            Power BI dashboards and paginated reports.
+        </p>
+    </div>
+
+    <button class="demo-alert-btn"
+            onclick="openDemoModal()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;" aria-hidden="true">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+        </svg>
+        View Demo Account
+    </button>
+
+    <button class="demo-alert-close"
+            onclick="closeDemoAlert()"
+            aria-label="Close Alert">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+
+</div>
+<script>
+let demoAlertTimeout = null;
+
+function startDemoAlertTimeout(){
+    if (demoAlertTimeout) {
+        clearTimeout(demoAlertTimeout);
+    }
+    demoAlertTimeout = setTimeout(() => {
+        closeDemoAlert();
+    }, 10000);
+}
+
+function openDemoModal(){
+
+    document.getElementById("demoModal")
+            .style.display = "flex";
+}
+
+function closeDemoModal(){
+
+    document.getElementById("demoModal")
+            .style.display = "none";
+}
+
+function closeDemoAlert(){
+    if (demoAlertTimeout) {
+        clearTimeout(demoAlertTimeout);
+        demoAlertTimeout = null;
+    }
+
+    const alert =
+    document.getElementById("demoAlert");
+
+    if (alert) {
+        alert.style.opacity = "0";
+
+        setTimeout(() => {
+
+            alert.style.display = "none";
+
+        },300);
+    }
+}
+
+function showToast(){
+
+    const toast =
+    document.getElementById("copyToast");
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    },2000);
+}
+
+function copyText(elementId, button){
+
+    const text =
+    document.getElementById(elementId)
+    .innerText;
+
+    navigator.clipboard.writeText(text)
+    .then(() => {
+
+        button.innerHTML = "✓";
+
+        button.classList.add("copied");
+
+        showToast();
+
+        setTimeout(() => {
+
+            button.innerHTML = `
+            <svg viewBox="0 0 24 24" class="copy-icon">
+                <path fill="currentColor"
+                d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z"/>
+            </svg>
+            `;
+
+            button.classList.remove("copied");
+
+        },1500);
+
+    });
+}
+</script>
 <!-- REPORT SIDE MENU -->
 <aside id="reportSidebar" class="reportSidebar" aria-label="Reports side navigation">
     <div class="sidebarTop">
@@ -404,6 +608,17 @@
             </div>
         </div>
         <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
+    </div>
+
+    <!-- Screen Summarizer Widget -->
+    <div class="chat-summarizer-panel">
+        <button id="captureScreenBtn" onclick="captureAndSummarizeScreen()" class="summarizer-btn" type="button">
+            <svg viewBox="0 0 24 24" class="summarizer-icon" aria-hidden="true">
+                <path d="M23 19V5c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zM3 5h18v14H3V5zm10 5l-2.5 3L8 10l-5 6h18l-5-6z"/>
+            </svg>
+            <span>Analyze Live Dashboard Screen</span>
+            <span class="summarizer-spinner d-none" id="summarizerSpinner"></span>
+        </button>
     </div>
 
     <div id="messages" class="chatMessages">
@@ -799,6 +1014,12 @@ function initWelcomeScreen(){
         screen.classList.add("hide");
         document.body.classList.remove("app-locked");
         document.body.classList.add("app-entered");
+        
+        // Start demo alert timeout after entering the dashboard
+        if (typeof startDemoAlertTimeout === "function") {
+            startDemoAlertTimeout();
+        }
+
         window.setTimeout(function(){
             if(screen && screen.parentNode){ screen.parentNode.removeChild(screen); }
         }, 720);
@@ -1554,6 +1775,83 @@ function buildAiKpiChart(chart){
         <div class="ai-kpi-label">${escapeHtml(label || y || "Result")}</div>
     </div>
 </div>`;
+}
+
+async function captureAndSummarizeScreen(){
+    if(chatBusy){ return; }
+
+    const btn = document.getElementById("captureScreenBtn");
+    const spinner = document.getElementById("summarizerSpinner");
+
+    if(!btn){ return; }
+
+    chatBusy = true;
+    document.body.classList.add("chat-busy");
+    btn.disabled = true;
+    if(spinner){ spinner.classList.remove("d-none"); }
+
+    const loadingId = "loading-capture-" + Date.now();
+
+    try{
+        // 1. Temporarily hide the AI assistant so it doesn't obstruct the dashboard
+        closeChat();
+        
+        // 2. Add visual messages (they will be visible when the chat re-opens)
+        addMessage("📷 Analyzing Live Dashboard View...", "user");
+        addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Processing dashboard screenshot...</div>", "bot");
+
+        // Create a global notification since the drawer is closed
+        const globalLoader = document.createElement("div");
+        globalLoader.id = "globalVisionLoader";
+        globalLoader.innerHTML = `<div style="position:fixed; top:32px; left:50%; transform:translateX(-50%); background:var(--blue-900, #082142); color:#fff; padding:14px 28px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:99999; display:flex; align-items:center; gap:14px; font-weight:600; font-size: 15px; font-family:system-ui, sans-serif; animation: fadeInDown 0.3s ease;"><span class="summarizer-spinner" style="border-color:#fff; border-top-color:transparent; width:18px; height:18px; border-width: 3px;"></span> AI is analyzing your dashboard... Please wait.</div>`;
+        document.body.appendChild(globalLoader);
+
+        // 3. Wait for the chat drawer's CSS transition to finish so the screen is clear
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        // 4. POST to backend. The backend will grab the physical desktop screenshot.
+        const response = await fetch("/summarize-vision", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({capture_desktop: true})
+        });
+
+        const data = await response.json();
+        
+        // 5. Re-open the chat drawer to show the results
+        openChat();
+        
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl && loadingEl.closest(".bot-message")){
+            loadingEl.closest(".bot-message").remove();
+        }
+
+        if(data.error){
+            addMessage("⚠️ " + data.error, "bot");
+        } else {
+            addMessage(data.answer, "bot");
+        }
+    }
+    catch(error){
+        console.error(error);
+        openChat();
+        
+        const loadingEl = document.getElementById(loadingId);
+        if(loadingEl && loadingEl.closest(".bot-message")){
+            loadingEl.closest(".bot-message").remove();
+        }
+        
+        addMessage("⚠️ Error: " + (error.message || "Connection error while analyzing screenshot."), "bot");
+    }
+    finally {
+        chatBusy = false;
+        document.body.classList.remove("chat-busy");
+        btn.disabled = false;
+        if(spinner){ spinner.classList.add("d-none"); }
+        
+        const gl = document.getElementById("globalVisionLoader");
+        if(gl){ gl.remove(); }
+    }
 }
 
 async function sendMessage(){

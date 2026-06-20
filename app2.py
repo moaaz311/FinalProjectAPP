@@ -2085,6 +2085,103 @@ def send_dashboard_pdf():
         }), 500
 
 # ======================
+# SUMMARIZE VISION
+# ======================
+
+@app.route("/summarize-vision", methods=["POST"])
+def summarize_vision():
+    try:
+        data = request.json or {}
+        image_data = data.get("image", "").strip()
+        capture_desktop = data.get("capture_desktop", False)
+        
+        base64_str = ""
+
+        if capture_desktop or not image_data:
+            # Capture the physical screen using Pillow (works perfectly locally)
+            from PIL import ImageGrab
+            import base64
+            from io import BytesIO
+            
+            # Grab screen
+            screenshot = ImageGrab.grab()
+            
+            # Convert to RGB if needed
+            if screenshot.mode != 'RGB':
+                screenshot = screenshot.convert('RGB')
+                
+            # Save to buffer
+            buffer = BytesIO()
+            screenshot.save(buffer, format="PNG")
+            base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        else:
+            # Extract base64 part if it contains the header (e.g. data:image/png;base64,...)
+            if "," in image_data:
+                header, base64_str = image_data.split(",", 1)
+            else:
+                base64_str = image_data
+
+            # Verify it is valid base64
+            import base64
+            base64.b64decode(base64_str)
+
+        # Construct the OpenRouter payload using the OpenAI Client
+        if client is None:
+            return jsonify({"error": "OpenRouter client is not available. Please check your API key."}), 500
+
+        system_prompt = (
+            "You are Egypt EconLens' senior business intelligence AI analyst. "
+            "You are analyzing a live screenshot of a Power BI dashboard. "
+            "The user has no background in this topic, so your explanation must be highly summarized, friendly, and easy to understand. "
+            "First, identify the dashboard's main topic. Then, explain the dashboard in simple terms: "
+            "highlight the main points, the most critical numbers, and exactly what the user should focus on. "
+            "Mention any active filters or parameters if visible. "
+            "Return your response formatted in clean, standard HTML (using <ul>, <li>, <p>, <strong>, and <h3> tags). "
+            "CRITICAL: Do NOT use any inline CSS styles for colors (e.g. no style='color:...'), so the text adapts to the app's dark/light theme. "
+            "Do not use markdown and do not include ```html blocks."
+        )
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Here is the screenshot of my dashboard. Please explain the dashboard, highlight the main points and numbers, and tell me what to focus on."},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{base64_str}"
+                        }
+                    }
+                ]
+            }
+        ]
+
+        # Use openai/gpt-4o-mini as our default vision model
+        vision_model = "openai/gpt-4o-mini"
+
+        response = client.chat.completions.create(
+            model=vision_model,
+            temperature=0.2,
+            max_tokens=1000,
+            messages=messages,
+            extra_headers={
+                "HTTP-Referer": HTTP_REFERER,
+                "X-Title": X_TITLE,
+            },
+        )
+
+        summary = response.choices[0].message.content.strip()
+
+        return jsonify({
+            "answer": summary
+        })
+
+    except Exception as e:
+        logger.error("Vision summarization failed: %s", e)
+        return jsonify({"error": f"An error occurred during vision analysis: {str(e)}"}), 500
+
+# ======================
 # RUN
 # ======================
 
