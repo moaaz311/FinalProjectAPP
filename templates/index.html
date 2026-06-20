@@ -610,14 +610,13 @@ function copyText(elementId, button){
         <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
     </div>
 
-    <!-- Screen Summarizer Widget -->
     <div class="chat-summarizer-panel">
-        <button id="captureScreenBtn" onclick="captureAndSummarizeScreen()" class="summarizer-btn" type="button">
-            <svg viewBox="0 0 24 24" class="summarizer-icon" aria-hidden="true">
-                <path d="M23 19V5c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zM3 5h18v14H3V5zm10 5l-2.5 3L8 10l-5 6h18l-5-6z"/>
+        <button id="emailSummaryBtn" onclick="openEmailSummaryModal()" class="summarizer-btn" type="button" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+            <svg viewBox="0 0 24 24" class="summarizer-icon" aria-hidden="true" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
             </svg>
-            <span>Analyze Live Dashboard Screen</span>
-            <span class="summarizer-spinner d-none" id="summarizerSpinner"></span>
+            <span>Email Chat Summary</span>
+            <span class="summarizer-spinner d-none" id="emailSummarySpinner"></span>
         </button>
     </div>
 
@@ -1327,7 +1326,7 @@ function askQuickQuestion(question){
 
 /* MODALS */
 function closeUtilityModals(exceptId){
-    ["emailModal", "updatesModal"].forEach(function(id){
+    ["emailModal", "updatesModal", "emailSummaryModal"].forEach(function(id){
         if(id !== exceptId){
             const el = document.getElementById(id);
             if(el){ el.classList.remove("open"); }
@@ -1777,113 +1776,6 @@ function buildAiKpiChart(chart){
 </div>`;
 }
 
-async function captureAndSummarizeScreen(){
-    if(chatBusy){ return; }
-
-    const btn = document.getElementById("captureScreenBtn");
-    const spinner = document.getElementById("summarizerSpinner");
-
-    if(!btn){ return; }
-
-    chatBusy = true;
-    document.body.classList.add("chat-busy");
-    btn.disabled = true;
-    if(spinner){ spinner.classList.remove("d-none"); }
-
-    const loadingId = "loading-capture-" + Date.now();
-
-    try{
-        // 1. Prompt user to capture screen (must happen immediately on click for browser security)
-        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
-        
-        // 2. Temporarily hide the AI assistant 
-        closeChat();
-
-        // Add visual messages (they will be visible when the chat re-opens)
-        addMessage("📷 Analyzing Live Dashboard View...", "user");
-        addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Processing dashboard screenshot...</div>", "bot");
-
-        // Create a global notification since the drawer is closed
-        const globalLoader = document.createElement("div");
-        globalLoader.id = "globalVisionLoader";
-        globalLoader.innerHTML = `<div style="position:fixed; top:32px; left:50%; transform:translateX(-50%); background:var(--blue-900, #082142); color:#fff; padding:14px 28px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:99999; display:flex; align-items:center; gap:14px; font-weight:600; font-size: 15px; font-family:system-ui, sans-serif; animation: fadeInDown 0.3s ease;"><span class="summarizer-spinner" style="border-color:#fff; border-top-color:transparent; width:18px; height:18px; border-width: 3px;"></span> AI is analyzing your dashboard... Please wait.</div>`;
-        document.body.appendChild(globalLoader);
-
-        // 3. Extract the image from the stream
-        const video = document.createElement("video");
-        video.srcObject = stream;
-        await new Promise((resolve) => {
-            video.onloadedmetadata = () => {
-                video.play();
-                resolve();
-            };
-        });
-
-        // Wait a tiny bit for the video to stabilize
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Stop the stream so the browser "sharing" indicator disappears
-        stream.getTracks().forEach(track => track.stop());
-
-        const base64Image = canvas.toDataURL("image/png");
-
-        // 4. POST the base64 image to the backend. capture_desktop: false tells the backend to use the provided image.
-        const response = await fetch("/summarize-vision", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ 
-                capture_desktop: false,
-                image: base64Image
-            })
-        });
-
-        const data = await response.json();
-        
-        // 5. Re-open the chat drawer to show the results
-        openChat();
-        
-        const loadingEl = document.getElementById(loadingId);
-        if(loadingEl && loadingEl.closest(".bot-message")){
-            loadingEl.closest(".bot-message").remove();
-        }
-
-        if(data.error){
-            addMessage("⚠️ " + data.error, "bot");
-        } else {
-            addMessage(data.answer, "bot");
-        }
-    }
-    catch(error){
-        console.error(error);
-        openChat();
-        
-        const loadingEl = document.getElementById(loadingId);
-        if(loadingEl && loadingEl.closest(".bot-message")){
-            loadingEl.closest(".bot-message").remove();
-        }
-        
-        if (error.name === "NotAllowedError" || error.message.includes("Permission denied")) {
-            addMessage("⚠️ Screen capture was cancelled or denied.", "bot");
-        } else {
-            addMessage("⚠️ Error: " + (error.message || "Connection error while analyzing screenshot."), "bot");
-        }
-    }
-    finally {
-        chatBusy = false;
-        document.body.classList.remove("chat-busy");
-        btn.disabled = false;
-        if(spinner){ spinner.classList.add("d-none"); }
-        
-        const gl = document.getElementById("globalVisionLoader");
-        if(gl){ gl.remove(); }
-    }
-}
 
 async function sendMessage(){
     if(chatBusy){ return; }
@@ -2367,7 +2259,94 @@ document.addEventListener("keydown", function(e){
         closeUtilityModals();
     }
 });
+function openEmailSummaryModal(){
+    closeUtilityModals("emailSummaryModal");
+    const e = document.getElementById("emailSummaryModal");
+    if(e) e.classList.add("open");
+}
+
+function closeEmailSummaryModal(){
+    const e = document.getElementById("emailSummaryModal");
+    if(e) e.classList.remove("open");
+}
+
+async function sendChatSummary(){
+    const emailInput = document.getElementById("emailSummaryInput");
+    if(!emailInput) return;
+    const email = emailInput.value.trim();
+    if(!email){
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    const btn = document.getElementById("emailSummarySubmitBtn");
+    const spinner = document.getElementById("emailSummarySpinner");
+    const modalSpinner = document.getElementById("emailSummaryModalSpinner");
+    
+    if(btn) btn.disabled = true;
+    if(spinner) spinner.classList.remove("d-none");
+    if(modalSpinner) modalSpinner.classList.remove("d-none");
+
+    // Gather chat history from DOM
+    const history = [];
+    document.querySelectorAll("#messages .bot-message, #messages .user-message").forEach(function(el){
+        const isUser = el.classList.contains("user-message");
+        const text = el.innerText.replace(/📷 Analyzing Live Dashboard View.../g, "").replace(/⚠️ Screen capture was cancelled or denied./g, "").trim();
+        if(text && text.length > 5 && !text.includes("Typing...")){
+            history.push({ role: isUser ? "user" : "assistant", content: text });
+        }
+    });
+
+    if (history.length === 0) {
+        alert("You don't have any chat history to summarize yet! Please ask the AI a question first.");
+        if(btn) btn.disabled = false;
+        if(spinner) spinner.classList.add("d-none");
+        if(modalSpinner) modalSpinner.classList.add("d-none");
+        return;
+    }
+
+    try {
+        const response = await fetch("/email-chat-summary", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ email: email, history: history })
+        });
+        const data = await response.json();
+        
+        if(!response.ok || data.error){
+            alert(data.error || "Failed to send email summary.");
+        } else {
+            alert(data.message || "Summary sent successfully to your email!");
+            closeEmailSummaryModal();
+        }
+    } catch(err) {
+        console.error(err);
+        alert("Connection error while sending summary.");
+    } finally {
+        if(btn) btn.disabled = false;
+        if(spinner) spinner.classList.add("d-none");
+        if(modalSpinner) modalSpinner.classList.add("d-none");
+    }
+}
 </script>
+
+<div id="emailSummaryModal" class="utilityModal" style="z-index: 1000000;">
+    <div class="utilityModalHeader">
+        <div class="utilityModalTitle">Email Chat Summary</div>
+        <button onclick="closeEmailSummaryModal()" type="button" style="background: transparent; border: none; font-size: 24px; color: var(--gray-400); cursor: pointer; padding: 0; line-height: 1;">×</button>
+    </div>
+    <div class="utilityModalBody">
+        <p style="font-size: 13px; color: var(--gray-400); margin-bottom: 12px;">We'll use AI to summarize this entire conversation and send it as a professional executive brief directly to your inbox.</p>
+        <div class="mb-3">
+            <label for="emailSummaryInput" class="form-label" style="font-size: 12px; color: var(--gray-300);">Work Email</label>
+            <input type="email" id="emailSummaryInput" class="form-control" placeholder="you@company.com">
+        </div>
+        <button id="emailSummarySubmitBtn" onclick="sendChatSummary()" class="btn btn-primary w-100 d-flex align-items-center justify-content-center" style="gap: 8px;">
+            <span>Send Summary via Power Automate</span>
+            <span class="spinner-border spinner-border-sm d-none" id="emailSummaryModalSpinner" role="status" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>
 
 </body>
 </html>

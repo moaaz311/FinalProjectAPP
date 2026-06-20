@@ -2085,85 +2085,57 @@ def send_dashboard_pdf():
         }), 500
 
 # ======================
-# SUMMARIZE VISION
+# EMAIL CHAT SUMMARY
 # ======================
 
-@app.route("/summarize-vision", methods=["POST"])
-def summarize_vision():
+@app.route("/email-chat-summary", methods=["POST"])
+def email_chat_summary():
     try:
         data = request.json or {}
-        image_data = data.get("image", "").strip()
-        capture_desktop = data.get("capture_desktop", False)
-        
-        base64_str = ""
+        email = data.get("email", "").strip()
+        history = data.get("history", [])
 
-        if capture_desktop or not image_data:
-            # Capture the physical screen using Pillow (works perfectly locally)
-            from PIL import ImageGrab
-            import base64
-            from io import BytesIO
-            
-            # Grab screen
-            screenshot = ImageGrab.grab()
-            
-            # Convert to RGB if needed
-            if screenshot.mode != 'RGB':
-                screenshot = screenshot.convert('RGB')
-                
-            # Save to buffer
-            buffer = BytesIO()
-            screenshot.save(buffer, format="PNG")
-            base64_str = base64.b64encode(buffer.getvalue()).decode("utf-8")
-        else:
-            # Extract base64 part if it contains the header (e.g. data:image/png;base64,...)
-            if "," in image_data:
-                header, base64_str = image_data.split(",", 1)
-            else:
-                base64_str = image_data
+        if not email or not history:
+            return jsonify({"error": "Email or chat history missing"}), 400
 
-            # Verify it is valid base64
-            import base64
-            base64.b64decode(base64_str)
+        flow_url = os.environ.get("EMAIL_SUMMARY_FLOW_URL", "").strip()
+        if not flow_url:
+            return jsonify({"error": "EMAIL_SUMMARY_FLOW_URL is not configured in .env"}), 500
 
-        # Construct the OpenRouter payload using the OpenAI Client
         if client is None:
-            return jsonify({"error": "OpenRouter client is not available. Please check your API key."}), 500
+            return jsonify({"error": "OpenRouter client is not available."}), 500
 
+        # Build prompt
         system_prompt = (
-            "You are Egypt EconLens' senior business intelligence AI analyst. "
-            "You are analyzing a live screenshot of a Power BI dashboard. "
-            "The user has no background in this topic, so your explanation must be highly summarized, friendly, and easy to understand. "
-            "First, identify the dashboard's main topic. Then, explain the dashboard in simple terms: "
-            "highlight the main points, the most critical numbers, and exactly what the user should focus on. "
-            "Mention any active filters or parameters if visible. "
-            "Return your response formatted in clean, standard HTML (using <ul>, <li>, <p>, <strong>, and <h3> tags). "
-            "CRITICAL: Do NOT use any inline CSS styles for colors (e.g. no style='color:...'), so the text adapts to the app's dark/light theme. "
-            "Do not use markdown and do not include ```html blocks."
+            "You are an executive assistant for Egypt EconLens. "
+            "Reconstruct the following data analytics conversation into a professional Q&A executive brief. "
+            "List every main question the user asked, and immediately below it, provide a concise, well-structured version of the AI's answer. "
+            "CRITICAL RULES: "
+            "1. Format the ENTIRE output in clean, standard HTML. NEVER use Markdown (no **, no ##, no | | tables). "
+            "2. If the answer contains tabular data, you MUST use standard HTML <table>, <tr>, <th>, and <td> tags with inline CSS for styling (e.g., <table style='width:100%; border-collapse:collapse; margin-bottom:15px;' border='1'>). "
+            "3. If the answer contains numerical trends, you MUST also generate an embedded image chart using the QuickChart API. "
+            "   Example Chart: <img src=\"https://quickchart.io/chart?bkg=white&c={type:'bar',data:{labels:['2019','2020'],datasets:[{label:'Value',data:[10,20]}]}}\" style=\"max-width:100%; margin: 15px 0;\"> "
+            "4. Use <h4 style='color: #b71c1c; margin-bottom: 8px; font-size: 16px; border-bottom: 1px solid #ffcdd2; padding-bottom: 4px;'>Q: {Question}</h4> "
+            "5. Use <div style='margin-top: 0; margin-bottom: 24px; color: #333;'>A: {Answer}</div> for the answers. "
         )
+
+        # Convert history into a single text block for the prompt
+        convo_text = ""
+        for msg in history:
+            role = "User" if msg.get("role") == "user" else "Assistant"
+            convo_text += f"{role}: {msg.get('content')}\n\n"
 
         messages = [
             {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Here is the screenshot of my dashboard. Please explain the dashboard, highlight the main points and numbers, and tell me what to focus on."},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{base64_str}"
-                        }
-                    }
-                ]
-            }
+            {"role": "user", "content": f"Please format this conversation as a Q&A report:\n\n{convo_text}"}
         ]
 
-        # Use openai/gpt-4o-mini as our default vision model
-        vision_model = "openai/gpt-4o-mini"
+        summary_model = os.environ.get("SUMMARY_MODEL", "openai/gpt-4o-mini")
 
         response = client.chat.completions.create(
-            model=vision_model,
-            temperature=0.2,
-            max_tokens=1000,
+            model=summary_model,
+            temperature=0.3,
+            max_tokens=4000,
             messages=messages,
             extra_headers={
                 "HTTP-Referer": HTTP_REFERER,
@@ -2171,15 +2143,66 @@ def summarize_vision():
             },
         )
 
-        summary = response.choices[0].message.content.strip()
+        summary_html = response.choices[0].message.content.strip()
+        
+        # Clean up markdown if AI includes it
+        if summary_html.startswith("```html"):
+            summary_html = summary_html[7:]
+        if summary_html.endswith("```"):
+            summary_html = summary_html[:-3]
 
-        return jsonify({
-            "answer": summary
-        })
+        # Wrap in red and white theme email template
+        styled_html = f"""
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+            <div style="background-color: #d32f2f; padding: 20px 24px; display: flex; align-items: center; border-bottom: 4px solid #b71c1c;">
+                <span style="font-size: 24px; margin-right: 12px; color: white;">📊</span>
+                <h2 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: 600;">Chat Summary</h2>
+            </div>
+            <div style="padding: 32px 24px; color: #333333; line-height: 1.6; font-size: 15px;">
+                <p style="margin-top: 0;">Hello Team,</p>
+                <p>An AI-generated executive summary of the recent data analytics conversation is ready for your review.</p>
+                
+                <div style="background-color: #ffffff; padding: 10px 0; margin: 28px 0;">
+                    {summary_html}
+                </div>
+
+                <p>The latest version is now available through the Egypt BI Portal.</p>
+                
+                <div style="margin: 32px 0;">
+                    <a href="https://finalprojectapp-ai-grggdybadqfugya3.austriaeast-01.azurewebsites.net" style="background-color: #d32f2f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Open Application</a>
+                </div>
+
+                <p>Please open the application to access the latest version and updated insights.</p>
+                
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee;">
+                    <p style="margin: 0; color: #666666; font-size: 14px;">Regards,</p>
+                    <p style="margin: 4px 0 0 0; font-weight: bold; color: #333333; font-size: 14px;">ITI BI Team</p>
+                </div>
+            </div>
+        </div>
+        """
+
+        # Call Power Automate Flow
+        payload = {
+            "email": email,
+            "title": "Egypt EconLens - Chat Summary",
+            "summaryHtml": styled_html
+        }
+
+        pa_response = requests.post(flow_url, json=payload, timeout=30)
+        
+        if pa_response.status_code not in [200, 202]:
+            return jsonify({
+                "error": "Failed to trigger Power Automate flow",
+                "details": pa_response.text
+            }), pa_response.status_code
+
+        return jsonify({"message": "Summary successfully sent to your email!"})
 
     except Exception as e:
-        logger.error("Vision summarization failed: %s", e)
-        return jsonify({"error": f"An error occurred during vision analysis: {str(e)}"}), 500
+        logger.error("Email summary failed: %s", e)
+        return jsonify({"error": str(e)}), 500
+
 
 # ======================
 # RUN
