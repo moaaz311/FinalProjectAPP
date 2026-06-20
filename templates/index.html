@@ -1793,10 +1793,13 @@ async function captureAndSummarizeScreen(){
     const loadingId = "loading-capture-" + Date.now();
 
     try{
-        // 1. Temporarily hide the AI assistant so it doesn't obstruct the dashboard
-        closeChat();
+        // 1. Prompt user to capture screen (must happen immediately on click for browser security)
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
         
-        // 2. Add visual messages (they will be visible when the chat re-opens)
+        // 2. Temporarily hide the AI assistant 
+        closeChat();
+
+        // Add visual messages (they will be visible when the chat re-opens)
         addMessage("📷 Analyzing Live Dashboard View...", "user");
         addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Processing dashboard screenshot...</div>", "bot");
 
@@ -1806,14 +1809,38 @@ async function captureAndSummarizeScreen(){
         globalLoader.innerHTML = `<div style="position:fixed; top:32px; left:50%; transform:translateX(-50%); background:var(--blue-900, #082142); color:#fff; padding:14px 28px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:99999; display:flex; align-items:center; gap:14px; font-weight:600; font-size: 15px; font-family:system-ui, sans-serif; animation: fadeInDown 0.3s ease;"><span class="summarizer-spinner" style="border-color:#fff; border-top-color:transparent; width:18px; height:18px; border-width: 3px;"></span> AI is analyzing your dashboard... Please wait.</div>`;
         document.body.appendChild(globalLoader);
 
-        // 3. Wait for the chat drawer's CSS transition to finish so the screen is clear
-        await new Promise(resolve => setTimeout(resolve, 600));
+        // 3. Extract the image from the stream
+        const video = document.createElement("video");
+        video.srcObject = stream;
+        await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                video.play();
+                resolve();
+            };
+        });
 
-        // 4. POST to backend. The backend will grab the physical desktop screenshot.
+        // Wait a tiny bit for the video to stabilize
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Stop the stream so the browser "sharing" indicator disappears
+        stream.getTracks().forEach(track => track.stop());
+
+        const base64Image = canvas.toDataURL("image/png");
+
+        // 4. POST the base64 image to the backend. capture_desktop: false tells the backend to use the provided image.
         const response = await fetch("/summarize-vision", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({capture_desktop: true})
+            body: JSON.stringify({ 
+                capture_desktop: false,
+                image: base64Image
+            })
         });
 
         const data = await response.json();
@@ -1841,7 +1868,11 @@ async function captureAndSummarizeScreen(){
             loadingEl.closest(".bot-message").remove();
         }
         
-        addMessage("⚠️ Error: " + (error.message || "Connection error while analyzing screenshot."), "bot");
+        if (error.name === "NotAllowedError" || error.message.includes("Permission denied")) {
+            addMessage("⚠️ Screen capture was cancelled or denied.", "bot");
+        } else {
+            addMessage("⚠️ Error: " + (error.message || "Connection error while analyzing screenshot."), "bot");
+        }
     }
     finally {
         chatBusy = false;
