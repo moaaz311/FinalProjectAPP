@@ -205,7 +205,7 @@
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                     </svg></span> About Us
             </a>
-            <a class="actionBtn" href="/guide" target="_blank"
+            <a class="actionBtn" href="/guide"
                 style="text-decoration: none; position: relative; overflow: hidden; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.8); color: #0f172a; font-weight: 700; border-radius: 999px; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; padding: 8px 16px;">
                 <span class="actionIcon svgIcon" aria-hidden="true" style="color: #0ea5e9; margin-right: 6px;"><svg
                         viewBox="0 0 24 24">
@@ -235,7 +235,7 @@
             </p>
         </div>
 
-        <button class="demo-alert-btn" onclick="window.open('/guide', '_blank')">
+        <button class="demo-alert-btn" onclick="window.location.href='/guide'">
             <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right: 6px;" aria-hidden="true">
                 <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
             </svg>
@@ -1234,6 +1234,16 @@
                 return;
             }
 
+            if (sessionStorage.getItem("app_entered") === "true") {
+                document.body.classList.remove("app-locked");
+                document.body.classList.add("app-entered");
+                if (screen && screen.parentNode) { screen.parentNode.removeChild(screen); }
+                if (typeof startDemoAlertTimeout === "function") {
+                    startDemoAlertTimeout();
+                }
+                return;
+            }
+
             function markReady() {
                 document.body.classList.add("welcome-ready");
                 btn.disabled = false;
@@ -1241,6 +1251,7 @@
             }
 
             function enterApp() {
+                sessionStorage.setItem("app_entered", "true");
                 screen.classList.add("hide");
                 document.body.classList.remove("app-locked");
                 document.body.classList.add("app-entered");

@@ -37,7 +37,7 @@
     <div class="container">
         <!-- Navigation -->
         <nav class="nav-bar">
-            <a href="/" class="btn-back">
+            <a href="/" class="btn-back" onclick="if(window.opener && !window.opener.closed) { window.close(); return false; }">
                 <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
             </a>
             <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">
