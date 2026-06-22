@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Our Team - ITI Business Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem("sse-theme") || "dark";
+                document.documentElement.setAttribute("data-theme", savedTheme);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav-bar">
+            <a href="/" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">Dark Mode</span>
+            </button>
+        </nav>
+
+        <!-- Header Banner -->
+        <div class="header-section">
+            <h1 class="title">Meet Our Team </h1>
+        </div>
+
+        <!-- Team Members Section (Circular Layout) -->
+        <div class="team-circle-layout">
+
+            <div class="circle-center">
+                <i class="fa-solid fa-users" style="font-size: 3rem; color: var(--primary-color);"></i>
+                <div class="center-text">Core Team</div>
+            </div>
+
+            <div class="center-line line-1"></div>
+            <div class="center-line line-2"></div>
+            <div class="center-line line-3"></div>
+            <div class="center-line line-4"></div>
+            <div class="center-line line-5"></div>
+
+            <!-- Ayman Abd Elsalam -->
+            <div class="circle-node node-1">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=Ayman+Abd+Elsalam&background=0f172a&color=fff&size=200&bold=true"
+                            alt="Ayman Abd Elsalam" class="profile-img">
+                    </div>
+                    <h3 class="member-name">Ayman Abd Elsalam</h3>
+                    <p class="member-role">Data Engineer & DWH Specialist</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Collecting and preparing data from multiple sources</li>
+                            <li>Designing and building the Enterprise Data Warehouse (DWH)</li>
+                            <li>Developing ETL pipelines using SQL Server Integration Services (SSIS)</li>
+                            <li>Optimizing data processing workflows</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shaimaa Hesham -->
+            <div class="circle-node node-2">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=Shaimaa+Hesham&background=0f172a&color=fff&size=200&bold=true"
+                            alt="Shaimaa Hesham" class="profile-img">
+                    </div>
+                    <h3 class="member-name">Shaimaa Hesham</h3>
+                    <p class="member-role">BI & AI Solutions Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Developing Paginated Reports using Power BI Report Builder</li>
+                            <li>Building and integrating AI Assistant capabilities</li>
+                            <li>Supporting advanced reporting solutions</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mahmoud Reda -->
+            <div class="circle-node node-3">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=Mahmoud+Reda&background=0f172a&color=fff&size=200&bold=true"
+                            alt="Mahmoud Reda" class="profile-img">
+                    </div>
+                    <h3 class="member-name">Mahmoud Reda</h3>
+                    <p class="member-role">Power BI Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Designing interactive Power BI dashboards</li>
+                            <li>Creating KPIs and analytical insights</li>
+                            <li>Building business intelligence visualizations</li>
+                            <li>Developing executive-level reporting solutions</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eman Salah -->
+            <div class="circle-node node-4">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=Eman+Salah&background=0f172a&color=fff&size=200&bold=true"
+                            alt="Eman Salah" class="profile-img">
+                    </div>
+                    <h3 class="member-name">Eman Salah</h3>
+                    <p class="member-role">Power BI Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Developing business intelligence dashboards</li>
+                            <li>Creating interactive visual reports</li>
+                            <li>Designing analytical data visualizations</li>
+                            <li>Supporting data-driven decision-making</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moaaz Ashraf -->
+            <div class="circle-node node-5">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-cloud"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="https://ui-avatars.com/api/?name=Moaaz+Ashraf&background=0f172a&color=fff&size=200&bold=true"
+                            alt="Moaaz Ashraf" class="profile-img">
+                    </div>
+                    <h3 class="member-name">Moaaz Ashraf</h3>
+                    <p class="member-role">Cloud, Automation & Platform Engineer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Uploading & managing databases in Microsoft Azure</li>
+                            <li>Migrating data solutions with Microsoft Fabric</li>
+                            <li>Building & deploying the project web application</li>
+                            <li>Developing Power Automate workflows</li>
+                            <li>Automating report generation & notifications</li>
+                            <li>Integrating Power BI, Fabric, Azure, and AI Assistant services</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Highlights Section -->
+        <h2 class="section-title">Project Highlights</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Enterprise Data Warehouse</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-network-wired" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">SSIS ETL Pipelines</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">20</div>
+                <div class="stat-label">Power BI Dashboards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Paginated Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-brain" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">AI Assistant Integration</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-bolt" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Power Automate Workflows</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-cloud" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Azure Cloud Infrastructure</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-cube" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Microsoft Fabric Integration</div>
+            </div>
+        </div>
+
+        <!-- Interactive Timeline -->
+        <h2 class="section-title">Project Journey</h2>
+        <div class="timeline">
+            <div class="timeline-items">
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-database"></i></div>
+                    <div class="timeline-label">Data Collection</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-filter"></i></div>
+                    <div class="timeline-label">ETL Pipelines</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-server"></i></div>
+                    <div class="timeline-label">Data Warehouse</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-cloud"></i></div>
+                    <div class="timeline-label">Azure Cloud</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-cube"></i></div>
+                    <div class="timeline-label">MS Fabric</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="timeline-label">Power BI</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div class="timeline-label">Report Builder</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-robot"></i></div>
+                    <div class="timeline-label">AI Assistant</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-globe"></i></div>
+                    <div class="timeline-label">Web Deployment</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technologies Section -->
+        <h2 class="section-title">Technologies Used</h2>
+        <div class="tech-section">
+            <div class="tech-grid">
+                <div class="tech-chip"><i class="fa-brands fa-microsoft" style="color: #0ea5e9; font-size: 1.2rem;"></i>
+                    Microsoft Fabric</div>
+                <div class="tech-chip"><i class="fa-solid fa-chart-column"
+                        style="color: #f59e0b; font-size: 1.2rem;"></i> Power BI</div>
+                <div class="tech-chip"><i class="fa-solid fa-file-invoice"
+                        style="color: #f59e0b; font-size: 1.2rem;"></i> Power BI Report Builder</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"
+                        alt="Azure" width="20"> Azure</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/microsoftsqlserver/microsoftsqlserver-plain.svg"
+                        alt="SQL Server" width="20"> SQL Server</div>
+                <div class="tech-chip"><i class="fa-solid fa-network-wired"
+                        style="color: #64748b; font-size: 1.2rem;"></i> SSIS</div>
+                <div class="tech-chip"><i class="fa-solid fa-bolt" style="color: #2563eb; font-size: 1.2rem;"></i> Power
+                    Automate</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"
+                        alt="Python" width="20"> Python</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flask/flask-original.svg"
+                        alt="Flask" width="20" style="filter: brightness(0) invert(var(--icon-invert));"> Flask</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"
+                        alt="HTML5" width="20"> HTML5</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"
+                        alt="CSS3" width="20"> CSS3</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"
+                        alt="JavaScript" width="20"> JavaScript</div>
+                <div class="tech-chip"><i class="fa-solid fa-brain" style="color: #10b981; font-size: 1.2rem;"></i> AI
+                    Technologies</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logo">ITI Business Intelligence Graduation Project 2026</div>
+            <div class="footer-tagline">"Turning Data into Decisions"</div>
+            <div class="footer-credits">
+                Developed by: Ayman Abd Elsalam • Shaimaa Hesham • Mahmoud Reda • Eman Salah • Moaaz Ashraf
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('sse-theme', newTheme);
+
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+
+            if (newTheme === 'dark') {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                text.innerText = 'Dark Mode';
+            } else {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                text.innerText = 'Light Mode';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (currentTheme === 'light') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                text.innerText = 'Light Mode';
+            }
+        });
+    </script>
+</body>
+
+</html>
