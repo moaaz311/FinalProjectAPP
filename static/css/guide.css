@@ -354,3 +354,49 @@ footer {
         padding: 2rem 1.5rem;
     }
 }
+
+/* Smooth Page Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out, scale-down;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in, scale-up;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scale-up {
+  from { transform: scale(0.98); }
+  to { transform: scale(1); }
+}
+
+@keyframes scale-down {
+  from { transform: scale(1); }
+  to { transform: scale(1.02); }
+}
+
+/* Fallback for browsers without View Transitions */
+@supports not (view-transition-name: none) {
+  body {
+    animation: fallback-fade-in 0.5s ease-out;
+  }
+  @keyframes fallback-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
