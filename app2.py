@@ -909,75 +909,64 @@ def format_metric(value, col_name: str) -> str:
     c = col_name.lower()
 
     try:
-        value = float(value)
+        val_float = float(value)
     except Exception:
         return html.escape(str(value))
 
+    res = ""
     # Never format years/codes/flags as money
     if c in {"year", "trade_year", "month", "quarter", "hs_code", "is_strategic"}:
-        if value.is_integer():
-            return str(int(value))
-        return str(value)
-
+        if val_float.is_integer():
+            res = str(int(val_float))
+        else:
+            res = str(val_float)
     # Percent / rate
-    if any(x in c for x in ["pct", "percent", "rate", "growth", "inflation"]):
-        return f"{value:.2f}%"
-
+    elif any(x in c for x in ["pct", "percent", "rate", "growth", "inflation"]):
+        res = f"{val_float:.2f}%"
     # Days / delays
-    if "days" in c or "delay" in c:
-        return f"{value:.1f} days"
-
+    elif "days" in c or "delay" in c:
+        res = f"{val_float:.1f} days"
     # EGP money
-    if "egp" in c:
-        sign = "-" if value < 0 else ""
-        abs_value = abs(value)
-
+    elif "egp" in c:
+        sign = "-" if val_float < 0 else ""
+        abs_value = abs(val_float)
         if abs_value >= 1_000_000_000:
-            return f"{sign}EGP {abs_value / 1_000_000_000:.2f}B"
+            res = f"{sign}EGP {abs_value / 1_000_000_000:.2f}B"
         elif abs_value >= 1_000_000:
-            return f"{sign}EGP {abs_value / 1_000_000:.2f}M"
+            res = f"{sign}EGP {abs_value / 1_000_000:.2f}M"
         elif abs_value >= 1_000:
-            return f"{sign}EGP {abs_value / 1_000:.2f}K"
-        return f"{sign}EGP {abs_value:,.2f}"
+            res = f"{sign}EGP {abs_value / 1_000:.2f}K"
+        else:
+            res = f"{sign}EGP {abs_value:,.2f}"
+    else:
+        # USD / trade money
+        money_keywords = [
+            "usd", "sales", "profit", "revenue", "trade_value", "cost", "value",
+            "amount", "export", "exports", "import", "imports", "trade_balance",
+            "balance", "total_trade", "total_exports", "total_imports"
+        ]
+        if any(x in c for x in money_keywords):
+            sign = "-" if val_float < 0 else ""
+            abs_value = abs(val_float)
+            if abs_value >= 1_000_000_000:
+                res = f"{sign}${abs_value / 1_000_000_000:.2f}B"
+            elif abs_value >= 1_000_000:
+                res = f"{sign}${abs_value / 1_000_000:.2f}M"
+            elif abs_value >= 1_000:
+                res = f"{sign}${abs_value / 1_000:.2f}K"
+            else:
+                res = f"{sign}${abs_value:,.2f}"
+        else:
+            # Generic number
+            if val_float.is_integer():
+                res = f"{int(val_float):,}"
+            else:
+                res = f"{val_float:,.2f}"
 
-    # USD / trade money
-    money_keywords = [
-        "usd",
-        "sales",
-        "profit",
-        "revenue",
-        "trade_value",
-        "cost",
-        "value",
-        "amount",
-        "export",
-        "exports",
-        "import",
-        "imports",
-        "trade_balance",
-        "balance",
-        "total_trade",
-        "total_exports",
-        "total_imports"
-    ]
+    if val_float < 0:
+        return f"<span style='color: #ef4444;'>{html.escape(res)}</span>"
+    return html.escape(res)
 
-    if any(x in c for x in money_keywords):
-        sign = "-" if value < 0 else ""
-        abs_value = abs(value)
-
-        if abs_value >= 1_000_000_000:
-            return f"{sign}${abs_value / 1_000_000_000:.2f}B"
-        elif abs_value >= 1_000_000:
-            return f"{sign}${abs_value / 1_000_000:.2f}M"
-        elif abs_value >= 1_000:
-            return f"{sign}${abs_value / 1_000:.2f}K"
-        return f"{sign}${abs_value:,.2f}"
-
-    # Generic number
-    if value.is_integer():
-        return f"{int(value):,}"
-
-    return f"{value:,.2f}"
 def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_rank: bool = False) -> str:
     table_df = source_df[display_cols].copy()
 
@@ -1015,12 +1004,17 @@ def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_
             formatters[display_col] = (
                 lambda value, col=original_col: format_metric(value, col)
             )
+        else:
+            formatters[display_col] = lambda value: html.escape(str(value)) if pd.notna(value) else ""
+
+    if add_rank:
+        formatters["Rank"] = lambda value: html.escape(str(value))
 
     return table_df.to_html(
         classes="ai-result-table",
         index=False,
         border=0,
-        escape=True,
+        escape=False,
         formatters=formatters
     )
 def _detect_result_type(question: str, df: pd.DataFrame, metric_col: str | None) -> str:
