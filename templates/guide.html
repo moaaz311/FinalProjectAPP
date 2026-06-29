@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin" />
+    <title>Sign In Guide - ITI Business Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/guide.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        body {
+            background-color: var(--bg-base) !important;
+            background-image: none !important;
+        }
+    </style>
+
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem("sse-theme") || "dark";
+                document.documentElement.setAttribute("data-theme", savedTheme);
+            } catch (e) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- PREMIUM NAVIGATION BAR -->
+        <header class="premium-nav" id="premiumNav" style="position: fixed; width: 100%;">
+            <a class="premium-nav-brand" href="/">
+                <div class="premium-nav-logo"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <div class="premium-nav-title">Egypt EconLens</div>
+                    <div class="premium-nav-subtitle">Economic Intelligence Platform</div>
+                </div>
+            </a>
+            <nav class="premium-nav-links" aria-label="Main navigation">
+                <a href="/" class="premium-nav-link"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="/app" class="premium-nav-link"><i class="fa-solid fa-chart-column"></i> App</a>
+                <a href="/about" class="premium-nav-link"><i class="fa-solid fa-circle-info"></i> About</a>
+                <a href="/guide" class="premium-nav-link active"><i class="fa-solid fa-book-open"></i> Guide</a>
+            </nav>
+            <div class="premium-nav-actions">
+                <button class="premium-nav-theme-btn" id="themeToggleBtn" onclick="toggleTheme()" type="button" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="premium-nav-hamburger" onclick="toggleMobileDrawer()" type="button" aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        <div class="premium-nav-drawer-overlay" id="drawerOverlay" onclick="toggleMobileDrawer()"></div>
+        <div class="premium-nav-drawer" id="mobileDrawer">
+            <div class="premium-nav-drawer-header">
+                <div class="premium-nav-brand" style="pointer-events:none;">
+                    <div class="premium-nav-logo"><i class="fa-solid fa-chart-line"></i></div>
+                    <div>
+                        <div class="premium-nav-title">Egypt EconLens</div>
+                        <div class="premium-nav-subtitle">Economic Intelligence Platform</div>
+                    </div>
+                </div>
+                <button class="premium-nav-drawer-close" onclick="toggleMobileDrawer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <a href="/" class="premium-nav-link"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/app" class="premium-nav-link"><i class="fa-solid fa-chart-column"></i> App</a>
+            <a href="/about" class="premium-nav-link"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="/guide" class="premium-nav-link active"><i class="fa-solid fa-book-open"></i> Guide</a>
+        </div>
+        <div style="height: 80px;"></div>
+
+        <!-- Header Banner -->
+        <div class="header-section">
+            <h1 class="title">How to Sign In</h1>
+            <p class="subtitle">A quick step-by-step guide to accessing your workspace</p>
+        </div>
+
+        <!-- Guide Steps -->
+        <div class="guide-timeline">
+            
+            <div class="step-card fade-in">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Access the Portal</h2>
+                </div>
+                <div class="step-content">
+                    <p class="step-desc">Open the Power BI dashboard or report portal from your web browser. You will be prompted to sign in with your Microsoft account.</p>
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='img/guide/image1.png') }}" alt="Step 1" class="guide-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-card fade-in">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Verify Using Password</h2>
+                </div>
+                <div class="step-content">
+                    <p class="step-desc">If prompted to verify your email with a code, click on 'Use your password' below the 'Send code' button.</p>
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='img/guide/image2.png') }}" alt="Step 2" class="guide-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-card fade-in">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Enter Password</h2>
+                </div>
+                <div class="step-content">
+                    <p class="step-desc">Provide your account password and click "Sign In". Make sure your credentials are correct to avoid lockouts.</p>
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='img/guide/image3.png') }}" alt="Step 3" class="guide-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-card fade-in">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2 class="step-title">Stay Signed In</h2>
+                </div>
+                <div class="step-content">
+                    <p class="step-desc">You can choose to stay signed in to reduce the number of times you are asked to log in. Click "Yes" to proceed to the dashboards.</p>
+                    <div class="image-wrapper">
+                        <img src="{{ url_for('static', filename='img/guide/image4.png') }}" alt="Step 4" class="guide-img">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logo">ITI Business Intelligence Graduation Project 2026</div>
+            <div class="footer-tagline">"Turning Data into Decisions"</div>
+            <div class="footer-credits">
+                Developed by: Ayman Abd Elsalam • Shaimaa Hesham • Mahmoud Reda • Eman Salah • Moaaz Ashraf
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('open');
+        }
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) { btn.classList.add('is-rotating'); setTimeout(function() { btn.classList.remove('is-rotating'); }, 500); }
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('sse-theme', newTheme);
+            const icon = document.getElementById('themeIcon');
+            if (icon) { icon.className = newTheme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'; }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('themeIcon');
+            if (icon && theme === 'light') { icon.className = 'fa-solid fa-sun'; }
+
+            // Intersection Observer for fade-in animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        });
+        window.addEventListener('scroll', function() {
+            var nav = document.getElementById('premiumNav');
+            if (!nav) return;
+            if ((window.scrollY || document.documentElement.scrollTop) > 10) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
+        }, { passive: true });
+    </script>
+</body>
+
+</html>

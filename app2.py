@@ -49,7 +49,6 @@ logger = logging.getLogger("egypt_trade_ai")
 # ======================
 
 app = Flask(__name__)
-CORS(app)
 
 # ======================
 # ENV
@@ -58,6 +57,10 @@ CORS(app)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 HTTP_REFERER = os.getenv("HTTP_REFERER", "http://localhost:5000")
+
+# Restrict CORS to the intended frontend domains
+CORS(app, resources={r"/*": {"origins": [HTTP_REFERER, "http://127.0.0.1:5000", "http://localhost:5000"]}})
+
 X_TITLE = os.getenv("X_TITLE", "EgyptTradeAI")
 
 SQL_SERVER = os.getenv("SQL_SERVER")
@@ -159,8 +162,8 @@ try:
     db_error_msg = None
 
 except Exception as e:
-    logger.error("Database connection failed: %s", e)
-    db_error_msg = f"Server: '{SQL_SERVER}' | DB: '{SQL_DATABASE}' | User: '{SQL_USERNAME}' | Exception: {str(e)}"
+    logger.error("Database connection failed: Server: '%s' | DB: '%s' | User: '%s' | Exception: %s", SQL_SERVER, SQL_DATABASE, SQL_USERNAME, str(e))
+    db_error_msg = "Database connection unavailable. Please contact the administrator."
     engine = None
 
 # ======================
@@ -170,6 +173,18 @@ except Exception as e:
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/app")
+def app_dashboard():
+    return render_template("app.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/guide")
+def guide():
+    return render_template("guide.html")
 
 # ======================
 # REPORTS
@@ -901,75 +916,64 @@ def format_metric(value, col_name: str) -> str:
     c = col_name.lower()
 
     try:
-        value = float(value)
+        val_float = float(value)
     except Exception:
         return html.escape(str(value))
 
+    res = ""
     # Never format years/codes/flags as money
     if c in {"year", "trade_year", "month", "quarter", "hs_code", "is_strategic"}:
-        if value.is_integer():
-            return str(int(value))
-        return str(value)
-
+        if val_float.is_integer():
+            res = str(int(val_float))
+        else:
+            res = str(val_float)
     # Percent / rate
-    if any(x in c for x in ["pct", "percent", "rate", "growth", "inflation"]):
-        return f"{value:.2f}%"
-
+    elif any(x in c for x in ["pct", "percent", "rate", "growth", "inflation"]):
+        res = f"{val_float:.2f}%"
     # Days / delays
-    if "days" in c or "delay" in c:
-        return f"{value:.1f} days"
-
+    elif "days" in c or "delay" in c:
+        res = f"{val_float:.1f} days"
     # EGP money
-    if "egp" in c:
-        sign = "-" if value < 0 else ""
-        abs_value = abs(value)
-
+    elif "egp" in c:
+        sign = "-" if val_float < 0 else ""
+        abs_value = abs(val_float)
         if abs_value >= 1_000_000_000:
-            return f"{sign}EGP {abs_value / 1_000_000_000:.2f}B"
+            res = f"{sign}EGP {abs_value / 1_000_000_000:.2f}B"
         elif abs_value >= 1_000_000:
-            return f"{sign}EGP {abs_value / 1_000_000:.2f}M"
+            res = f"{sign}EGP {abs_value / 1_000_000:.2f}M"
         elif abs_value >= 1_000:
-            return f"{sign}EGP {abs_value / 1_000:.2f}K"
-        return f"{sign}EGP {abs_value:,.2f}"
+            res = f"{sign}EGP {abs_value / 1_000:.2f}K"
+        else:
+            res = f"{sign}EGP {abs_value:,.2f}"
+    else:
+        # USD / trade money
+        money_keywords = [
+            "usd", "sales", "profit", "revenue", "trade_value", "cost", "value",
+            "amount", "export", "exports", "import", "imports", "trade_balance",
+            "balance", "total_trade", "total_exports", "total_imports"
+        ]
+        if any(x in c for x in money_keywords):
+            sign = "-" if val_float < 0 else ""
+            abs_value = abs(val_float)
+            if abs_value >= 1_000_000_000:
+                res = f"{sign}${abs_value / 1_000_000_000:.2f}B"
+            elif abs_value >= 1_000_000:
+                res = f"{sign}${abs_value / 1_000_000:.2f}M"
+            elif abs_value >= 1_000:
+                res = f"{sign}${abs_value / 1_000:.2f}K"
+            else:
+                res = f"{sign}${abs_value:,.2f}"
+        else:
+            # Generic number
+            if val_float.is_integer():
+                res = f"{int(val_float):,}"
+            else:
+                res = f"{val_float:,.2f}"
 
-    # USD / trade money
-    money_keywords = [
-        "usd",
-        "sales",
-        "profit",
-        "revenue",
-        "trade_value",
-        "cost",
-        "value",
-        "amount",
-        "export",
-        "exports",
-        "import",
-        "imports",
-        "trade_balance",
-        "balance",
-        "total_trade",
-        "total_exports",
-        "total_imports"
-    ]
+    if val_float < 0:
+        return f"<span style='color: #ef4444;'>{html.escape(res)}</span>"
+    return html.escape(res)
 
-    if any(x in c for x in money_keywords):
-        sign = "-" if value < 0 else ""
-        abs_value = abs(value)
-
-        if abs_value >= 1_000_000_000:
-            return f"{sign}${abs_value / 1_000_000_000:.2f}B"
-        elif abs_value >= 1_000_000:
-            return f"{sign}${abs_value / 1_000_000:.2f}M"
-        elif abs_value >= 1_000:
-            return f"{sign}${abs_value / 1_000:.2f}K"
-        return f"{sign}${abs_value:,.2f}"
-
-    # Generic number
-    if value.is_integer():
-        return f"{int(value):,}"
-
-    return f"{value:,.2f}"
 def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_rank: bool = False) -> str:
     table_df = source_df[display_cols].copy()
 
@@ -1007,12 +1011,17 @@ def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_
             formatters[display_col] = (
                 lambda value, col=original_col: format_metric(value, col)
             )
+        else:
+            formatters[display_col] = lambda value: html.escape(str(value)) if pd.notna(value) else ""
+
+    if add_rank:
+        formatters["Rank"] = lambda value: html.escape(str(value))
 
     return table_df.to_html(
         classes="ai-result-table",
         index=False,
         border=0,
-        escape=True,
+        escape=False,
         formatters=formatters
     )
 def _detect_result_type(question: str, df: pd.DataFrame, metric_col: str | None) -> str:
@@ -1100,35 +1109,20 @@ def build_ai_answer(df: pd.DataFrame, summary: str, question: str = "") -> str:
     result_type = _detect_result_type(question, df, metric_col)
     table_title = _table_title(question, metric_col, result_type, len(df))
 
-    # ======================
-    # CASE 1: TIME SERIES / TREND
-    # ======================
     if result_type == "trend":
         table_html = build_formatted_table(df, display_cols, add_rank=False)
+        icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>'
 
         return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📈 Trend Insight
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">Trend Comparison</div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
+<div class="ai-insight-summary">
+    {html.escape(summary)}
 </div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
-<div style='margin-top:10px;color:#94a3b8'>
-Analysis based on {len(df)} records
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1161,88 +1155,55 @@ Analysis based on {len(df)} records
 
         if len(df) > 1:
             ranking_table_html = f"""
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{build_formatted_table(df, display_cols, add_rank=True)}
+<div class="ai-insight-table-container">
+    {build_formatted_table(df, display_cols, add_rank=True)}
 </div>
 """
 
         label_html = ""
-
         if is_rate_ranking and top_tied_count > 1:
-            label_html = f"""
-<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
-{top_tied_count} results tied at the highest rate
-</div>
-"""
+            label_html = f"{top_tied_count} results tied at the highest rate"
         elif has_real_label:
-            label_html = f"""
-<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
-{html.escape(str(top[label_col]))}
-</div>
-"""
+            label_html = f"{html.escape(str(top[label_col]))} is the highest by {html.escape(clean_label(metric_col)).lower()}"
+        else:
+            label_html = f"{html.escape(clean_label(metric_col))}"
+
+        icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/><path fill="currentColor" opacity="0.4" d="M16 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/><path fill="currentColor" d="M8 13c-.25 0-.5.01-.76.04C5.12 13.43 3 15.02 3 17v2h4.5v-2.5c0-1.1.42-2.32 1.3-3.08-.26-.27-.55-.42-.8-.42z"/></svg>'
 
         return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📊 Business Insight
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">{html.escape(table_title)}</div>
 </div>
-
-{label_html}
-
-<div style='font-size:30px;font-weight:bold;color:#34d399;margin-top:15px'>
-{formatted_value}
+<div class="ai-insight-summary">
+    {html.escape(summary)}
 </div>
-
-<div style='margin-top:6px;color:#94a3b8;font-size:13px'>
-{html.escape(clean_label(metric_col))}
+<div class="ai-insight-kpi-block">
+    <div class="ai-insight-kpi-icon">🌐</div>
+    <div class="ai-insight-kpi-content">
+        <div class="ai-insight-kpi-value">{formatted_value}</div>
+        <div class="ai-insight-kpi-label">{label_html}</div>
+    </div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
-</div>
-
 {ranking_table_html}
-
-<div style='margin-top:10px;color:#94a3b8'>
-Analysis based on {len(df)} records
-</div>
-
-</div>
 """
 
     # ======================
     # CASE 3: DESCRIPTIVE / LIST RESULT
     # ======================
     table_html = build_formatted_table(df, display_cols, add_rank=False)
+    icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>'
 
     return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📋 Result Summary
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">Result Summary</div>
 </div>
-
-<div style='font-size:26px;font-weight:bold;color:#34d399;margin-top:12px'>
-{len(df)} records found
+<div class="ai-insight-summary">
+    {len(df)} records found. {html.escape(summary)}
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
-</div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1270,28 +1231,17 @@ def build_sql_preview_answer(df: pd.DataFrame, sql: str) -> str:
     shown_rows = min(len(df), 20)
 
     return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📋 SQL Result Preview
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+    </div>
+    <div class="ai-insight-title">SQL Result Preview</div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-The SQL query was executed successfully. Showing the first {shown_rows} rows.
+<div class="ai-insight-summary">
+    The SQL query was executed successfully. Showing the first {shown_rows} rows.
 </div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-Query Result
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:12px'>
-Raw SQL input was handled as a table preview, not as a KPI insight.
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1313,23 +1263,26 @@ def _first_existing_column(columns: list[str], candidates: list[str]) -> str | N
     return None
 
 
-def _pick_metric_column_for_chart(df: pd.DataFrame) -> str | None:
+def _pick_metric_columns_for_chart(df: pd.DataFrame) -> list[str]:
     numeric_cols = [
         col for col in df.columns
         if pd.api.types.is_numeric_dtype(df[col]) and _is_measure_col(col)
     ]
 
     if numeric_cols:
-        return numeric_cols[0]
+        return numeric_cols[:2]  # Return up to 2 columns for dual-line chart support
 
     # Fallback for numeric-looking object columns after JSON/None conversion.
+    fallback = []
     for col in df.columns:
         if _is_measure_col(col):
             coerced = pd.to_numeric(df[col], errors="coerce")
             if coerced.notna().any():
-                return col
+                fallback.append(col)
+                if len(fallback) == 2:
+                    break
 
-    return None
+    return fallback
 
 
 def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
@@ -1350,7 +1303,8 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         }
 
     columns = list(df.columns)
-    metric_col = _pick_metric_column_for_chart(df)
+    metric_cols = _pick_metric_columns_for_chart(df)
+    metric_col = metric_cols[0] if metric_cols else None
     result_type = _detect_result_type(question, df, metric_col)
 
     time_col = _first_existing_column(
@@ -1360,7 +1314,7 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
 
     label_candidates = [
         col for col in columns
-        if col != metric_col and not _is_internal_display_col(col)
+        if col not in metric_cols and not _is_internal_display_col(col)
     ]
     label_col = next(
         (col for col in label_candidates if not pd.api.types.is_numeric_dtype(df[col])),
@@ -1383,7 +1337,10 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
     if result_type == "trend" and time_col:
         x_col = time_col
         chart_type = "line"
-        title = f"{clean_label(metric_col)} Trend"
+        if len(metric_cols) > 1:
+            title = "Trend Comparison"
+        else:
+            title = f"{clean_label(metric_col)} Trend"
     elif len(df) == 1:
         top = df.iloc[0]
         return {
@@ -1418,10 +1375,13 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         }
 
     chart_rows = []
-    for _, row in df[[x_col, metric_col]].head(20).iterrows():
+    display_cols = [c for c in columns if not _is_internal_display_col(c)]
+    if not display_cols:
+        display_cols = columns
+
+    for _, row in df[display_cols].head(20).iterrows():
         chart_rows.append({
-            x_col: _json_safe_value(row[x_col]),
-            metric_col: _json_safe_value(row[metric_col]),
+            col: _json_safe_value(row[col]) for col in display_cols
         })
 
     return {
@@ -1429,7 +1389,7 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         "type": chart_type,
         "title": title,
         "x": x_col,
-        "y": metric_col,
+        "y": metric_cols if len(metric_cols) > 1 else metric_col,
         "data": chart_rows,
     }
 
@@ -2083,6 +2043,126 @@ def send_dashboard_pdf():
         return jsonify({
             "error": str(e)
         }), 500
+
+# ======================
+# EMAIL CHAT SUMMARY
+# ======================
+
+@app.route("/email-chat-summary", methods=["POST"])
+def email_chat_summary():
+    try:
+        data = request.json or {}
+        email = data.get("email", "").strip()
+        history = data.get("history", [])
+
+        if not email or not history:
+            return jsonify({"error": "Email or chat history missing"}), 400
+
+        flow_url = os.environ.get("EMAIL_SUMMARY_FLOW_URL", "").strip()
+        if not flow_url:
+            return jsonify({"error": "EMAIL_SUMMARY_FLOW_URL is not configured in .env"}), 500
+
+        if client is None:
+            return jsonify({"error": "OpenRouter client is not available."}), 500
+
+        # Build prompt
+        system_prompt = (
+            "You are an executive assistant for Egypt EconLens. "
+            "Reconstruct the following data analytics conversation into a professional Q&A executive brief. "
+            "List every main question the user asked, and immediately below it, provide a concise, well-structured version of the AI's answer. "
+            "CRITICAL RULES: "
+            "1. Format the ENTIRE output in clean, standard HTML. NEVER use Markdown (no **, no ##, no | | tables). "
+            "2. If the answer contains tabular data, you MUST use standard HTML <table>, <tr>, <th>, and <td> tags with inline CSS for styling (e.g., <table style='width:100%; border-collapse:collapse; margin-bottom:15px;' border='1'>). "
+            "3. If the answer contains numerical trends, you MUST also generate an embedded image chart using the QuickChart API. "
+            "   Example Chart: <img src=\"https://quickchart.io/chart?bkg=white&c={type:'bar',data:{labels:['2019','2020'],datasets:[{label:'Value',data:[10,20]}]}}\" style=\"max-width:100%; margin: 15px 0;\"> "
+            "4. Use <h4 style='color: #b71c1c; margin-bottom: 8px; font-size: 16px; border-bottom: 1px solid #ffcdd2; padding-bottom: 4px;'>Q: {Question}</h4> "
+            "5. Use <div style='margin-top: 0; margin-bottom: 24px; color: #333;'>A: {Answer}</div> for the answers. "
+        )
+
+        # Convert history into a single text block for the prompt
+        convo_text = ""
+        for msg in history:
+            role = "User" if msg.get("role") == "user" else "Assistant"
+            convo_text += f"{role}: {msg.get('content')}\n\n"
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Please format this conversation as a Q&A report:\n\n{convo_text}"}
+        ]
+
+        summary_model = os.environ.get("SUMMARY_MODEL", "openai/gpt-4o-mini")
+
+        response = client.chat.completions.create(
+            model=summary_model,
+            temperature=0.3,
+            max_tokens=4000,
+            messages=messages,
+            extra_headers={
+                "HTTP-Referer": HTTP_REFERER,
+                "X-Title": X_TITLE,
+            },
+        )
+
+        summary_html = response.choices[0].message.content.strip()
+        
+        # Clean up markdown if AI includes it
+        if summary_html.startswith("```html"):
+            summary_html = summary_html[7:]
+        if summary_html.endswith("```"):
+            summary_html = summary_html[:-3]
+
+        # Wrap in red and white theme email template
+        styled_html = f"""
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+            <div style="background-color: #d32f2f; padding: 20px 24px; display: flex; align-items: center; border-bottom: 4px solid #b71c1c;">
+                <span style="font-size: 24px; margin-right: 12px; color: white;">📊</span>
+                <h2 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: 600;">Chat Summary</h2>
+            </div>
+            <div style="padding: 32px 24px; color: #333333; line-height: 1.6; font-size: 15px;">
+                <p style="margin-top: 0;">Hello Team,</p>
+                <p>An AI-generated executive summary of the recent data analytics conversation is ready for your review.</p>
+                
+                <div style="background-color: #ffffff; padding: 10px 0; margin: 28px 0;">
+                    {summary_html}
+                </div>
+
+                <p>The latest version is now available through the Egypt BI Portal.</p>
+                
+                <div style="margin: 32px 0;">
+                    <a href="https://finalprojectapp-ai-grggdybadqfugya3.austriaeast-01.azurewebsites.net" style="background-color: #d32f2f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Open Application</a>
+                </div>
+
+                <p>Please open the application to access the latest version and updated insights.</p>
+                
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eeeeee;">
+                    <p style="margin: 0; color: #666666; font-size: 14px;">Regards,</p>
+                    <p style="margin: 4px 0 0 0; font-weight: bold; color: #333333; font-size: 14px;">ITI BI Team</p>
+                </div>
+            </div>
+        </div>
+        """
+
+        # Call Power Automate Flow
+        payload = {
+            "email": email,
+            "title": "Egypt EconLens - Chat Summary",
+            "summaryHtml": styled_html
+        }
+
+        pa_response = requests.post(flow_url, json=payload, timeout=30)
+        
+        if pa_response.status_code not in [200, 202]:
+            return jsonify({
+                "error": "Failed to trigger Power Automate flow",
+                "details": pa_response.text
+            }), pa_response.status_code
+
+        return jsonify({"message": "Summary successfully sent to your email!"})
+
+    except Exception as e:
+        logger.error("Email summary failed: %s", e)
+        return jsonify({"error": str(e)}), 500
+
 
 # ======================
 # RUN

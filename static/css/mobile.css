@@ -1,0 +1,497 @@
+/* 
+   Egypt EconLens Intelligence Platform 
+   Mobile Responsive & UX Optimization Stylesheet
+   Designed to preserve desktop (min-width: 769px) while overhauling mobile (max-width: 768px).
+*/
+
+@media (max-width: 768px) {
+    /* -------------------------------------
+       16. TYPOGRAPHY
+    ------------------------------------- */
+    h1, .welcome-main-title {
+        font-size: 30px !important;
+        line-height: 1.2 !important;
+    }
+    h2 {
+        font-size: 24px !important;
+    }
+    h3 {
+        font-size: 20px !important;
+    }
+    body, p, .chatMessages {
+        font-size: 16px !important;
+    }
+    button, .btn {
+        font-size: 14px !important;
+    }
+    small, .small-text, .metricDot + div small {
+        font-size: 13px !important;
+    }
+
+    /* -------------------------------------
+       1. LANDING PAGE
+    ------------------------------------- */
+    .welcomeScreen {
+        height: auto !important;
+        min-height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding-bottom: 60px !important;
+        display: block !important;
+    }
+    .welcome-container {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        padding: 40px 16px !important;
+        gap: 60px !important; /* Increased gap */
+    }
+    .welcome-left {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        padding-top: 20px !important;
+    }
+    .welcome-right {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        margin-top: 20px !important;
+    }
+    .carousel-container {
+        width: 100% !important;
+        height: 280px !important; /* Fixed height so absolute cards don't overflow */
+        position: relative !important;
+    }
+    .carousel-card {
+        width: 100% !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+    #welcomeExploreBtn {
+        margin: 30px auto 40px !important; /* Center button and add heavy spacing bottom */
+        z-index: 10 !important;
+        position: relative !important;
+    }
+
+    /* -------------------------------------
+       2. NAVIGATION BAR
+    ------------------------------------- */
+    .appHeader {
+        height: 60px !important;
+        padding: 0 12px !important;
+        display: flex !important;
+        flex-direction: row !important; /* CRITICAL FIX: Overrides desktop column stack */
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        background: var(--surface) !important;
+    }
+    .viewStatus, .headerActions {
+        display: none !important; /* Hide non-essential header blocks on mobile */
+    }
+    .brandBlock {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important; /* Allows truncation */
+    }
+    .mainNav {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+    }
+    .pill-nav-container {
+        display: flex !important;
+        gap: 2px !important;
+    }
+    .pill-link, .navBtn {
+        height: 36px !important;
+        min-width: auto !important;
+        padding: 0 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 13px !important; /* Slightly smaller to fit mobile */
+    }
+    .pill-link i {
+        margin-right: 4px !important; /* Keep icons tight */
+    }
+    #themeToggleBtn {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+    }
+    .brandTitle {
+        font-size: 15px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    .brandSub {
+        display: none !important; /* Save space on mobile header */
+    }
+
+    /* AI Chat Close Button Mobile Overrides */
+    .chatCloseBtn {
+        display: flex !important;
+        position: absolute !important;
+        top: calc(env(safe-area-inset-top, 10px) + 10px) !important;
+        right: 15px !important;
+        z-index: 9999 !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        color: white !important;
+        font-size: 28px !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .chatHeader {
+        padding-top: calc(env(safe-area-inset-top, 0px) + 20px) !important;
+        padding-right: 60px !important; /* Ensure text doesn't overlap the close button */
+    }
+
+    /* -------------------------------------
+       3. DASHBOARD LAYOUT & 5. REPORT VIEWER
+    ------------------------------------- */
+    .dashboardShell {
+        height: calc(100dvh - 60px - 72px) !important; /* viewport - nav - bottom dock */
+        margin-top: 60px !important;
+        padding: 0 !important;
+        width: 100% !important;
+        overflow: hidden !important; /* rely on iframe internal scroll or specific wrapper */
+    }
+    .dashboardChrome {
+        display: none !important; /* Hide fake chrome top bar on mobile to maximize space */
+    }
+    #viewer iframe {
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* -------------------------------------
+       6. REPORTS NAVIGATION
+    ------------------------------------- */
+    .mobileReportsCanvas {
+        /* This is the offcanvas, user wants a horizontal scroll if applicable. */
+    }
+    .reportPickerList, .mobileCanvasBody {
+        display: flex !important;
+        flex-direction: column !important; /* default offcanvas is list */
+    }
+
+    /* -------------------------------------
+       7. BOTTOM NAVIGATION
+    ------------------------------------- */
+    .mobileBottomDock {
+        height: 72px !important;
+        padding-bottom: env(safe-area-inset-bottom) !important; /* Safe-area support */
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+        background: var(--surface-glass, #ffffff) !important;
+        border-top: 1px solid var(--border-light, #e2e8f0) !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scroll-snap-type: x mandatory !important;
+        scrollbar-width: thin !important;
+        /* Padding right creates a visible edge so users know they can scroll */
+        padding-right: 40px !important; 
+    }
+    .mobileBottomDock::-webkit-scrollbar {
+        height: 4px !important;
+    }
+    .mobileBottomDock::-webkit-scrollbar-thumb {
+        background: var(--border-light) !important;
+        border-radius: 4px !important;
+    }
+    .mobileDockBtn {
+        flex: 0 0 calc(100vw / 4.5) !important; /* Shows 4.5 items to hint at scrolling */
+        scroll-snap-align: start !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 100% !important;
+        gap: 4px !important;
+        background: transparent !important;
+        border: none !important;
+        color: var(--gray-500, #64748b) !important;
+        transition: all 0.2s ease !important;
+    }
+    .mobileDockBtn .dockIcon {
+        font-size: 22px !important;
+        width: 22px !important;
+        height: 22px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .mobileDockBtn small {
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 90% !important;
+    }
+    .mobileDockBtn.active {
+        color: var(--primary, #2dd4ff) !important;
+        transform: scale(1.05) !important;
+    }
+    .menuDockBtn {
+        order: -1 !important; /* Force menu icon to be first */
+    }
+
+    /* -------------------------------------
+       8. FILTERS PANEL (Drawer from right)
+    ------------------------------------- */
+    .emailParamsPanel {
+        position: fixed !important;
+        top: 0 !important;
+        right: -100% !important;
+        width: 85vw !important;
+        height: 100dvh !important;
+        background: var(--surface, #ffffff) !important;
+        z-index: 1050 !important;
+        box-shadow: -5px 0 25px rgba(0,0,0,0.1) !important;
+        transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border-radius: 0 !important; /* Overriding flyout panel styling */
+        overflow: hidden !important;
+        bottom: auto !important;
+        left: auto !important;
+    }
+    .emailParamsPanel.open {
+        right: 0 !important;
+    }
+    .paramsPanelHeader {
+        padding: 16px !important;
+        background: var(--surface-alt) !important;
+        border-bottom: 1px solid var(--border-light) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 2 !important;
+    }
+    .paramsPanelContent {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 16px !important;
+        padding-bottom: 80px !important; /* Space for sticky actions */
+    }
+    /* Sticky Actions for Filters */
+    .filtersStickyActions {
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        padding: 16px !important;
+        background: var(--surface) !important;
+        border-top: 1px solid var(--border-light) !important;
+        display: flex !important;
+        gap: 12px !important;
+        z-index: 3 !important;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.05) !important;
+    }
+    .filtersStickyActions button {
+        flex: 1 !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    .filtersApplyBtn {
+        background: var(--primary) !important;
+        color: white !important;
+        border: none !important;
+    }
+    .filtersResetBtn {
+        background: var(--surface-alt) !important;
+        color: var(--text-main) !important;
+        border: 1px solid var(--border-light) !important;
+    }
+
+    /* -------------------------------------
+       9. FLOATING AI BUTTON
+    ------------------------------------- */
+    .aiFloatingBtn {
+        bottom: 90px !important; /* Safe distance above bottom dock */
+        right: 16px !important;
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 50% !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2) !important;
+        z-index: 999 !important; /* High but below modals */
+    }
+    .aiFloatingLabel {
+        display: none !important; /* Hide text on mobile to save space */
+    }
+
+    /* -------------------------------------
+       10. AI ASSISTANT PANEL
+    ------------------------------------- */
+    .aiDrawer {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100dvh !important; /* Use dynamic viewport height */
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        border-radius: 0 !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: var(--surface) !important;
+        z-index: 2000 !important; /* Above everything */
+    }
+    .aiDrawer.open {
+        transform: translateY(0) !important;
+    }
+    .chatHeader {
+        flex-shrink: 0 !important;
+        padding: 12px 16px !important;
+        padding-top: max(12px, env(safe-area-inset-top)) !important; /* Handle iOS notch */
+    }
+    .chatMessages {
+        flex: 1 !important; /* Takes all available space */
+        padding: 16px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    .bot-message, .user-message {
+        max-width: 90% !important;
+        word-wrap: break-word !important;
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+        padding: 10px 14px !important;
+    }
+    .quickQuestions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .quickQuestions button {
+        width: 100% !important; /* Suggestions become cards */
+        text-align: left !important;
+        padding: 12px 16px !important;
+        border-radius: 12px !important;
+    }
+
+    /* -------------------------------------
+       12. AI CHAT INPUT
+    ------------------------------------- */
+    .chatBottom {
+        flex-shrink: 0 !important;
+        padding: 10px 16px !important;
+        padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        background: var(--surface) !important;
+        border-top: 1px solid var(--border-light) !important;
+        display: flex !important;
+        align-items: flex-end !important;
+        gap: 8px !important;
+    }
+    .chatBottom input, .chatBottom textarea {
+        border-radius: 20px !important;
+        padding: 10px 16px !important;
+        font-size: 16px !important; /* Prevents iOS zoom */
+        max-height: 100px !important; /* ~4 lines */
+        overflow-y: auto !important;
+        resize: none !important;
+        width: 100% !important;
+        background: var(--surface-alt) !important;
+        border: 1px solid var(--border-light) !important;
+        margin: 0 !important;
+    }
+    .chatBottom button {
+        flex-shrink: 0 !important;
+        height: 44px !important; /* Consistent touch target height */
+        margin-bottom: 2px !important; /* Align with single line input */
+    }
+
+    /* -------------------------------------
+       13. CARDS
+    ------------------------------------- */
+    .card, .dashboard-card, .demo-alert, .reportEmailAlertCard {
+        width: 100% !important;
+        padding: 16px !important;
+        border-radius: 16px !important;
+        margin-bottom: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* -------------------------------------
+       14. IMAGES & CHARTS
+    ------------------------------------- */
+    img, svg, canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+    }
+    .chart-container {
+        width: 100% !important;
+        overflow-x: auto !important; /* Horizontal scroll if needed */
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* -------------------------------------
+       15. TABLES
+    ------------------------------------- */
+    .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    table th {
+        position: sticky !important;
+        top: 0 !important;
+        background: inherit !important;
+        z-index: 1 !important;
+    }
+
+    /* -------------------------------------
+       17. CLEANUP & PERFORMANCE
+    ------------------------------------- */
+    .appAmbient, .welcomeAurora {
+        display: none !important; /* Improve performance by disabling heavy ambient animations on mobile */
+    }
+    * {
+        max-width: 100vw !important;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+    .brandTitle {
+        font-size: 14px !important;
+    }
+    .mobileDockBtn small {
+        font-size: 10px !important;
+    }
+}
