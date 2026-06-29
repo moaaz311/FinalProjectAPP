@@ -13,8 +13,20 @@
         rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/guide.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        body {
+            background-color: var(--bg-base) !important;
+            background-image: none !important;
+        }
+    </style>
 
     <script>
         (function () {
@@ -36,15 +48,48 @@
     </div>
 
     <div class="container">
-        <!-- Navigation -->
-        <nav class="nav-bar">
-            <a href="/" class="btn-back" onclick="if(window.opener && !window.opener.closed) { window.close(); return false; }">
-                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        <!-- PREMIUM NAVIGATION BAR -->
+        <header class="premium-nav" id="premiumNav" style="position: fixed; width: 100%;">
+            <a class="premium-nav-brand" href="/">
+                <div class="premium-nav-logo"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <div class="premium-nav-title">Egypt EconLens</div>
+                    <div class="premium-nav-subtitle">Economic Intelligence Platform</div>
+                </div>
             </a>
-            <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">
-                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeText">Dark Mode</span>
-            </button>
-        </nav>
+            <nav class="premium-nav-links" aria-label="Main navigation">
+                <a href="/" class="premium-nav-link"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="/app" class="premium-nav-link"><i class="fa-solid fa-chart-column"></i> App</a>
+                <a href="/about" class="premium-nav-link"><i class="fa-solid fa-circle-info"></i> About</a>
+                <a href="/guide" class="premium-nav-link active"><i class="fa-solid fa-book-open"></i> Guide</a>
+            </nav>
+            <div class="premium-nav-actions">
+                <button class="premium-nav-theme-btn" id="themeToggleBtn" onclick="toggleTheme()" type="button" aria-label="Toggle theme">
+                    <i class="fa-solid fa-moon" id="themeIcon"></i>
+                </button>
+                <button class="premium-nav-hamburger" onclick="toggleMobileDrawer()" type="button" aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        <div class="premium-nav-drawer-overlay" id="drawerOverlay" onclick="toggleMobileDrawer()"></div>
+        <div class="premium-nav-drawer" id="mobileDrawer">
+            <div class="premium-nav-drawer-header">
+                <div class="premium-nav-brand" style="pointer-events:none;">
+                    <div class="premium-nav-logo"><i class="fa-solid fa-chart-line"></i></div>
+                    <div>
+                        <div class="premium-nav-title">Egypt EconLens</div>
+                        <div class="premium-nav-subtitle">Economic Intelligence Platform</div>
+                    </div>
+                </div>
+                <button class="premium-nav-drawer-close" onclick="toggleMobileDrawer()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <a href="/" class="premium-nav-link"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/app" class="premium-nav-link"><i class="fa-solid fa-chart-column"></i> App</a>
+            <a href="/about" class="premium-nav-link"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="/guide" class="premium-nav-link active"><i class="fa-solid fa-book-open"></i> Guide</a>
+        </div>
+        <div style="height: 80px;"></div>
 
         <!-- Header Banner -->
         <div class="header-section">
@@ -120,36 +165,24 @@
     </div>
 
     <script>
+        function toggleMobileDrawer() {
+            document.getElementById('mobileDrawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('open');
+        }
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) { btn.classList.add('is-rotating'); setTimeout(function() { btn.classList.remove('is-rotating'); }, 500); }
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('sse-theme', newTheme);
-
             const icon = document.getElementById('themeIcon');
-            const text = document.getElementById('themeText');
-
-            if (newTheme === 'dark') {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                text.innerText = 'Dark Mode';
-            } else {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                text.innerText = 'Light Mode';
-            }
+            if (icon) { icon.className = newTheme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun'; }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = document.documentElement.getAttribute('data-theme');
             const icon = document.getElementById('themeIcon');
-            const text = document.getElementById('themeText');
-            if (currentTheme === 'light') {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                text.innerText = 'Light Mode';
-            }
+            if (icon && theme === 'light') { icon.className = 'fa-solid fa-sun'; }
 
             // Intersection Observer for fade-in animations
             const observer = new IntersectionObserver((entries) => {
@@ -159,9 +192,13 @@
                     }
                 });
             }, { threshold: 0.1 });
-
             document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
         });
+        window.addEventListener('scroll', function() {
+            var nav = document.getElementById('premiumNav');
+            if (!nav) return;
+            if ((window.scrollY || document.documentElement.scrollTop) > 10) { nav.classList.add('scrolled'); } else { nav.classList.remove('scrolled'); }
+        }, { passive: true });
     </script>
 </body>
 

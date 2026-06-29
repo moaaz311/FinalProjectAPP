@@ -1,101 +1,91 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin" />
-    <title>Egypt EconLens — Premium UI</title>
-    <script>
-        (function () {
-            try {
-                const savedTheme = localStorage.getItem("sse-theme") || "light";
-                document.documentElement.setAttribute("data-theme", savedTheme);
-            } catch (e) {
-                document.documentElement.setAttribute("data-theme", "light");
-            }
-        })();
-    </script>
+    <title>Egypt EconLens — Welcome</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html, body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        body { 
+            margin: 0; 
+            background: linear-gradient(rgba(10, 15, 30, 0.7), rgba(10, 15, 30, 0.7)), url("{{ url_for('static', filename='img/hero_bg.png') }}") no-repeat center center fixed !important;
+            background-size: cover !important;
+        }
+        .welcomeScreen { position: relative; z-index: 1; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; background: transparent !important; }
+        .ambient-bg { background: transparent !important; }
+
+        /* Floating Explore Button Styles */
+        .welcomeStartSwitch {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .welcomeStartSwitch.floating-btn {
+            position: fixed !important;
+            top: 50%;
+            left: 24px;
+            transform: translateY(-50%) scale(0.9);
+            z-index: 9999;
+            background: linear-gradient(135deg, #2563EB, #38BDF8) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 40px rgba(45, 212, 255, 0.4) !important;
+            animation: floatingGlow 3s infinite alternate ease-in-out;
+            margin: 0 !important;
+        }
+        .welcomeStartSwitch.floating-btn:hover {
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.6) !important;
+        }
+        .welcomeStartSwitch:active {
+            transform: scale(0.95);
+        }
+        .welcomeStartSwitch.floating-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+        @keyframes floatingGlow {
+            0% { transform: translateY(-50%) translateY(0) scale(0.9); }
+            100% { transform: translateY(-50%) translateY(-10px) scale(0.9); }
+        }
+        @media (max-width: 1024px) {
+            .welcomeStartSwitch.floating-btn { left: 16px; }
+        }
+        @media (max-width: 768px) {
+            .welcomeStartSwitch.floating-btn {
+                top: auto;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) scale(0.9);
+            }
+            .welcomeStartSwitch.floating-btn:hover {
+                transform: translateX(-50%) scale(1.05);
+            }
+            .welcomeStartSwitch.floating-btn:active {
+                transform: translateX(-50%) scale(0.95);
+            }
+            @keyframes floatingGlow {
+                0% { transform: translateX(-50%) translateY(0) scale(0.9); }
+                100% { transform: translateX(-50%) translateY(-10px) scale(0.9); }
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
 </head>
-<div id="demoModal" class="demo-modal">
 
-    <div class="demo-modal-content">
-
-        <button class="close-modal" onclick="closeDemoModal()">
-            &times;
-        </button>
-
-        <h2>Demo Account Credentials</h2>
-
-        <p class="modal-subtitle">
-            Use the following account to access all dashboards and reports.
-        </p>
-
-        <!-- Email -->
-
-        <div class="credential-box">
-
-            <label>Email</label>
-
-            <div class="credential-row">
-
-                <span id="demoEmail">
-                    Demo112004@outlook.com
-                </span>
-
-                <button class="copy-btn" onclick="copyText('demoEmail', this)">
-
-                    <svg viewBox="0 0 24 24" class="copy-icon">
-                        <path fill="currentColor"
-                            d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z" />
-                    </svg>
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- Password -->
-
-        <div class="credential-box">
-
-            <label>Password</label>
-
-            <div class="credential-row">
-
-                <span id="demoPassword">
-                    Demo@112004#
-                </span>
-
-                <button class="copy-btn" onclick="copyText('demoPassword', this)">
-
-                    <svg viewBox="0 0 24 24" class="copy-icon">
-                        <path fill="currentColor"
-                            d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z" />
-                    </svg>
-
-                </button>
-
-            </div>
-
-        </div>
-
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
     </div>
-
-</div>
-
-<!-- Toast -->
-
-<div id="copyToast" class="copy-toast">
-    ✓ Copied Successfully
-</div>
-
-<body class="app-locked">
-
-    <!-- WELCOME / FAKE LOADING SCREEN -->
     <div id="welcomeScreen" class="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle"
         aria-describedby="welcomeSubtitle">
         <div class="welcomeAurora" aria-hidden="true">
@@ -104,2408 +94,452 @@
             <span></span>
         </div>
 
-        <section class="welcomePanel">
-            <div class="welcomeKicker">Egypt EconLens</div>
+        <div class="welcome-container">
+            <div class="welcome-left">
+                <h1 class="welcome-main-title" id="welcomeTitle">EGYPT<br><span style="color: #38bdf8;">ECONLENS</span><br>INTELLIGENCE<br>PLATFORM</h1>
+                <p class="welcome-main-subtitle" id="welcomeSubtitle">
+                    An advanced economic intelligence platform integrating Power BI dashboards, dynamic AI analytics, and comprehensive trade insights into a single source of truth.
+                </p>
 
-            <div class="welcomeHandLoader" aria-hidden="true">
-                <div class="welcomeFinger"></div>
-                <div class="welcomeFinger"></div>
-                <div class="welcomeFinger"></div>
-                <div class="welcomeFinger"></div>
-                <div class="welcomePalm"></div>
-                <div class="welcomeThumb"></div>
+                <div style="min-height: 52px; width: 100%;">
+                    <button id="welcomeExploreBtn" class="welcomeStartSwitch" type="button">
+                        <span class="welcomeStartText">Explore App</span>
+                        <svg class="welcomeStartIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true">
+                            <path
+                                d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V256c0 17.7 14.3 32 32 32s32-14.3 32-32V32zM143.5 120.6c13.6-11.3 15.4-31.5 4.1-45.1s-31.5-15.4-45.1-4.1C49.7 115.4 16 181.8 16 256c0 132.5 107.5 240 240 240s240-107.5 240-240c0-74.2-33.8-140.6-86.6-184.6c-13.6-11.3-33.8-9.4-45.1 4.1s-9.4 33.8 4.1 45.1c38.9 32.3 63.5 81 63.5 135.4c0 97.2-78.8 176-176 176s-176-78.8-176-176c0-54.4 24.7-103.1 63.5-135.4z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
             </div>
+            
+            <div class="welcome-right">
+                <div class="gear-showcase-container">
+                    <div class="futuristic-gear-wrapper">
+                        <svg class="futuristic-gear-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="gearGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#082142" />
+                                    <stop offset="100%" stop-color="#06152b" />
+                                </linearGradient>
+                                <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="4" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <circle cx="100" cy="100" r="85" fill="none" stroke="#2dd4ff" stroke-width="12" stroke-dasharray="15 15" filter="url(#cyanGlow)" />
+                            <circle cx="100" cy="100" r="75" fill="url(#gearGradient)" stroke="#38bdf8" stroke-width="2" />
+                            <circle cx="100" cy="100" r="50" fill="#071a32" stroke="#1f83cf" stroke-width="4" />
+                            <circle cx="100" cy="100" r="30" fill="none" stroke="#2dd4ff" stroke-width="2" filter="url(#cyanGlow)" />
+                            <circle cx="100" cy="100" r="15" fill="#38bdf8" filter="url(#cyanGlow)" />
+                            <line x1="100" y1="25" x2="100" y2="75" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="100" y1="125" x2="100" y2="175" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="25" y1="100" x2="75" y2="100" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="125" y1="100" x2="175" y2="100" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="47" y1="47" x2="82" y2="82" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="118" y1="118" x2="153" y2="153" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="153" y1="47" x2="118" y2="82" stroke="#1f83cf" stroke-width="6" />
+                            <line x1="47" y1="153" x2="82" y2="118" stroke="#1f83cf" stroke-width="6" />
+                        </svg>
+                    </div>
 
-            <h1 id="welcomeTitle">Welcome to our Egypt EconLens App</h1>
-            <p id="welcomeSubtitle">
-                Preparing your economic intelligence workspace, Power BI reports, and AI analytics assistant.
-            </p>
+                    <div class="cyber-connection-line" id="connectionLine"></div>
 
-            <button id="welcomeExploreBtn" class="welcomeStartSwitch" type="button" disabled>
-                <span class="welcomeStartText">Preparing workspace</span>
-                <svg class="welcomeStartIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                    <path
-                        d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V256c0 17.7 14.3 32 32 32s32-14.3 32-32V32zM143.5 120.6c13.6-11.3 15.4-31.5 4.1-45.1s-31.5-15.4-45.1-4.1C49.7 115.4 16 181.8 16 256c0 132.5 107.5 240 240 240s240-107.5 240-240c0-74.2-33.8-140.6-86.6-184.6c-13.6-11.3-33.8-9.4-45.1 4.1s-9.4 33.8 4.1 45.1c38.9 32.3 63.5 81 63.5 135.4c0 97.2-78.8 176-176 176s-176-78.8-176-176c0-54.4 24.7-103.1 63.5-135.4z">
-                    </path>
-                </svg>
-            </button>
-        </section>
+                    <div class="menu-card gear-card pos-1" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-solid fa-chart-column"></i></div>
+                        <div class="menu-card-content">
+                            <h3>Dashboard Analysis</h3>
+                            <p>Explore interactive Power BI dashboards with advanced analytics.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-card gear-card pos-2" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        <div class="menu-card-content">
+                            <h3>Reports</h3>
+                            <p>Generate, filter, and view detailed business reports.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-card gear-card pos-3" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-solid fa-robot"></i></div>
+                        <div class="menu-card-content">
+                            <h3>AI Assistant</h3>
+                            <p>Ask questions in natural language and receive AI-powered insights.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-card gear-card pos-4" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-solid fa-file-pdf"></i><span class="icon-text-badge">PDF</span></div>
+                        <div class="menu-card-content">
+                            <h3>Export Reports</h3>
+                            <p>Export reports to PDF and instantly send them via email.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-card gear-card pos-5" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-regular fa-bell"></i><span class="icon-badge">1</span></div>
+                        <div class="menu-card-content">
+                            <h3>Update Subscription</h3>
+                            <p>Subscribe to receive notifications whenever reports are updated.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-card gear-card pos-6" onclick="document.getElementById('welcomeExploreBtn').click()">
+                        <div class="menu-card-icon"><i class="fa-regular fa-envelope"></i><i class="fa-solid fa-wand-magic-sparkles spark-icon"></i></div>
+                        <div class="menu-card-content">
+                            <h3>AI Summary to Email</h3>
+                            <p>Automatically generate AI summaries and deliver them directly to your inbox.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    
 
-    <div class="appAmbient" aria-hidden="true">
-        <span class="ambientOrb orbOne"></span>
-        <span class="ambientOrb orbTwo"></span>
-        <span class="ambientGrid"></span>
+    <!-- ABOUT SECTION -->
+    <div class="container">
+        <!-- Navigation Removed -->
+        <!-- Header Banner -->
+        <div class="header-section" style="margin-top: -2rem; padding-top: 2rem;">
+            <h1 class="title">Meet Our Team </h1>
+        </div>
+
+        <!-- Team Members Section (Circular Layout) -->
+        <div class="team-circle-layout">
+
+            <div class="circle-center">
+                <i class="fa-solid fa-users" style="font-size: 3rem; color: var(--primary-color);"></i>
+                <div class="center-text">Core Team</div>
+            </div>
+
+            <div class="center-line line-1"></div>
+            <div class="center-line line-2"></div>
+            <div class="center-line line-3"></div>
+            <div class="center-line line-4"></div>
+            <div class="center-line line-5"></div>
+
+            <!-- Ayman Abd Elsalam -->
+            <div class="circle-node node-1">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-database"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="{{ url_for('static', filename='profile/ayman.png') }}"
+                            alt="Ayman Abd Elsalam" class="profile-img" style="object-fit: cover; object-position: top;">
+                    </div>
+                    <h3 class="member-name">Ayman Abd Elsalam</h3>
+                    <p class="member-role">Data Engineer &amp; DWH Specialist</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Collecting and preparing data from multiple sources</li>
+                            <li>Designing and building the Enterprise Data Warehouse (DWH)</li>
+                            <li>Developing ETL pipelines using SQL Server Integration Services (SSIS)</li>
+                            <li>Optimizing data processing workflows</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/ayman-abd-elsalam-5b2131381/" target="_blank" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="https://github.com/3bslam" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shaimaa Hesham -->
+            <div class="circle-node node-2">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="{{ url_for('static', filename='profile/shaimaa.png') }}"
+                            alt="Shaimaa Hesham" class="profile-img" style="object-fit: cover; object-position: top;">
+                    </div>
+                    <h3 class="member-name">Shaimaa Hesham</h3>
+                    <p class="member-role">BI &amp; AI Solutions Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Developing Paginated Reports using Power BI Report Builder</li>
+                            <li>Building and integrating AI Assistant capabilities</li>
+                            <li>Supporting advanced reporting solutions</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/shaimaa-hesham/" target="_blank" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="https://github.com/shaimaahesham" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mahmoud Reda -->
+            <div class="circle-node node-3">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="{{ url_for('static', filename='profile/mahmoud.png') }}"
+                            alt="Mahmoud Reda" class="profile-img" style="object-fit: cover; object-position: top;">
+                    </div>
+                    <h3 class="member-name">Mahmoud Reda</h3>
+                    <p class="member-role">Power BI Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Designing interactive Power BI dashboards</li>
+                            <li>Creating KPIs and analytical insights</li>
+                            <li>Building business intelligence visualizations</li>
+                            <li>Developing executive-level reporting solutions</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/mahmoud-aboali-539130389/" target="_blank" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="https://github.com/mahmoud113647" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eman Salah -->
+            <div class="circle-node node-4">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="{{ url_for('static', filename='profile/eman.png') }}"
+                            alt="Eman Salah" class="profile-img" style="object-fit: cover; object-position: top;">
+                    </div>
+                    <h3 class="member-name">Eman Salah</h3>
+                    <p class="member-role">Power BI Developer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Developing business intelligence dashboards</li>
+                            <li>Creating interactive visual reports</li>
+                            <li>Designing analytical data visualizations</li>
+                            <li>Supporting data-driven decision-making</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/emansalahahmed/" target="_blank" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="https://github.com/emanemysalah3-ai" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moaaz Ashraf -->
+            <div class="circle-node node-5">
+                <div class="team-card expanding-card">
+                    <div class="role-icon"><i class="fa-solid fa-cloud"></i></div>
+                    <div class="profile-img-wrapper">
+                        <img src="{{ url_for('static', filename='profile/moaz.png') }}"
+                            alt="Moaaz Ashraf" class="profile-img" style="object-fit: cover; object-position: top;">
+                    </div>
+                    <h3 class="member-name">Moaaz Ashraf</h3>
+                    <p class="member-role">Cloud, Automation &amp; Platform Engineer</p>
+
+                    <div class="card-hidden-content">
+                        <div class="card-divider"></div>
+                        <ul class="member-tasks">
+                            <li>Uploading &amp; managing databases in Microsoft Azure</li>
+                            <li>Migrating data solutions with Microsoft Fabric</li>
+                            <li>Building &amp; deploying the project web application</li>
+                            <li>Developing Power Automate workflows</li>
+                            <li>Automating report generation &amp; notifications</li>
+                            <li>Integrating Power BI, Fabric, Azure, and AI Assistant services</li>
+                        </ul>
+                        <div class="social-links">
+                            <a href="https://www.linkedin.com/in/moaaz-achraf/" target="_blank" class="social-link"><i class="fa-brands fa-linkedin"></i></a>
+                            <a href="https://github.com/moaaz311" target="_blank" class="social-link"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Highlights Section -->
+        <h2 class="section-title">Project Highlights</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">1</div>
+                <div class="stat-label">Enterprise Data Warehouse</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-network-wired" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">SSIS ETL Pipelines</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">20</div>
+                <div class="stat-label">Power BI Dashboards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Paginated Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-brain" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">AI Assistant Integration</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-bolt" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Power Automate Workflows</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-cloud" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Azure Cloud Infrastructure</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value"><i class="fa-solid fa-cube" style="font-size: 2.2rem;"></i></div>
+                <div class="stat-label">Microsoft Fabric Integration</div>
+            </div>
+        </div>
+
+        <!-- Interactive Timeline -->
+        <h2 class="section-title">Project Journey</h2>
+        <div class="timeline">
+            <div class="timeline-items">
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-database"></i></div>
+                    <div class="timeline-label">Data Collection</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-filter"></i></div>
+                    <div class="timeline-label">ETL Pipelines</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-server"></i></div>
+                    <div class="timeline-label">Data Warehouse</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-cloud"></i></div>
+                    <div class="timeline-label">Azure Cloud</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-cube"></i></div>
+                    <div class="timeline-label">MS Fabric</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="timeline-label">Power BI</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-file-invoice"></i></div>
+                    <div class="timeline-label">Report Builder</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-robot"></i></div>
+                    <div class="timeline-label">AI Assistant</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"><i class="fa-solid fa-globe"></i></div>
+                    <div class="timeline-label">Web Deployment</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technologies Section -->
+        <h2 class="section-title">Technologies Used</h2>
+        <div class="tech-section">
+            <div class="tech-grid">
+                <div class="tech-chip"><i class="fa-brands fa-microsoft" style="color: #0ea5e9; font-size: 1.2rem;"></i>
+                    Microsoft Fabric</div>
+                <div class="tech-chip"><i class="fa-solid fa-chart-column"
+                        style="color: #f59e0b; font-size: 1.2rem;"></i> Power BI</div>
+                <div class="tech-chip"><i class="fa-solid fa-file-invoice"
+                        style="color: #f59e0b; font-size: 1.2rem;"></i> Power BI Report Builder</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"
+                        alt="Azure" width="20"> Azure</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/microsoftsqlserver/microsoftsqlserver-plain.svg"
+                        alt="SQL Server" width="20"> SQL Server</div>
+                <div class="tech-chip"><i class="fa-solid fa-network-wired"
+                        style="color: #64748b; font-size: 1.2rem;"></i> SSIS</div>
+                <div class="tech-chip"><i class="fa-solid fa-bolt" style="color: #2563eb; font-size: 1.2rem;"></i> Power
+                    Automate</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"
+                        alt="Python" width="20"> Python</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flask/flask-original.svg"
+                        alt="Flask" width="20" style="filter: brightness(0) invert(var(--icon-invert));"> Flask</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"
+                        alt="HTML5" width="20"> HTML5</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"
+                        alt="CSS3" width="20"> CSS3</div>
+                <div class="tech-chip"><img
+                        src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"
+                        alt="JavaScript" width="20"> JavaScript</div>
+                <div class="tech-chip"><i class="fa-solid fa-brain" style="color: #10b981; font-size: 1.2rem;"></i> AI
+                    Technologies</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logo">ITI Business Intelligence Graduation Project 2026</div>
+            <div class="footer-tagline">"Turning Data into Decisions"</div>
+            <div class="footer-credits">
+                Developed by: Ayman Abd Elsalam • Shaimaa Hesham • Mahmoud Reda • Eman Salah • Moaaz Ashraf
+            </div>
+        </footer>
     </div>
 
-    <div id="switchOverlay" class="switchOverlay" aria-hidden="true">
-        <div class="switchCard">
-            <span class="switchSpinner"></span>
-            <div>
-                <strong id="switchTitle">Opening report</strong>
-                <small id="switchType">Egypt EconLens workspace</small>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- TOP APP BAR -->
-    <header class="appHeader">
-        <div class="brandBlock">
-            <div class="brandMark" aria-hidden="true">
-                <span class="brandMarkInner">△</span>
-            </div>
-            <div class="brandText">
-                <div class="brandTitle">Egypt EconLens</div>
-                <div class="brandSub">Egypt Economic Intelligence</div>
-            </div>
-        </div>
-
-        <div class="viewStatus" aria-live="polite">
-            <span id="activeReportType" class="statusBadge">PBIX</span>
-            <div>
-                <div class="statusLabel">Currently viewing</div>
-                <div id="activeReportName" class="statusTitle">Full Light Mode PowerBI Dashboard</div>
-            </div>
-        </div>
-
-        <nav class="mainNav" aria-label="Quick actions">
-            <button class="navBtn menuBtn" onclick="handleReportsMenu()" type="button" aria-label="Open reports menu">
-                <span class="navIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                        <path d="M4 6.5h16v2H4v-2Zm0 4.75h16v2H4v-2ZM4 16h16v2H4v-2Z" />
-                    </svg></span>
-                <span class="navLabel">Reports Menu</span>
-            </button>
-            <button id="themeToggleBtn" class="navBtn themeBtn" onclick="toggleTheme()" type="button"
-                aria-label="Toggle day and night mode">
-                <span id="themeIcon" class="navIcon svgIcon" aria-hidden="true"><svg class="sunGlyph"
-                        viewBox="0 0 24 24">
-                        <path
-                            d="M12 4.5V2h2v2.5h-2Zm0 17.5v-2.5h2V22h-2ZM4.22 5.64 5.64 4.22l1.77 1.77-1.42 1.42-1.77-1.77Zm14.37 14.14-1.77-1.77 1.42-1.42 1.77 1.77-1.42 1.42ZM2 13v-2h2.5v2H2Zm17.5 0v-2H22v2h-2.5ZM5.64 19.78 4.22 18.36l1.77-1.77 1.42 1.42-1.77 1.77ZM18.24 7.41l-1.42-1.42 1.77-1.77 1.42 1.42-1.77 1.77ZM13 17.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11Z" />
-                    </svg></span>
-                <span id="themeText" class="navLabel">Day Mode</span>
-            </button>
-        </nav>
-
-        <div class="headerActions">
-            <button class="actionBtn" onclick="openDemoModal()" type="button">
-                <span class="actionIcon svgIcon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                        <path fill="rgb(170, 20, 67)"
-                            d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z" />
-                    </svg>
-                </span> Account credentials
-            </button>
-            <a class="actionBtn aboutBtn" href="/about"
-                style="text-decoration: none; position: relative; overflow: hidden; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.8); color: #0f172a; font-weight: 700; border-radius: 999px; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; padding: 8px 16px;">
-                <span class="actionIcon svgIcon" aria-hidden="true" style="color: #0ea5e9; margin-right: 6px;"><svg
-                        viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                    </svg></span> About Us
-            </a>
-            <a class="actionBtn" href="/guide"
-                style="text-decoration: none; position: relative; overflow: hidden; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.8); color: #0f172a; font-weight: 700; border-radius: 999px; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; padding: 8px 16px;">
-                <span class="actionIcon svgIcon" aria-hidden="true" style="color: #0ea5e9; margin-right: 6px;"><svg
-                        viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                            d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                    </svg></span> Guide to Sign In
-            </a>
-        </div>
-    </header>
-    <div id="demoAlert" class="demo-alert">
-
-        <div class="demo-alert-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.2" fill="none"
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-        </div>
-
-        <div class="demo-alert-content">
-            <h4>Demo Access Required</h4>
-
-            <p>
-                Use the Demo Account credentials to access
-                Power BI dashboards and paginated reports.
-            </p>
-        </div>
-
-        <button class="demo-alert-btn" onclick="window.location.href='/guide'">
-            <svg viewBox="0 0 24 24" width="16" height="16" style="margin-right: 6px;" aria-hidden="true">
-                <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-            </svg>
-            View Guide
-        </button>
-
-        <button class="demo-alert-close" onclick="closeDemoAlert()" aria-label="Close Alert">
-            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none"
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-
-    </div>
     <script>
-        let demoAlertTimeout = null;
-
-        function startDemoAlertTimeout() {
-            if (demoAlertTimeout) {
-                clearTimeout(demoAlertTimeout);
-            }
-            demoAlertTimeout = setTimeout(() => {
-                closeDemoAlert();
-            }, 10000);
-        }
-
-        function openDemoModal() {
-
-            document.getElementById("demoModal")
-                .style.display = "flex";
-        }
-
-        function closeDemoModal() {
-
-            document.getElementById("demoModal")
-                .style.display = "none";
-        }
-
-        function closeDemoAlert() {
-            if (demoAlertTimeout) {
-                clearTimeout(demoAlertTimeout);
-                demoAlertTimeout = null;
-            }
-
-            const alert =
-                document.getElementById("demoAlert");
-
-            if (alert) {
-                alert.style.opacity = "0";
-
-                setTimeout(() => {
-
-                    alert.style.display = "none";
-
-                }, 300);
-            }
-        }
-
-        function showToast() {
-
-            const toast =
-                document.getElementById("copyToast");
-
-            toast.classList.add("show");
-
-            setTimeout(() => {
-
-                toast.classList.remove("show");
-
-            }, 2000);
-        }
-
-        function copyText(elementId, button) {
-
-            const text =
-                document.getElementById(elementId)
-                    .innerText;
-
-            navigator.clipboard.writeText(text)
-                .then(() => {
-
-                    button.innerHTML = "✓";
-
-                    button.classList.add("copied");
-
-                    showToast();
-
-                    setTimeout(() => {
-
-                        button.innerHTML = `
-            <svg viewBox="0 0 24 24" class="copy-icon">
-                <path fill="currentColor"
-                d="M16 1H8a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2z"/>
-            </svg>
-            `;
-
-                        button.classList.remove("copied");
-
-                    }, 1500);
-
-                });
-        }
-    </script>
-    <!-- REPORT SIDE MENU -->
-    <aside id="reportSidebar" class="reportSidebar" aria-label="Reports side navigation">
-        <div class="sidebarTop">
-            <div class="sideLogo">
-                <div class="sideLogoMark">△</div>
-                <div class="sideLogoText">
-                    <div>Egypt EconLens</div>
-                    <span>Report Center</span>
-                </div>
-            </div>
-            <button class="sideCollapseBtn" onclick="toggleSidebar()" type="button"
-                aria-label="Collapse reports side menu">‹</button>
-        </div>
-
-        <div class="sideSectionLabel">Embedded Reports</div>
-
-        <div class="sideMicroStats" aria-label="Report workspace summary">
-            <div><strong>7</strong><span>Reports</span></div>
-            <div><strong>Live</strong><span>Embed</span></div>
-        </div>
-
-
-        <div class="reportList">
-            <button class="reportNavItem active" aria-label="Open Full Light Mode PowerBI Dashboard" data-report="pbix1"
-                data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX"
-                data-title-tooltip="Full Light Mode PowerBI Dashboard" onclick="showReport('pbix1', this)"
-                type="button">
-                <span class="reportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Dashboard"><path d="M4 3h6a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 14h6a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z" fill="currentColor" opacity="0.4"/><path d="M14 11h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM14 3h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Full Light Mode PowerBI Dashboard</strong>
-                    <small>Power BI dashboard</small>
-                </span>
-                <span class="reportChip">PBIX</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Procurement Risk &amp;Fraud Monitoring Report"
-                data-report="rdl1" data-title="Procurement Risk &amp;Fraud Monitoring Report" data-type="RDL"
-                data-title-tooltip="Procurement Risk &amp;Fraud Monitoring Report" onclick="showReport('rdl1', this)"
-                type="button">
-                <span class="reportIcon riskIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Risk"><path d="M12 2l8 3.5v6c0 5.5-3.6 10.1-8 11.5-4.4-1.4-8-6-8-11.5v-6L12 2z" fill="currentColor" opacity="0.3"/><path d="M12 16a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-8a1.5 1.5 0 0 0-1.5 1.5v3a1.5 1.5 0 0 0 3 0v-3A1.5 1.5 0 0 0 12 8z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Procurement Risk &amp;Fraud Monitoring Report</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Forecasting &amp; Strategic Planning Report"
-                data-report="rdl2" data-title="Forecasting &amp; Strategic Planning Report" data-type="RDL"
-                data-title-tooltip="Forecasting &amp; Strategic Planning Report" onclick="showReport('rdl2', this)"
-                type="button">
-                <span class="reportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Forecasting"><path d="M3 3a1 1 0 0 0-2 0v18a1 1 0 0 0 1 1h18a1 1 0 0 0 0-2H3V3z" fill="currentColor"/><path d="M21.7 6.3l-6 6a1 1 0 0 1-1.4 0l-3.3-3.3-4.3 4.3a1 1 0 1 1-1.4-1.4l5-5a1 1 0 0 1 1.4 0l3.3 3.3 5.3-5.3a1 1 0 1 1 1.4 1.4z" fill="currentColor" opacity="0.4"/><circle cx="21" cy="6" r="2.5" fill="currentColor"/><circle cx="15" cy="12" r="2.5" fill="currentColor"/><circle cx="11" cy="8" r="2.5" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Forecasting &amp; Strategic Planning Report</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Executive Trade &amp; Supply Chain Summary"
-                data-report="rdl3" data-title="Executive Trade &amp; Supply Chain Summary" data-type="RDL"
-                data-title-tooltip="Executive Trade &amp; Supply Chain Summary" onclick="showReport('rdl3', this)"
-                type="button">
-                <span class="reportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Executive"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM10 4h4v2h-4V4z" fill="currentColor" opacity="0.3"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Executive Trade &amp; Supply Chain Summary</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Supply Chain Operations Performance" data-report="rdl4"
-                data-title="Supply Chain Operations Performance" data-type="RDL"
-                data-title-tooltip="Supply Chain Operations Performance" onclick="showReport('rdl4', this)"
-                type="button">
-                <span class="reportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Supply Chain"><path d="M1 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5z" fill="currentColor" opacity="0.3"/><path d="M16 7h3.5l3.5 4.5V17a2 2 0 0 1-2 2h-5V7z" fill="currentColor" opacity="0.15"/><path d="M6 16a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zm11 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM16 11h4l-2.5-3H16v3z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Supply Chain Operations Performance</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Macro Currency &amp; Cost Exposure" data-report="rdl5"
-                data-title="Macro Currency &amp; Cost Exposure" data-type="RDL"
-                data-title-tooltip="Macro Currency &amp; Cost Exposure" onclick="showReport('rdl5', this)"
-                type="button">
-                <span class="reportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Currency"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/><path d="M12.5 17v-1.2c1.7-.2 3.1-1.3 3.5-3h-2.1c-.2.7-.9 1.2-1.9 1.2-1.4 0-2.3-.9-2.3-2 0-1.1.9-1.9 2.5-2.2l1.6-.3c2.4-.4 3.7-1.8 3.7-3.8 0-1.8-1.4-3.2-3.5-3.5V1h-2v1.2c-1.6.3-2.9 1.4-3.3 3h2.1c.2-.6.9-1.1 1.8-1.1 1.2 0 2.1.8 2.1 1.8 0 1.1-.9 1.8-2.5 2.1l-1.6.3c-2.4.4-3.7 1.8-3.7 3.8 0 1.9 1.5 3.3 3.6 3.6V17h2z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Macro Currency &amp; Cost Exposure</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-
-            <button class="reportNavItem" aria-label="Open Trade Partners" data-report="rdl6"
-                data-title="Trade Partners" data-type="RDL" data-title-tooltip="Trade Partners"
-                onclick="showReport('rdl6', this)" type="button">
-                <span class="reportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Trade Partners"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z" fill="currentColor"/><path d="M16 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor" opacity="0.4"/><path d="M8 13c-.25 0-.5.01-.76.04C5.12 13.43 3 15.02 3 17v2h4.5v-2.5c0-1.1.42-2.32 1.3-3.08-.26-.27-.55-.42-.8-.42z" fill="currentColor"/></svg>
-                </span>
-                <span class="reportText">
-                    <strong>Trade Partners</strong>
-                    <small>Paginated report</small>
-                </span>
-                <span class="reportChip">RDL</span><span class="reportAura" aria-hidden="true"></span>
-            </button>
-        </div>
-
-        <div class="sideDivider"></div>
-
-        <div class="sideSectionLabel">Smart Actions</div>
-        <button class="sideAction" data-title="Email PDF" onclick="toggleEmail()" type="button" aria-label="Email PDF">
-            <span class="actionIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                    <path
-                        d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm8 7.1L4.4 7.2 4 7.9v.5l8 5.1 8-5.1v-.5l-.4-.7L12 12.1Z" />
-                </svg></span><strong>Email PDF</strong>
-        </button>
-        <button class="sideAction" data-title="Update Alerts" onclick="toggleUpdates()" type="button"
-            aria-label="Update Alerts">
-            <span class="actionIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 22a2.8 2.8 0 0 0 2.7-2h-5.4A2.8 2.8 0 0 0 12 22Zm7-6.5V11a7 7 0 0 0-5-6.7V3a2 2 0 1 0-4 0v1.3A7 7 0 0 0 5 11v4.5L3 17.5V19h18v-1.5l-2-2Z" />
-                </svg></span><strong>Update Alerts</strong>
-        </button>
-        <button class="sideAction" data-title="Ask AI Assistant" onclick="toggleChat()" type="button"
-            aria-label="Ask AI Assistant">
-            <span class="actionIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 3C6.5 3 2 6.9 2 11.7c0 2.5 1.2 4.7 3.2 6.3L4.4 22l4.2-2.1c1.1.3 2.2.5 3.4.5 5.5 0 10-3.9 10-8.7S17.5 3 12 3Zm-4 9a1.4 1.4 0 1 1 0-2.8A1.4 1.4 0 0 1 8 12Zm4 0a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Zm4 0a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Z" />
-                </svg></span><strong>Ask AI</strong>
-        </button>
-
-        <div class="sidebarFooter">
-            <div class="miniMetric">
-                <span class="metricDot"></span>
-                <div>
-                    <strong>Live workspace</strong>
-                    <small>Egypt EconLens viewer</small>
-                </div>
-            </div>
-        </div>
-
-    </aside>
-
-    <!-- MOBILE BOOTSTRAP REPORTS OFFCANVAS -->
-    <div class="offcanvas offcanvas-start mobileReportsCanvas" tabindex="-1" id="mobileReportsOffcanvas"
-        aria-labelledby="mobileReportsTitle">
-        <div class="offcanvas-header mobileCanvasHeader">
-            <div>
-                <div id="mobileReportsTitle" class="mobileCanvasTitle">Reports Menu</div>
-                <div class="mobileCanvasSub">Choose dashboard or paginated report</div>
-            </div>
-            <button type="button" class="btn-close mobileCanvasClose" data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body mobileCanvasBody">
-            <button class="mobileReportOption active" data-bs-dismiss="offcanvas" data-report="pbix1"
-                data-title="Full Light Mode PowerBI Dashboard" data-type="PBIX" onclick="showReport('pbix1', this)"
-                type="button">
-                <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Dashboard"><path d="M4 3h6a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 14h6a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z" fill="currentColor" opacity="0.4"/><path d="M14 11h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM14 3h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor"/></svg></span>
-                <span><strong>Full Light Mode PowerBI Dashboard</strong><small>Power BI
-                        dashboard</small></span><em>PBIX</em>
-            </button>
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl1"
-                data-title="Procurement Risk &amp;Fraud Monitoring Report" data-type="RDL"
-                onclick="showReport('rdl1', this)" type="button">
-                <span class="mobileReportIcon riskIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Risk"><path d="M12 2l8 3.5v6c0 5.5-3.6 10.1-8 11.5-4.4-1.4-8-6-8-11.5v-6L12 2z" fill="currentColor" opacity="0.3"/><path d="M12 16a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-8a1.5 1.5 0 0 0-1.5 1.5v3a1.5 1.5 0 0 0 3 0v-3A1.5 1.5 0 0 0 12 8z" fill="currentColor"/></svg></span>
-                <span><strong>Procurement Risk &amp;Fraud Monitoring Report</strong><small>Paginated
-                        report</small></span><em>RDL</em>
-            </button>
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl2"
-                data-title="Forecasting &amp; Strategic Planning Report" data-type="RDL"
-                onclick="showReport('rdl2', this)" type="button">
-                <span class="mobileReportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Forecasting"><path d="M3 3a1 1 0 0 0-2 0v18a1 1 0 0 0 1 1h18a1 1 0 0 0 0-2H3V3z" fill="currentColor"/><path d="M21.7 6.3l-6 6a1 1 0 0 1-1.4 0l-3.3-3.3-4.3 4.3a1 1 0 1 1-1.4-1.4l5-5a1 1 0 0 1 1.4 0l3.3 3.3 5.3-5.3a1 1 0 1 1 1.4 1.4z" fill="currentColor" opacity="0.4"/><circle cx="21" cy="6" r="2.5" fill="currentColor"/><circle cx="15" cy="12" r="2.5" fill="currentColor"/><circle cx="11" cy="8" r="2.5" fill="currentColor"/></svg></span>
-                <span><strong>Forecasting &amp; Strategic Planning Report</strong><small>Paginated
-                        report</small></span><em>RDL</em>
-            </button>
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl3"
-                data-title="Executive Trade &amp; Supply Chain Summary" data-type="RDL"
-                onclick="showReport('rdl3', this)" type="button">
-                <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Executive"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM10 4h4v2h-4V4z" fill="currentColor" opacity="0.3"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="currentColor"/></svg></span>
-                <span><strong>Executive Trade &amp; Supply Chain Summary</strong><small>Paginated
-                        report</small></span><em>RDL</em>
-            </button>
-
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl4"
-                data-title="Supply Chain Operations Performance" data-type="RDL" onclick="showReport('rdl4', this)"
-                type="button">
-                <span class="mobileReportIcon opsIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Supply Chain"><path d="M1 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5z" fill="currentColor" opacity="0.3"/><path d="M16 7h3.5l3.5 4.5V17a2 2 0 0 1-2 2h-5V7z" fill="currentColor" opacity="0.15"/><path d="M6 16a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zm11 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM16 11h4l-2.5-3H16v3z" fill="currentColor"/></svg></span>
-                <span><strong>Supply Chain Operations Performance</strong><small>Paginated
-                        report</small></span><em>RDL</em>
-            </button>
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl5"
-                data-title="Macro Currency &amp; Cost Exposure" data-type="RDL" onclick="showReport('rdl5', this)"
-                type="button">
-                <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Currency"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/><path d="M12.5 17v-1.2c1.7-.2 3.1-1.3 3.5-3h-2.1c-.2.7-.9 1.2-1.9 1.2-1.4 0-2.3-.9-2.3-2 0-1.1.9-1.9 2.5-2.2l1.6-.3c2.4-.4 3.7-1.8 3.7-3.8 0-1.8-1.4-3.2-3.5-3.5V1h-2v1.2c-1.6.3-2.9 1.4-3.3 3h2.1c.2-.6.9-1.1 1.8-1.1 1.2 0 2.1.8 2.1 1.8 0 1.1-.9 1.8-2.5 2.1l-1.6.3c-2.4.4-3.7 1.8-3.7 3.8 0 1.9 1.5 3.3 3.6 3.6V17h2z" fill="currentColor"/></svg></span>
-                <span><strong>Macro Currency &amp; Cost Exposure</strong><small>Paginated
-                        report</small></span><em>RDL</em>
-            </button>
-            <button class="mobileReportOption" data-bs-dismiss="offcanvas" data-report="rdl6"
-                data-title="Trade Partners" data-type="RDL" onclick="showReport('rdl6', this)" type="button">
-                <span class="mobileReportIcon dashboardIcon" aria-hidden="true"><svg viewBox="0 0 24 24" role="img" aria-label="Trade Partners"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z" fill="currentColor"/><path d="M16 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor" opacity="0.4"/><path d="M8 13c-.25 0-.5.01-.76.04C5.12 13.43 3 15.02 3 17v2h4.5v-2.5c0-1.1.42-2.32 1.3-3.08-.26-.27-.55-.42-.8-.42z" fill="currentColor"/></svg></span>
-                <span><strong>Trade Partners</strong><small>Paginated report</small></span><em>RDL</em>
-            </button>
-
-            <div class="mobileCanvasDivider"></div>
-            <button class="mobileUtilityAction" onclick="toggleEmail()" data-bs-dismiss="offcanvas" type="button">Email
-                PDF</button>
-            <button class="mobileUtilityAction" onclick="toggleUpdates()" data-bs-dismiss="offcanvas"
-                type="button">Update Alerts</button>
-            <button class="mobileUtilityAction" onclick="toggleChat()" data-bs-dismiss="offcanvas" type="button">Ask
-                AI</button>
-        </div>
-    </div>
-
-    <!-- MOBILE BOOTSTRAP BOTTOM DOCK -->
-    <nav class="mobileBottomDock d-lg-none" aria-label="Mobile report switcher">
-        <button class="mobileDockBtn active" data-report="pbix1" data-title="Full Light Mode PowerBI Dashboard"
-            data-type="PBIX" onclick="showReport('pbix1', this)" type="button"
-            aria-label="Full Light Mode PowerBI Dashboard">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Dashboard"><path d="M4 3h6a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM4 14h6a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z" fill="currentColor" opacity="0.4"/><path d="M14 11h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2zM14 3h6a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor"/></svg></span>
-            <small>PBIX</small>
-        </button>
-        <button class="mobileDockBtn" data-report="rdl1" data-title="Procurement Risk &amp;Fraud Monitoring Report"
-            data-type="RDL" onclick="showReport('rdl1', this)" type="button"
-            aria-label="Procurement Risk &amp;Fraud Monitoring Report">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Risk"><path d="M12 2l8 3.5v6c0 5.5-3.6 10.1-8 11.5-4.4-1.4-8-6-8-11.5v-6L12 2z" fill="currentColor" opacity="0.3"/><path d="M12 16a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-8a1.5 1.5 0 0 0-1.5 1.5v3a1.5 1.5 0 0 0 3 0v-3A1.5 1.5 0 0 0 12 8z" fill="currentColor"/></svg></span>
-            <small>Risk</small>
-        </button>
-        <button class="mobileDockBtn" data-report="rdl2" data-title="Forecasting &amp; Strategic Planning Report"
-            data-type="RDL" onclick="showReport('rdl2', this)" type="button"
-            aria-label="Forecasting &amp; Strategic Planning Report">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Forecasting"><path d="M3 3a1 1 0 0 0-2 0v18a1 1 0 0 0 1 1h18a1 1 0 0 0 0-2H3V3z" fill="currentColor"/><path d="M21.7 6.3l-6 6a1 1 0 0 1-1.4 0l-3.3-3.3-4.3 4.3a1 1 0 1 1-1.4-1.4l5-5a1 1 0 0 1 1.4 0l3.3 3.3 5.3-5.3a1 1 0 1 1 1.4 1.4z" fill="currentColor" opacity="0.4"/><circle cx="21" cy="6" r="2.5" fill="currentColor"/><circle cx="15" cy="12" r="2.5" fill="currentColor"/><circle cx="11" cy="8" r="2.5" fill="currentColor"/></svg></span>
-            <small>Plan</small>
-        </button>
-        <button class="mobileDockBtn" data-report="rdl3" data-title="Executive Trade &amp; Supply Chain Summary"
-            data-type="RDL" onclick="showReport('rdl3', this)" type="button"
-            aria-label="Executive Trade &amp; Supply Chain Summary Report">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Executive"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM10 4h4v2h-4V4z" fill="currentColor" opacity="0.3"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill="currentColor"/></svg></span>
-            <small>Exec</small>
-        </button>
-
-        <button class="mobileDockBtn" data-report="rdl4" data-title="Supply Chain Operations Performance"
-            data-type="RDL" onclick="showReport('rdl4', this)" type="button"
-            aria-label="Supply Chain Operations Performance">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Supply Chain"><path d="M1 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5z" fill="currentColor" opacity="0.3"/><path d="M16 7h3.5l3.5 4.5V17a2 2 0 0 1-2 2h-5V7z" fill="currentColor" opacity="0.15"/><path d="M6 16a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zm11 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM16 11h4l-2.5-3H16v3z" fill="currentColor"/></svg></span>
-            <small>Ops</small>
-        </button>
-        <button class="mobileDockBtn" data-report="rdl5" data-title="Macro Currency &amp; Cost Exposure" data-type="RDL"
-            onclick="showReport('rdl5', this)" type="button" aria-label="Macro Currency & Cost Exposure">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Currency"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM12 20c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor" opacity="0.3"/><path d="M12.5 17v-1.2c1.7-.2 3.1-1.3 3.5-3h-2.1c-.2.7-.9 1.2-1.9 1.2-1.4 0-2.3-.9-2.3-2 0-1.1.9-1.9 2.5-2.2l1.6-.3c2.4-.4 3.7-1.8 3.7-3.8 0-1.8-1.4-3.2-3.5-3.5V1h-2v1.2c-1.6.3-2.9 1.4-3.3 3h2.1c.2-.6.9-1.1 1.8-1.1 1.2 0 2.1.8 2.1 1.8 0 1.1-.9 1.8-2.5 2.1l-1.6.3c-2.4.4-3.7 1.8-3.7 3.8 0 1.9 1.5 3.3 3.6 3.6V17h2z" fill="currentColor"/></svg></span>
-            <small>Macro</small>
-        </button>
-        <button class="mobileDockBtn" data-report="rdl6" data-title="Trade Partners" data-type="RDL"
-            onclick="showReport('rdl6', this)" type="button" aria-label="Trade Partners">
-            <span class="dockIcon"><svg viewBox="0 0 24 24" role="img" aria-label="Trade Partners"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z" fill="currentColor"/><path d="M16 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor" opacity="0.4"/><path d="M8 13c-.25 0-.5.01-.76.04C5.12 13.43 3 15.02 3 17v2h4.5v-2.5c0-1.1.42-2.32 1.3-3.08-.26-.27-.55-.42-.8-.42z" fill="currentColor"/></svg></span>
-            <small>Partners</small>
-        </button>
-        <button class="mobileDockBtn menuDockBtn" onclick="handleReportsMenu()" type="button"
-            aria-label="Open full reports menu">
-            <span class="dockIcon"><svg viewBox="0 0 24 24">
-                    <path d="M4 6.5h16v2H4v-2Zm0 4.75h16v2H4v-2ZM4 16h16v2H4v-2Z" />
-                </svg></span>
-            <small>Menu</small>
-        </button>
-    </nav>
-
-    <!-- DASHBOARD VIEWER -->
-    <main id="viewer" class="dashboardShell">
-        <div class="dashboardChrome" aria-hidden="true"><span></span><span></span><span></span></div>
-
-        <iframe id="pbix1" class="active" title="Full Light Mode PowerBI Dashboard"
-            src="https://app.powerbi.com/reportEmbed?reportId=fd74639c-26b8-4245-927c-f5e5f7bfa1e4&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl1" title="Procurement Risk &amp;Fraud Monitoring Report"
-            src="https://app.powerbi.com/rdlEmbed?reportId=470349ed-7f49-494f-b62e-4c5325073e8e&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl2" title="Forecasting &amp; Strategic Planning Report"
-            src="https://app.powerbi.com/rdlEmbed?reportId=f816875a-4fd8-44b9-a8f4-c22c536920d4&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl3" title="Executive Trade &amp; Supply Chain Summary"
-            src="https://app.powerbi.com/rdlEmbed?reportId=23b137ec-dc44-4de8-ba30-93eca6c0631e&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl4" title="Supply Chain Operations Performance"
-            src="https://app.powerbi.com/rdlEmbed?reportId=f4757103-3ab4-44c7-af32-399a2e4129da&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl5" title="Macro Currency &amp; Cost Exposure"
-            src="https://app.powerbi.com/rdlEmbed?reportId=5e2f5bc7-5fc9-4119-8d58-04162bb2a3da&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-
-        <iframe id="rdl6" title="Trade Partners"
-            src="https://app.powerbi.com/rdlEmbed?reportId=c4753a9e-52ac-41e3-8b4b-fd72cdf79f50&amp;groupId=9e1acf4e-e428-48a5-9f49-ca6c3bff92c3&amp;autoAuth=true&amp;ctid=ff4a48d6-4b5e-4fd3-8266-7eafc3e6e23e&amp;experience=power-bi&amp;rdl:parameterPanel=collapsed"
-            frameborder="0" allowFullScreen="true">
-        </iframe>
-    </main>
-
-    <!-- FLOATING AI BUTTON -->
-    <button id="aiFloatingBtn" class="aiFloatingBtn" onclick="toggleChat()" type="button"
-        aria-label="Open AI Assistant">
-        <span class="aiBotIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                <path
-                    d="M12 2a1.5 1.5 0 0 1 1.5 1.5V5H17a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4h3.5V3.5A1.5 1.5 0 0 1 12 2Zm-5 8.8a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0Zm6.8 0a1.6 1.6 0 1 0 3.2 0 1.6 1.6 0 0 0-3.2 0ZM8 15.5c1 1 2.3 1.5 4 1.5s3-.5 4-1.5l-1.2-1.2c-.7.6-1.6.9-2.8.9s-2.1-.3-2.8-.9L8 15.5Z" />
-            </svg></span>
-        <span class="aiFloatingLabel">Ask AI</span>
-    </button>
-
-    <!-- AI ASSISTANT OVERLAY BACKDROP -->
-    <div id="aiBackdrop" class="aiBackdrop" onclick="closeChat()" aria-hidden="true"></div>
-
-    <!-- AI ASSISTANT DRAWER -->
-    <aside id="chatModal" class="aiDrawer" aria-label="AI Assistant panel">
-        <div class="chatHeader">
-            <div class="chatTitle">
-                <span class="chatIcon svgIcon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                        <path
-                            d="M12 2a1.4 1.4 0 0 1 1.4 1.4V5H17a4 4 0 0 1 4 4v7a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a4 4 0 0 1 4-4h3.6V3.4A1.4 1.4 0 0 1 12 2ZM8 10.7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm8 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm-7.2 5.1c.8.9 1.9 1.3 3.2 1.3s2.4-.4 3.2-1.3" />
-                    </svg></span>
-                <div>
-                    <div class="chatTitleMain">AI Assistant</div>
-                    <div class="chatTitleSub">Egypt EconLens analytics companion</div>
-                </div>
-            </div>
-            <button class="chatCloseBtn" onclick="closeChat()" type="button" aria-label="Close chat">×</button>
-        </div>
-
-        <div class="chat-summarizer-panel">
-            <button id="emailSummaryBtn" onclick="openEmailSummaryModal()" class="summarizer-btn" type="button"
-                style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                <svg viewBox="0 0 24 24" class="summarizer-icon" aria-hidden="true" fill="currentColor">
-                    <path
-                        d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                </svg>
-                <span>Email Chat Summary</span>
-                <span class="summarizer-spinner d-none" id="emailSummarySpinner"></span>
-            </button>
-        </div>
-
-        <div id="messages" class="chatMessages">
-            <div class="welcomeCard">
-                <div class="welcomeKicker">Natural-language analytics</div>
-                <div class="welcomeTitle">Ask about your dashboard</div>
-                <div class="welcomeText">Query trade, macro, procurement-risk, and supply-chain performance without
-                    leaving the report view.</div>
-                <div class="quickQuestions">
-                    <button type="button"
-                        onclick="askQuickQuestion('What are the top 10 countries by trade value?')">Top
-                        countries</button>
-                    <button type="button" onclick="askQuickQuestion('Compare exports and imports by year.')">Exports vs
-                        imports</button>
-                    <button type="button" onclick="askQuickQuestion('Show GDP growth trend.')">GDP trend</button>
-                    <button type="button"
-                        onclick="askQuickQuestion('Which products have the largest shipping delays?')">Shipping
-                        delays</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="chatBottom">
-            <input id="userInput" placeholder="Ask a question about Egypt trade...">
-            <button onclick="sendMessage()" type="button">Send</button>
-        </div>
-    </aside>
-
-    <!-- TABLE FULL VIEW MODAL -->
-    <div id="tableFullViewModal" class="tableFullViewModal" aria-hidden="true">
-        <div class="tableFullViewBox">
-            <div class="tableFullViewHeader">
-                <div class="tableFullViewTitle">Full Table View</div>
-                <button id="closeTableFullViewBtn" class="tableFullViewClose" type="button"
-                    onclick="closeTableFullView()">×</button>
-            </div>
-            <div id="tableFullViewContent" class="tableFullViewContent"></div>
-        </div>
-    </div>
-
-    <!-- REPORT EMAIL SUBMISSION ALERT -->
-    <div id="reportEmailAlert" class="reportEmailAlertBackdrop" aria-hidden="true">
-        <div class="reportEmailAlertCard" role="alertdialog" aria-labelledby="reportEmailAlertTitle"
-            aria-describedby="reportEmailAlertMessage">
-            <div class="reportEmailAlertBody">
-                <div class="reportEmailAlertLeft">
-                    <div class="reportEmailAlertDot" aria-hidden="true"></div>
-                </div>
-
-                <div class="reportEmailAlertRight">
-                    <div class="reportEmailAlertTextWrap">
-                        <div id="reportEmailAlertTitle" class="reportEmailAlertTitle">Report request submitted</div>
-                        <p id="reportEmailAlertMessage" class="reportEmailAlertMessage">
-                            Report request submitted successfully. A download link will be sent to your email shortly.
-                        </p>
-                        <p id="reportEmailAlertNote" class="reportEmailAlertNote">
-                            If you do not see the email in your inbox, please check your Spam or Junk folder.
-                        </p>
-                    </div>
-
-                    <div class="reportEmailAlertActions">
-                        <a id="reportEmailGmailLink" class="reportEmailPrimaryCta"
-                            href="https://mail.google.com/mail/u/0/#inbox" target="_blank"
-                            rel="noopener noreferrer">Check Gmail</a>
-                        <button class="reportEmailSecondaryCta" type="button" onclick="closeReportEmailAlert()">Mark as
-                            read</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- EMAIL MODAL -->
-    <div id="emailModal" class="utilityModal emailModalEnhanced" aria-label="Share reports via email">
-        <div class="modalTitle">Share Reports via Email</div>
-        <div class="modal-note">Choose the reports on the left. Use the arrow on any RDL report to open its export
-            parameters on the right.</div>
-
-        <div class="emailModalGrid windowsParamLayout">
-            <section class="emailReportsPanel" aria-label="Reports to export">
-                <div class="sidePanelTitle">Reports</div>
-                <div class="report-options reportCheckboxGroup reportPickerList">
-                    <div class="reportPickerItem noParams pbixExportPrimary checked"
-                        data-report-value="Full_Light_Mode_PowerBI">
-                        <label class="reportPickLabel">
-                            <input type="checkbox" value="Full_Light_Mode_PowerBI" checked>
-                            <span><strong>Full Light Mode PowerBI Dashboard</strong><small>PBIX dashboard · no export
-                                    parameters</small></span>
-                        </label>
-                        <span class="paramStatePill">No params</span>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="procurementParams"
-                        data-report-value="Procurement Risk &amp;Fraud Monitoring Report ">
-                        <label class="reportPickLabel"><input type="checkbox"
-                                value="Procurement Risk &amp;Fraud Monitoring Report "
-                                data-parameter-toggle="procurementParams"><span><strong>Procurement Risk &amp;Fraud
-                                    Monitoring Report</strong><small>RDL · Year and Month
-                                    multi-select</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('procurementParams')"
-                            aria-label="Open Procurement parameters">›</button>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="forecastingParams"
-                        data-report-value="Forecasting &amp; Strategic Planning Report">
-                        <label class="reportPickLabel"><input type="checkbox"
-                                value="Forecasting &amp; Strategic Planning Report"
-                                data-parameter-toggle="forecastingParams"><span><strong>Forecasting &amp; Strategic
-                                    Planning Report</strong><small>RDL · scenario and horizon
-                                    controls</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('forecastingParams')"
-                            aria-label="Open Forecasting parameters">›</button>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="executiveParams"
-                        data-report-value="Executive Trade &amp; Supply Chain Summary">
-                        <label class="reportPickLabel"><input type="checkbox"
-                                value="Executive Trade &amp; Supply Chain Summary"
-                                data-parameter-toggle="executiveParams"><span><strong>Executive Trade &amp; Supply Chain
-                                    Summary</strong><small>RDL · year and country controls</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('executiveParams')"
-                            aria-label="Open Executive parameters">›</button>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="supplyOpsParams"
-                        data-report-value="Supply Chain Operations Performance">
-                        <label class="reportPickLabel"><input type="checkbox"
-                                value="Supply Chain Operations Performance"
-                                data-parameter-toggle="supplyOpsParams"><span><strong>Supply Chain Operations
-                                    Performance</strong><small>RDL · Year and Month multi-select</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('supplyOpsParams')"
-                            aria-label="Open Supply Chain Operations parameters">›</button>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="macroParams"
-                        data-report-value="Macro Currency &amp; Cost Exposure">
-                        <label class="reportPickLabel"><input type="checkbox" value="Macro Currency &amp; Cost Exposure"
-                                data-parameter-toggle="macroParams"><span><strong>Macro Currency &amp; Cost
-                                    Exposure</strong><small>RDL · MacroYear control</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('macroParams')"
-                            aria-label="Open Macro parameters">›</button>
-                    </div>
-
-                    <div class="reportPickerItem hasParams" data-panel="tradePartnersParams"
-                        data-report-value="Trade Partners">
-                        <label class="reportPickLabel"><input type="checkbox" value="Trade Partners"
-                                data-parameter-toggle="tradePartnersParams"><span><strong>Trade
-                                    Partners</strong><small>RDL · P_year and P_Country
-                                    multi-select</small></span></label>
-                        <button class="paramArrowBtn" type="button" onclick="toggleParamPanel('tradePartnersParams')"
-                            aria-label="Open Trade Partners parameters">›</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="emailParamsPanel windowsFlyoutPanel" aria-label="Selected report parameters">
-                <div class="paramsPanelHeader">
-                    <div>
-                        <div class="sidePanelTitle">Export Parameters</div>
-                        <strong id="activeParamsTitle">No RDL selected</strong>
-                    </div>
-                    <button id="closeParamsPanelBtn" class="paramsDoneBtn" type="button"
-                        onclick="closeParamsPanel()">Done</button>
-                </div>
-
-                <div id="paramsEmptyState" class="paramsEmptyState">
-                    Select an RDL report, then press its arrow to configure export parameters.
-                </div>
-
-                <div id="procurementParams" class="reportParameterBlock"
-                    data-param-report="Procurement Risk &amp;Fraud Monitoring Report "
-                    data-param-title="Procurement Risk &amp;Fraud Monitoring Report">
-                    <div class="paramBlockHeader">
-                        <strong>Procurement Report Parameters</strong>
-                        <small>Year and Month are multi-value RDL parameters.</small>
-                    </div>
-                    <div class="paramHint">Tick one or more values. The app sends repeated Year and Month entries to
-                        Power Automate.</div>
-
-                    <div class="paramField multiParamField">
-                        <span>Year</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('procurementParamYear')">Select all</button>
-                            <button type="button" onclick="clearAllOptions('procurementParamYear')">Clear</button>
-                        </div>
-                        <div id="procurementParamYear" class="paramChecklist twoCols" role="group"
-                            aria-label="Procurement years">
-                            <label><input type="checkbox" value="2025" checked>2025</label>
-                            <label><input type="checkbox" value="2024" checked>2024</label>
-                            <label><input type="checkbox" value="2023" checked>2023</label>
-                            <label><input type="checkbox" value="2022" checked>2022</label>
-                            <label><input type="checkbox" value="2021" checked>2021</label>
-                            <label><input type="checkbox" value="2020" checked>2020</label>
-                            <label><input type="checkbox" value="2019" checked>2019</label>
-                        </div>
-                    </div>
-
-                    <div class="paramField multiParamField">
-                        <span>Month</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('procurementParamMonth')">Select
-                                all</button>
-                            <button type="button" onclick="clearAllOptions('procurementParamMonth')">Clear</button>
-                        </div>
-                        <div id="procurementParamMonth" class="paramChecklist" role="group"
-                            aria-label="Procurement months">
-                            <label><input type="checkbox" value="1" checked>01 - January</label>
-                            <label><input type="checkbox" value="2" checked>02 - February</label>
-                            <label><input type="checkbox" value="3" checked>03 - March</label>
-                            <label><input type="checkbox" value="4" checked>04 - April</label>
-                            <label><input type="checkbox" value="5" checked>05 - May</label>
-                            <label><input type="checkbox" value="6" checked>06 - June</label>
-                            <label><input type="checkbox" value="7" checked>07 - July</label>
-                            <label><input type="checkbox" value="8" checked>08 - August</label>
-                            <label><input type="checkbox" value="9" checked>09 - September</label>
-                            <label><input type="checkbox" value="10" checked>10 - October</label>
-                            <label><input type="checkbox" value="11" checked>11 - November</label>
-                            <label><input type="checkbox" value="12" checked>12 - December</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="forecastingParams" class="reportParameterBlock"
-                    data-param-report="Forecasting &amp; Strategic Planning Report"
-                    data-param-title="Forecasting &amp; Strategic Planning Report">
-                    <div class="paramBlockHeader">
-                        <strong>Forecasting Report Parameters</strong>
-                        <small>These values are sent to Power Automate for RDL PDF export.</small>
-                    </div>
-                    <label class="paramField">
-                        <span>Forecast Base Year</span>
-                        <select id="forecastParamBaseYear">
-                            <option value="2025">2025</option>
-                        </select>
-                    </label>
-                    <label class="paramField">
-                        <span>Forecast Scenario</span>
-                        <select id="forecastParamScenario">
-                            <option value="Base">Base Scenario</option>
-                            <option value="Optimistic">Optimistic Scenario</option>
-                            <option value="Stress">Stress Scenario</option>
-                        </select>
-                    </label>
-                    <label class="paramField">
-                        <span>Forecast Horizon Years</span>
-                        <select id="forecastParamHorizon">
-                            <option value="1">Next 1 Year</option>
-                            <option value="2">Next 2 Years</option>
-                            <option value="3">Next 3 Years</option>
-                        </select>
-                    </label>
-                </div>
-
-                <div id="executiveParams" class="reportParameterBlock"
-                    data-param-report="Executive Trade &amp; Supply Chain Summary"
-                    data-param-title="Executive Trade &amp; Supply Chain Summary Report">
-                    <div class="paramBlockHeader">
-                        <strong>Executive Summary Parameters</strong>
-                        <small>Country must match the country name in the semantic model.</small>
-                    </div>
-                    <label class="paramField">
-                        <span>Year</span>
-                        <select id="executiveParamYear">
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                        </select>
-                    </label>
-                    <label class="paramField">
-                        <span>Country</span>
-                        <input id="executiveParamCountry" list="executiveCountryList" value="United States"
-                            placeholder="United States">
-                        <datalist id="executiveCountryList">
-                            <option value="United States"></option>
-                            <option value="China"></option>
-                            <option value="Germany"></option>
-                            <option value="Italy"></option>
-                            <option value="Turkey"></option>
-                            <option value="Saudi Arabia"></option>
-                            <option value="United Arab Emirates"></option>
-                            <option value="India"></option>
-                            <option value="Russia"></option>
-                            <option value="France"></option>
-                        </datalist>
-                    </label>
-                </div>
-
-                <div id="supplyOpsParams" class="reportParameterBlock"
-                    data-param-report="Supply Chain Operations Performance"
-                    data-param-title="Supply Chain Operations Performance">
-                    <div class="paramBlockHeader">
-                        <strong>Supply Chain Operations Parameters</strong>
-                        <small>Year and Month are multi-value RDL parameters.</small>
-                    </div>
-                    <div class="paramHint">Tick one or more values. Month labels stay readable, but numeric month IDs
-                        are sent to Power Automate.</div>
-
-                    <div class="paramField multiParamField">
-                        <span>Year</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('supplyOpsParamYear')">Select all</button>
-                            <button type="button" onclick="clearAllOptions('supplyOpsParamYear')">Clear</button>
-                        </div>
-                        <div id="supplyOpsParamYear" class="paramChecklist twoCols" role="group"
-                            aria-label="Supply chain operations years">
-                            <label><input type="checkbox" value="2019" checked>2019</label>
-                            <label><input type="checkbox" value="2020" checked>2020</label>
-                            <label><input type="checkbox" value="2021" checked>2021</label>
-                            <label><input type="checkbox" value="2022" checked>2022</label>
-                            <label><input type="checkbox" value="2023" checked>2023</label>
-                            <label><input type="checkbox" value="2024" checked>2024</label>
-                            <label><input type="checkbox" value="2025" checked>2025</label>
-                        </div>
-                    </div>
-
-                    <div class="paramField multiParamField">
-                        <span>Month</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('supplyOpsParamMonth')">Select all</button>
-                            <button type="button" onclick="clearAllOptions('supplyOpsParamMonth')">Clear</button>
-                        </div>
-                        <div id="supplyOpsParamMonth" class="paramChecklist" role="group"
-                            aria-label="Supply chain operations months">
-                            <label><input type="checkbox" value="1" checked>Jan</label>
-                            <label><input type="checkbox" value="2" checked>Feb</label>
-                            <label><input type="checkbox" value="3" checked>Mar</label>
-                            <label><input type="checkbox" value="4" checked>Apr</label>
-                            <label><input type="checkbox" value="5" checked>May</label>
-                            <label><input type="checkbox" value="6" checked>Jun</label>
-                            <label><input type="checkbox" value="7" checked>Jul</label>
-                            <label><input type="checkbox" value="8" checked>Aug</label>
-                            <label><input type="checkbox" value="9" checked>Sep</label>
-                            <label><input type="checkbox" value="10" checked>Oct</label>
-                            <label><input type="checkbox" value="11" checked>Nov</label>
-                            <label><input type="checkbox" value="12" checked>Dec</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="macroParams" class="reportParameterBlock"
-                    data-param-report="Macro Currency &amp; Cost Exposure"
-                    data-param-title="Macro Currency &amp; Cost Exposure">
-                    <div class="paramBlockHeader">
-                        <strong>Macro Currency Parameters</strong>
-                        <small>MacroYear is sent to Power Automate for RDL PDF export.</small>
-                    </div>
-                    <label class="paramField">
-                        <span>Macro Year</span>
-                        <select id="macroParamYear">
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                        </select>
-                    </label>
-                </div>
-
-                <div id="tradePartnersParams" class="reportParameterBlock" data-param-report="Trade Partners"
-                    data-param-title="Trade Partners">
-                    <div class="paramBlockHeader">
-                        <strong>Trade Partners Parameters</strong>
-                        <small>P_year and P_Country are multi-value RDL parameters.</small>
-                    </div>
-                    <div class="paramHint">Tick one or more values. The app sends repeated P_year and P_Country entries
-                        to Power Automate.</div>
-
-                    <div class="paramField multiParamField">
-                        <span>Year</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('tradePartnersParamYear')">Select
-                                all</button>
-                            <button type="button" onclick="clearAllOptions('tradePartnersParamYear')">Clear</button>
-                        </div>
-                        <div id="tradePartnersParamYear" class="paramChecklist twoCols" role="group"
-                            aria-label="Trade partners years">
-                            <label><input type="checkbox" value="2019" checked>2019</label>
-                            <label><input type="checkbox" value="2020" checked>2020</label>
-                            <label><input type="checkbox" value="2021" checked>2021</label>
-                            <label><input type="checkbox" value="2022" checked>2022</label>
-                            <label><input type="checkbox" value="2023" checked>2023</label>
-                            <label><input type="checkbox" value="2024" checked>2024</label>
-                            <label><input type="checkbox" value="2025" checked>2025</label>
-                        </div>
-                    </div>
-
-                    <div class="paramField multiParamField">
-                        <span>Country</span>
-                        <div class="paramQuickActions">
-                            <button type="button" onclick="selectAllOptions('tradePartnersParamCountry')">Select
-                                all</button>
-                            <button type="button" onclick="clearAllOptions('tradePartnersParamCountry')">Clear</button>
-                        </div>
-                        <div id="tradePartnersParamCountry" class="paramChecklist" role="group"
-                            aria-label="Trade partners countries">
-                            <label><input type="checkbox" value="United States" checked>United States</label>
-                            <label><input type="checkbox" value="Germany" checked>Germany</label>
-                            <label><input type="checkbox" value="China">China</label>
-                            <label><input type="checkbox" value="Saudi Arabia">Saudi Arabia</label>
-                            <label><input type="checkbox" value="Turkey">Turkey</label>
-                            <label><input type="checkbox" value="Italy">Italy</label>
-                            <label><input type="checkbox" value="United Arab Emirates">United Arab Emirates</label>
-                            <label><input type="checkbox" value="Brazil">Brazil</label>
-                            <label><input type="checkbox" value="France">France</label>
-                            <label><input type="checkbox" value="India">India</label>
-                            <label><input type="checkbox" value="Russia">Russia</label>
-                            <label><input type="checkbox" value="New Zealand">New Zealand</label>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="emailSubmitRow">
-            <input type="email" id="email" placeholder="Enter recipient email">
-            <button onclick="sendPDF()" type="button">Send PDF</button>
-        </div>
-    </div>
-
-    <!-- UPDATE ALERTS MODAL -->
-    <div id="updatesModal" class="utilityModal" aria-label="Report update alerts">
-        <div class="modalTitle">Report Update Alerts</div>
-        <div class="modal-note">Enter your email and choose whether you want to receive notifications when report
-            content is updated.</div>
-        <input type="email" id="updatesEmail" placeholder="Enter email">
-        <label class="update-choice">
-            <input type="checkbox" id="updatesEnabled" checked>
-            <span>I want to receive dashboard update notifications</span>
-        </label>
-        <button onclick="saveUpdatePreference()" type="button">Save Preference</button>
-        <div id="updateStatus"></div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-
-        function initWelcomeScreen() {
-            const screen = document.getElementById("welcomeScreen");
-            const btn = document.getElementById("welcomeExploreBtn");
-            const text = btn ? btn.querySelector(".welcomeStartText") : null;
-
-            if (!screen || !btn) {
-                document.body.classList.remove("app-locked");
-                return;
-            }
-
-            if (sessionStorage.getItem("app_entered") === "true") {
-                document.body.classList.remove("app-locked");
-                document.body.classList.add("app-entered");
-                if (screen && screen.parentNode) { screen.parentNode.removeChild(screen); }
-                if (typeof startDemoAlertTimeout === "function") {
-                    startDemoAlertTimeout();
-                }
-                return;
-            }
-
-            function markReady() {
-                document.body.classList.add("welcome-ready");
-                btn.disabled = false;
-                if (text) { text.textContent = "Explore App"; }
-            }
-
-            function enterApp() {
-                sessionStorage.setItem("app_entered", "true");
-                screen.classList.add("hide");
-                document.body.classList.remove("app-locked");
-                document.body.classList.add("app-entered");
-
-                // Start demo alert timeout after entering the dashboard
-                if (typeof startDemoAlertTimeout === "function") {
-                    startDemoAlertTimeout();
-                }
-
-                window.setTimeout(function () {
-                    if (screen && screen.parentNode) { screen.parentNode.removeChild(screen); }
-                }, 720);
-            }
-
-            btn.addEventListener("click", enterApp);
-
-            window.setTimeout(markReady, 1100);
-            window.addEventListener("load", markReady, { once: true });
-        }
-
-        function initUiState() {
-            try {
-                if (localStorage.getItem("sse-sidebar") === "collapsed") {
-                    document.body.classList.add("sidebar-collapsed");
-                }
-            } catch (e) { }
-
-            updateThemeButton();
-        }
-
-        function updateThemeButton() {
-            const theme = document.documentElement.getAttribute("data-theme") || "light";
-            const icon = document.getElementById("themeIcon");
-            const text = document.getElementById("themeText");
-
-            if (icon) { icon.classList.toggle("is-night", theme === "dark"); }
-            if (text) { text.innerText = theme === "dark" ? "Night Mode" : "Day Mode"; }
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-            const nextTheme = currentTheme === "dark" ? "light" : "dark";
-
-            document.documentElement.setAttribute("data-theme", nextTheme);
-
-            try { localStorage.setItem("sse-theme", nextTheme); } catch (e) { }
-
-            updateThemeButton();
-        }
-
-        function handleReportsMenu() {
-            if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches && window.bootstrap) {
-                const canvas = document.getElementById("mobileReportsOffcanvas");
-                if (canvas) {
-                    bootstrap.Offcanvas.getOrCreateInstance(canvas).show();
-                    return;
-                }
-            }
-            toggleSidebar();
-        }
-
-        function toggleSidebar() {
-            document.body.classList.toggle("sidebar-collapsed");
-
-            try {
-                localStorage.setItem(
-                    "sse-sidebar",
-                    document.body.classList.contains("sidebar-collapsed") ? "collapsed" : "expanded"
-                );
-            } catch (e) { }
-        }
-
-        function showReport(id, btn) {
-            document.body.setAttribute("data-active-report", id);
-            document.body.classList.toggle("rdl-active", id && id.startsWith("rdl"));
-            document.body.classList.toggle("pbix-active", id === "pbix1");
-
-            document.querySelectorAll("#viewer iframe").forEach(function (frame) {
-                frame.classList.remove("active");
-            });
-
-            const target = document.getElementById(id);
-            if (target) {
-                target.classList.add("active");
-            }
-
-            document.querySelectorAll(".reportNavItem, .mobileReportOption, .mobileDockBtn").forEach(function (reportBtn) {
-                reportBtn.classList.remove("active");
-            });
-
-            const activeBtn = btn || document.querySelector('[data-report="' + id + '"]');
-            document.querySelectorAll('[data-report="' + id + '"]').forEach(function (reportBtn) {
-                reportBtn.classList.add("active");
-            });
-
-            if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
-                const activeDockBtn = document.querySelector('.mobileBottomDock .mobileDockBtn[data-report="' + id + '"]');
-                if (activeDockBtn && activeDockBtn.scrollIntoView) {
-                    activeDockBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-                }
-            }
-
-            if (activeBtn) {
-                const title = activeBtn.getAttribute("data-title") || target?.title || "Report";
-                const type = activeBtn.getAttribute("data-type") || "Report";
-                const nameBox = document.getElementById("activeReportName");
-                const typeBox = document.getElementById("activeReportType");
-                if (nameBox) { nameBox.innerText = title; }
-                if (typeBox) { typeBox.innerText = type; }
-                runReportTransition(title, type);
-            }
-        }
-
-        function runReportTransition(title, type) {
-            const overlay = document.getElementById("switchOverlay");
-            const switchTitle = document.getElementById("switchTitle");
-            const switchType = document.getElementById("switchType");
-
-            if (switchTitle) { switchTitle.innerText = title || "Opening report"; }
-            if (switchType) { switchType.innerText = (type || "Report") + " · Egypt EconLens workspace"; }
-
-            if (!overlay) { return; }
-            overlay.classList.remove("show");
-            void overlay.offsetWidth;
-            overlay.classList.add("show");
-            window.setTimeout(function () { overlay.classList.remove("show"); }, 760);
-        }
-
-
-        /* AI recommended question engine */
-        const QUESTION_BANK = [
-            "What are the top 10 countries by trade value?",
-            "What are the top 5 countries by export value?",
-            "What are the top 5 countries by import value?",
-            "Which countries have the highest trade balance?",
-            "Which countries have the lowest trade balance?",
-            "Compare exports and imports by year.",
-            "Show yearly trade balance trend.",
-            "What is the total trade value in 2025?",
-            "Which countries had the highest exports in 2025?",
-            "Which countries had the highest imports in 2025?",
-            "Show top 10 commodities by trade value.",
-            "Which commodities have the highest export value?",
-            "Which commodities have the highest import value?",
-            "Compare trade value by region.",
-            "Which region had the highest trade value in 2025?",
-            "Show trade value trend from 2019 to 2025.",
-            "Show GDP growth trend.",
-            "Compare inflation trend by year.",
-            "Show exchange rate trend.",
-            "Show foreign reserves trend.",
-            "Which year had the highest GDP growth?",
-            "Which year had the lowest GDP growth?",
-            "Which year had the highest inflation rate?",
-            "Compare GDP growth and inflation by year.",
-            "Show macroeconomic indicators for 2025.",
-            "What was Egypt’s GDP growth in 2022?",
-            "Which products have the largest shipping delays?",
-            "Show top 10 products by average shipping delay.",
-            "Which products have the highest late delivery rate?",
-            "Which countries have the most late deliveries?",
-            "Compare sales by product category.",
-            "Which products generate the highest sales?",
-            "Which products generate the highest profit?",
-            "Which countries generate the highest supply chain profit?",
-            "Show average shipping delay by country.",
-            "Which products have negative profit?",
-            "Show strategic commodities.",
-            "Which regions contribute most to trade value?",
-            "Compare yearly trade volume.",
-            "Show countries list.",
-            "Show commodity categories.",
-        ];
-
-        let chatBusy = false;
-
-        function normalizeQuestionText(value) {
-            return String(value || "")
-                .toLowerCase()
-                .replace(/\s+/g, " ")
-                .trim();
-        }
-
-        function isEnglishRecommendation(question) {
-            return !/[\u0600-\u06FF]/.test(String(question || ""));
-        }
-
-        function getRandomSuggestions(currentQuestion, count) {
-            const current = normalizeQuestionText(currentQuestion);
-            const pool = QUESTION_BANK.filter(function (question) {
-                return isEnglishRecommendation(question) && normalizeQuestionText(question) !== current;
-            });
-
-            for (let i = pool.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                const temp = pool[i];
-                pool[i] = pool[j];
-                pool[j] = temp;
-            }
-
-            return pool.slice(0, count || 5);
-        }
-
-        function addSuggestedQuestions(currentQuestion) {
-            const chatBox = document.getElementById("messages");
-            if (!chatBox) { return; }
-
-            /* Keep only the latest recommendation block to avoid duplicated question boxes. */
-            chatBox.querySelectorAll(".suggestionCard").forEach(function (card) {
-                card.remove();
-            });
-
-            const questions = getRandomSuggestions(currentQuestion, 5);
-            const card = document.createElement("div");
-            card.className = "suggestionCard";
-            card.setAttribute("role", "note");
-            card.setAttribute("aria-label", "Optional follow-up questions");
-
-            const header = document.createElement("div");
-            header.className = "suggestionHeader";
-            header.innerHTML = "<span>↳</span><div><strong>Optional follow-up questions</strong><small>Tap one to continue — not part of the answer</small></div>";
-            card.appendChild(header);
-
-            const grid = document.createElement("div");
-            grid.className = "suggestionGrid";
-
-            questions.forEach(function (question) {
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = "suggestionChip";
-                btn.textContent = question;
-                btn.onclick = function () { askSuggestedQuestion(question); };
-                grid.appendChild(btn);
-            });
-
-            card.appendChild(grid);
-            chatBox.appendChild(card);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function askSuggestedQuestion(question) {
-            if (chatBusy) { return; }
-            document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
-                checkbox.addEventListener("change", syncReportParamsVisibility);
-            });
-            syncReportParamsVisibility();
-
-            const input = document.getElementById("userInput");
-            if (input) { input.value = question; }
-            openChat();
-            sendMessage();
-        }
-
-        /* CHAT */
-        function openChat() {
-            const c = document.getElementById("chatModal");
-            const b = document.getElementById("aiFloatingBtn");
-            document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
-                checkbox.addEventListener("change", function () {
-                    if (checkbox.checked) {
-                        activeParamPanelId = checkbox.getAttribute("data-parameter-toggle");
+        document.addEventListener("DOMContentLoaded", function() {
+            // Gear animation logic
+            const cards = document.querySelectorAll('.gear-card');
+            const line = document.getElementById('connectionLine');
+            if (cards.length > 0) {
+                let currentIndex = 0;
+                
+                function updateCards() {
+                    cards.forEach((card, index) => {
+                        if (index === currentIndex) {
+                            card.classList.add('active-card');
+                        } else {
+                            card.classList.remove('active-card');
+                        }
+                    });
+                    if (line) {
+                        line.style.transform = `rotate(${currentIndex * 60 - 90}deg)`;
                     }
-                    syncReportParamsVisibility();
-                });
-            });
-            syncReportParamsVisibility();
-
-            const input = document.getElementById("userInput");
-
-            document.body.classList.add("chat-open");
-            c.classList.add("open");
-            if (b) { b.classList.add("active"); }
-
-            setTimeout(function () {
-                if (input) { input.focus(); }
-            }, 120);
-        }
-
-        function closeChat() {
-            const c = document.getElementById("chatModal");
-            const b = document.getElementById("aiFloatingBtn");
-
-            document.body.classList.remove("chat-open");
-            c.classList.remove("open");
-            if (b) { b.classList.remove("active"); }
-        }
-
-        function toggleChat() {
-            const c = document.getElementById("chatModal");
-            if (c.classList.contains("open")) {
-                closeChat();
-            } else {
-                openChat();
-            }
-        }
-
-        function askQuickQuestion(question) {
-            if (chatBusy) { return; }
-            document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
-                checkbox.addEventListener("change", function () {
-                    if (checkbox.checked) {
-                        activeParamPanelId = checkbox.getAttribute("data-parameter-toggle");
-                    }
-                    syncReportParamsVisibility();
-                });
-            });
-            syncReportParamsVisibility();
-
-            const input = document.getElementById("userInput");
-            input.value = question;
-            openChat();
-            sendMessage();
-        }
-
-        /* MODALS */
-        function closeUtilityModals(exceptId) {
-            ["emailModal", "updatesModal", "emailSummaryModal"].forEach(function (id) {
-                if (id !== exceptId) {
-                    const el = document.getElementById(id);
-                    if (el) { el.classList.remove("open"); }
+                    currentIndex = (currentIndex + 1) % cards.length;
                 }
-            });
-        }
-
-        function toggleEmail() {
-            const e = document.getElementById("emailModal");
-            closeUtilityModals("emailModal");
-            const isOpen = e.classList.toggle("open");
-
-            if (isOpen && window.bootstrap) {
-                const canvas = document.getElementById("mobileReportsOffcanvas");
-                if (canvas) {
-                    const instance = bootstrap.Offcanvas.getInstance(canvas);
-                    if (instance) { instance.hide(); }
-                }
+                
+                updateCards();
+                setInterval(updateCards, 2500);
             }
 
-            if (isOpen) {
-                window.setTimeout(function () {
-                    const emailInput = document.getElementById("email");
-                    if (emailInput && window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
-                        emailInput.scrollIntoView({ block: "nearest", inline: "nearest" });
-                    }
-                }, 120);
-            }
-
-            syncReportParamsVisibility();
-        }
-
-        function toggleUpdates() {
-            const u = document.getElementById("updatesModal");
-            closeUtilityModals("updatesModal");
-            u.classList.toggle("open");
-        }
-
-        async function saveUpdatePreference() {
-            const email = document.getElementById("updatesEmail").value.trim();
-            const enabled = document.getElementById("updatesEnabled").checked;
-            const statusBox = document.getElementById("updateStatus");
-
-            if (!email) {
-                alert("Enter email");
-                return;
-            }
-
-            const payload = {
-                email: email,
-                reports: ["ALL"]
-            };
-
-            const endpoint = enabled ? "/subscribe-updates" : "/unsubscribe-updates";
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+            // Navigation logic
+            const exploreBtn = document.getElementById("welcomeExploreBtn");
+            if (exploreBtn) {
+                exploreBtn.addEventListener("click", function() {
+                    window.location.href = "/app";
                 });
-
-                const data = await response.json();
-                statusBox.style.color = response.ok ? "var(--success)" : "var(--danger)";
-                statusBox.innerText = data.message || data.error || "Done";
             }
-            catch (e) {
-                console.log(e);
-                statusBox.style.color = "var(--danger)";
-                statusBox.innerText = "Connection error";
-            }
-        }
-
-        function addMessage(message, sender) {
-            const chatBox = document.getElementById("messages");
-            const bubble = document.createElement("div");
-
-            bubble.className = sender === "user" ? "user-message" : "bot-message";
-            bubble.innerHTML = message;
-
-            chatBox.appendChild(bubble);
-            enhanceWideTables(bubble);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function enhanceWideTables(scope) {
-            const tables = scope.querySelectorAll(".ai-result-table");
-
-            tables.forEach(function (table) {
-                if (table.closest(".ai-table-shell")) {
-                    return;
-                }
-
-                const shell = document.createElement("div");
-                shell.className = "ai-table-shell";
-
-                table.parentNode.insertBefore(shell, table);
-                shell.appendChild(table);
-
-                const fullBtn = document.createElement("button");
-                fullBtn.type = "button";
-                fullBtn.className = "tableFullViewBtn";
-                fullBtn.title = "Open full table view";
-                fullBtn.setAttribute("aria-label", "Open full table view");
-                fullBtn.innerHTML = "⛶";
-
-                fullBtn.onclick = function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openTableFullView(table);
-                };
-
-                shell.appendChild(fullBtn);
-
-                requestAnimationFrame(function () {
-                    if (table.scrollWidth > shell.clientWidth + 8) {
-                        shell.classList.add("is-wide");
+            // Scroll Listener for Floating Explore Button
+            const heroScreen = document.querySelector('.welcomeScreen');
+            if (heroScreen && exploreBtn) {
+                const checkFloating = () => {
+                    const rect = heroScreen.getBoundingClientRect();
+                    // Add floating class when the hero section scrolls up past 50% of the viewport
+                    if (rect.bottom <= window.innerHeight * 0.5) {
+                        exploreBtn.classList.add('floating-btn');
                     } else {
-                        shell.classList.add("is-normal");
+                        exploreBtn.classList.remove('floating-btn');
                     }
-                });
-            });
-        }
-
-        function openTableFullView(table) {
-            const modal = document.getElementById("tableFullViewModal");
-            const content = document.getElementById("tableFullViewContent");
-
-            if (!modal || !content) { return; }
-
-            content.innerHTML = "";
-
-            const clonedTable = table.cloneNode(true);
-            clonedTable.classList.add("ai-result-table-full");
-
-            content.appendChild(clonedTable);
-            modal.classList.add("open");
-            modal.setAttribute("aria-hidden", "false");
-        }
-
-        function closeTableFullView() {
-            const modal = document.getElementById("tableFullViewModal");
-            const content = document.getElementById("tableFullViewContent");
-
-            if (content) { content.innerHTML = ""; }
-            if (modal) {
-                modal.classList.remove("open");
-                modal.setAttribute("aria-hidden", "true");
-            }
-        }
-
-        function addBotAnswer(answerHtml, chart) {
-            const safeAnswer = answerHtml || "No answer returned.";
-            const chartHtml = buildAiChartHtml(chart);
-            addMessage(safeAnswer + chartHtml, "bot");
-        }
-
-        function escapeHtml(value) {
-            return String(value ?? "")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        function escapeAttr(value) {
-            return escapeHtml(value).replace(/`/g, "&#096;");
-        }
-
-        function isNumericChartValue(value) {
-            if (value === null || value === undefined || value === "") { return false; }
-            return Number.isFinite(Number(value));
-        }
-
-        function getChartNumericKeys(records) {
-            if (!Array.isArray(records) || !records.length) { return []; }
-            const keys = Object.keys(records[0] || {});
-            return keys.filter(function (key) {
-                const lower = key.toLowerCase();
-                if (["year", "month", "quarter", "hs_code"].includes(lower)) { return false; }
-                if (lower.endsWith("_key") || lower.endsWith("_id")) { return false; }
-                return records.some(function (row) { return isNumericChartValue(row[key]); });
-            });
-        }
-
-        function getChartDimensionKeys(records) {
-            if (!Array.isArray(records) || !records.length) { return []; }
-            const keys = Object.keys(records[0] || {});
-            return keys.filter(function (key) {
-                const lower = key.toLowerCase();
-                if (lower.endsWith("_key") || lower.endsWith("_id")) { return false; }
-                return !getChartNumericKeys(records).includes(key);
-            });
-        }
-
-        function guessChartX(records) {
-            const dimensions = getChartDimensionKeys(records);
-            const preferred = ["year", "month", "quarter", "country_name", "product_name", "category", "description", "region", "shipping_mode"];
-            for (const key of preferred) {
-                const found = Object.keys(records[0] || {}).find(function (col) { return col.toLowerCase() === key; });
-                if (found) { return found; }
-            }
-            return dimensions[0] || Object.keys(records[0] || {})[0] || "";
-        }
-
-        function guessChartY(records) {
-            const numeric = getChartNumericKeys(records);
-            const preferredHints = ["total", "value", "usd", "sales", "profit", "rate", "pct", "growth", "inflation", "delay", "days", "count"];
-            for (const hint of preferredHints) {
-                const found = numeric.find(function (col) { return col.toLowerCase().includes(hint); });
-                if (found) { return found; }
-            }
-            return numeric[0] || "";
-        }
-
-        function buildFallbackChart(records, question) {
-            if (!Array.isArray(records) || records.length < 2) { return null; }
-
-            const x = guessChartX(records);
-            const y = guessChartY(records);
-            if (!x || !y) { return null; }
-
-            const xLower = x.toLowerCase();
-            const questionLower = String(question || "").toLowerCase();
-            const isTrend = ["year", "month", "quarter"].includes(xLower) || questionLower.includes("trend") || questionLower.includes("over time") || questionLower.includes("by year");
-
-            return {
-                available: true,
-                type: isTrend ? "line" : "bar",
-                title: isTrend ? "Trend Preview" : "Visual Preview",
-                x: x,
-                y: y,
-                data: records
-            };
-        }
-
-        function normaliseChart(chart) {
-            if (!chart || typeof chart !== "object") { return null; }
-            if (chart.available === false) { return null; }
-
-            const data = Array.isArray(chart.data) ? chart.data : [];
-            const x = chart.x || guessChartX(data);
-            const y = chart.y || guessChartY(data);
-            const type = String(chart.type || "bar").toLowerCase();
-
-            if (type !== "kpi" && (!data.length || !x || !y)) { return null; }
-
-            return {
-                available: true,
-                type: type,
-                title: chart.title || "AI Visual",
-                x: x,
-                y: y,
-                data: data
-            };
-        }
-
-        function formatCompactNumber(value) {
-            const n = Number(value);
-            if (!Number.isFinite(n)) { return escapeHtml(value); }
-
-            const abs = Math.abs(n);
-            const sign = n < 0 ? "-" : "";
-
-            if (abs >= 1000000000) { return sign + (abs / 1000000000).toFixed(2) + "B"; }
-            if (abs >= 1000000) { return sign + (abs / 1000000).toFixed(2) + "M"; }
-            if (abs >= 1000) { return sign + (abs / 1000).toFixed(2) + "K"; }
-
-            if (abs % 1 === 0) { return sign + abs.toLocaleString(); }
-            return sign + abs.toLocaleString(undefined, { maximumFractionDigits: 2 });
-        }
-
-        function cleanChartLabel(value, maxLength) {
-            const text = String(value ?? "N/A").trim() || "N/A";
-            const limit = maxLength || 28;
-            return text.length > limit ? text.slice(0, limit - 1) + "…" : text;
-        }
-
-        function getChartRows(chart, limit) {
-            const rows = Array.isArray(chart.data) ? chart.data.slice(0, limit || 12) : [];
-            return rows
-                .map(function (row) {
-                    return {
-                        label: row[chart.x],
-                        value: Number(row[chart.y])
-                    };
-                })
-                .filter(function (row) { return Number.isFinite(row.value); });
-        }
-
-        function buildAiChartHtml(chartInput) {
-            const chart = normaliseChart(chartInput);
-            if (!chart) { return ""; }
-
-            if (chart.type === "line" || chart.type === "trend") {
-                return buildAiLineChart(chart);
-            }
-
-            if (chart.type === "donut" || chart.type === "pie") {
-                return buildAiDonutChart(chart);
-            }
-
-            if (chart.type === "kpi") {
-                return buildAiKpiChart(chart);
-            }
-
-            return buildAiBarChart(chart);
-        }
-
-        function buildAiChartHeader(chart, icon) {
-            return `
-<div class="ai-chart-header">
-    <div>
-        <div class="ai-chart-kicker">${escapeHtml(icon || "Chart-ready JSON")}</div>
-        <div class="ai-chart-title">${escapeHtml(chart.title || "AI Visual")}</div>
-    </div>
-    <div class="ai-chart-axis">${escapeHtml(chart.x || "")}${chart.y ? " → " + escapeHtml(chart.y) : ""}</div>
-</div>`;
-        }
-
-        function buildAiBarChart(chart) {
-            const rows = getChartRows(chart, 10);
-            if (!rows.length) { return ""; }
-
-            const maxAbs = Math.max.apply(null, rows.map(function (row) { return Math.abs(row.value); })) || 1;
-            const bars = rows.map(function (row) {
-                const pct = Math.max(3, Math.min(100, Math.abs(row.value) / maxAbs * 100));
-                const label = cleanChartLabel(row.label, 30);
-
-                return `
-<div class="ai-bar-row">
-    <div class="ai-bar-label" title="${escapeAttr(row.label)}">${escapeHtml(label)}</div>
-    <div class="ai-bar-track"><span style="width:${pct.toFixed(2)}%"></span></div>
-    <div class="ai-bar-value">${escapeHtml(formatCompactNumber(row.value))}</div>
-</div>`;
-            }).join("");
-
-            return `
-<div class="ai-chart-card ai-chart-bar-card">
-    ${buildAiChartHeader(chart, "Bar chart")}
-    <div class="ai-bar-chart">${bars}</div>
-</div>`;
-        }
-
-        function buildAiLineChart(chart) {
-            const rows = getChartRows(chart, 12);
-            if (rows.length < 2) { return buildAiBarChart(chart); }
-
-            const width = 520;
-            const height = 190;
-            const padX = 28;
-            const padY = 24;
-            const values = rows.map(function (row) { return row.value; });
-            const min = Math.min.apply(null, values);
-            const max = Math.max.apply(null, values);
-            const range = max - min || 1;
-
-            const points = rows.map(function (row, index) {
-                const x = padX + (index * ((width - padX * 2) / Math.max(1, rows.length - 1)));
-                const y = height - padY - ((row.value - min) / range * (height - padY * 2));
-                return { x: x, y: y, row: row };
-            });
-
-            const polyline = points.map(function (point) { return point.x.toFixed(1) + "," + point.y.toFixed(1); }).join(" ");
-            const circles = points.map(function (point) {
-                return `<circle cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4"><title>${escapeHtml(point.row.label)}: ${escapeHtml(formatCompactNumber(point.row.value))}</title></circle>`;
-            }).join("");
-
-            const firstLabel = cleanChartLabel(rows[0].label, 12);
-            const lastLabel = cleanChartLabel(rows[rows.length - 1].label, 12);
-
-            return `
-<div class="ai-chart-card ai-chart-line-card">
-    ${buildAiChartHeader(chart, "Line chart")}
-    <div class="ai-line-wrap">
-        <svg class="ai-line-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeAttr(chart.title)}">
-            <line x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}" class="ai-line-grid"></line>
-            <line x1="${padX}" y1="${height / 2}" x2="${width - padX}" y2="${height / 2}" class="ai-line-grid"></line>
-            <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" class="ai-line-grid"></line>
-            <polyline points="${polyline}" class="ai-line-path"></polyline>
-            <g class="ai-line-points">${circles}</g>
-        </svg>
-        <div class="ai-line-footer">
-            <span>${escapeHtml(firstLabel)}</span>
-            <strong>${escapeHtml(formatCompactNumber(min))} — ${escapeHtml(formatCompactNumber(max))}</strong>
-            <span>${escapeHtml(lastLabel)}</span>
-        </div>
-    </div>
-</div>`;
-        }
-
-        function buildAiDonutChart(chart) {
-            const rows = getChartRows(chart, 6);
-            if (!rows.length) { return ""; }
-
-            const total = rows.reduce(function (sum, row) { return sum + Math.abs(row.value); }, 0) || 1;
-            let current = 0;
-            const colors = ["var(--ai-chart-c1)", "var(--ai-chart-c2)", "var(--ai-chart-c3)", "var(--ai-chart-c4)", "var(--ai-chart-c5)", "var(--ai-chart-c6)"];
-
-            const gradientParts = rows.map(function (row, index) {
-                const start = current;
-                const degrees = Math.abs(row.value) / total * 360;
-                current += degrees;
-                return `${colors[index % colors.length]} ${start.toFixed(2)}deg ${current.toFixed(2)}deg`;
-            }).join(", ");
-
-            const legend = rows.map(function (row, index) {
-                const pct = Math.abs(row.value) / total * 100;
-                return `
-<div class="ai-donut-legend-row">
-    <span class="ai-donut-dot dot-${index + 1}"></span>
-    <span title="${escapeAttr(row.label)}">${escapeHtml(cleanChartLabel(row.label, 24))}</span>
-    <strong>${pct.toFixed(1)}%</strong>
-</div>`;
-            }).join("");
-
-            return `
-<div class="ai-chart-card ai-chart-donut-card">
-    ${buildAiChartHeader(chart, "Donut chart")}
-    <div class="ai-donut-layout">
-        <div class="ai-donut" style="background: conic-gradient(${gradientParts});">
-            <div>${escapeHtml(formatCompactNumber(total))}<small>Total</small></div>
-        </div>
-        <div class="ai-donut-legend">${legend}</div>
-    </div>
-</div>`;
-        }
-
-        function buildAiKpiChart(chart) {
-            const rows = Array.isArray(chart.data) ? chart.data : [];
-            const row = rows[0] || {};
-            const y = chart.y || guessChartY(rows);
-            const x = chart.x || guessChartX(rows);
-            const value = y ? row[y] : "";
-            const label = x ? row[x] : chart.title;
-
-            if (value === "" || value === undefined || value === null) { return ""; }
-
-            return `
-<div class="ai-chart-card ai-chart-kpi-card">
-    ${buildAiChartHeader(chart, "KPI card")}
-    <div class="ai-kpi-visual">
-        <div class="ai-kpi-value">${escapeHtml(formatCompactNumber(value))}</div>
-        <div class="ai-kpi-label">${escapeHtml(label || y || "Result")}</div>
-    </div>
-</div>`;
-        }
-
-
-        async function sendMessage() {
-            if (chatBusy) { return; }
-
-            document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
-                checkbox.addEventListener("change", function () {
-                    if (checkbox.checked) {
-                        activeParamPanelId = checkbox.getAttribute("data-parameter-toggle");
-                    }
-                    syncReportParamsVisibility();
-                });
-            });
-            syncReportParamsVisibility();
-
-            const input = document.getElementById("userInput");
-            const msg = input.value.trim();
-
-            if (!msg) { return; }
-
-            chatBusy = true;
-            document.body.classList.add("chat-busy");
-
-            addMessage(msg, "user");
-            input.value = "";
-
-            const loadingId = "loading-" + Date.now();
-            addMessage("<div id='" + loadingId + "' class='typingIndicator'><span></span><span></span><span></span> Analyzing Egypt EconLens data...</div>", "bot");
-
-            try {
-                const response = await fetch("/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: msg })
-                });
-
-                const data = await response.json();
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl && loadingEl.closest(".bot-message")) {
-                    loadingEl.closest(".bot-message").remove();
-                }
-
-                if (data.error) {
-                    addMessage("⚠️ " + data.error, "bot");
-                    return;
-                }
-
-                const chartPayload = data.chart || buildFallbackChart(data.data, msg);
-                addBotAnswer(data.answer, chartPayload);
-                addSuggestedQuestions(msg);
-            }
-            catch (error) {
-                console.log(error);
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl && loadingEl.closest(".bot-message")) {
-                    loadingEl.closest(".bot-message").remove();
-                }
-                addMessage("Connection Error", "bot");
-            }
-            finally {
-                chatBusy = false;
-                document.body.classList.remove("chat-busy");
-            }
-        }
-
-        let activeParamPanelId = null;
-
-        function getReportCheckboxForPanel(panelId) {
-            return document.querySelector('#emailModal input[data-parameter-toggle="' + panelId + '"]');
-        }
-
-        function openParamPanel(panelId) {
-            const checkbox = getReportCheckboxForPanel(panelId);
-            if (checkbox && !checkbox.checked) {
-                checkbox.checked = true;
-            }
-            activeParamPanelId = panelId;
-            syncReportParamsVisibility();
-        }
-
-        function toggleParamPanel(panelId) {
-            if (activeParamPanelId === panelId) {
-                closeParamsPanel();
-                return;
-            }
-            openParamPanel(panelId);
-        }
-
-        function closeParamsPanel() {
-            activeParamPanelId = null;
-            syncReportParamsVisibility();
-        }
-
-        function getFirstCheckedParamPanel() {
-            const checked = document.querySelector('#emailModal input[data-parameter-toggle]:checked');
-            return checked ? checked.getAttribute('data-parameter-toggle') : null;
-        }
-
-        function syncReportParamsVisibility() {
-            const checkedPanels = Array.from(document.querySelectorAll('#emailModal input[data-parameter-toggle]:checked'))
-                .map(function (checkbox) { return checkbox.getAttribute('data-parameter-toggle'); });
-
-            if (activeParamPanelId && checkedPanels.indexOf(activeParamPanelId) === -1) {
-                activeParamPanelId = null;
-            }
-
-            if (!activeParamPanelId && checkedPanels.length === 1) {
-                activeParamPanelId = checkedPanels[0];
-            }
-
-            document.querySelectorAll('#emailModal .reportParameterBlock').forEach(function (block) {
-                block.classList.toggle('show', block.id === activeParamPanelId);
-            });
-
-            document.querySelectorAll('#emailModal .reportPickerItem').forEach(function (item) {
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                const panelId = item.getAttribute('data-panel');
-                item.classList.toggle('checked', !!(checkbox && checkbox.checked));
-                item.classList.toggle('active', !!(panelId && panelId === activeParamPanelId));
-            });
-
-            document.querySelectorAll('#emailModal .paramArrowBtn').forEach(function (btn) {
-                const item = btn.closest('.reportPickerItem');
-                const panelId = item ? item.getAttribute('data-panel') : null;
-                btn.classList.toggle('open', !!(panelId && panelId === activeParamPanelId));
-            });
-
-            const emptyState = document.getElementById('paramsEmptyState');
-            if (emptyState) {
-                emptyState.classList.toggle('hidden', !!activeParamPanelId);
-            }
-
-            const title = document.getElementById('activeParamsTitle');
-            const doneBtn = document.getElementById('closeParamsPanelBtn');
-            const activeBlock = activeParamPanelId ? document.getElementById(activeParamPanelId) : null;
-            if (title) {
-                title.innerText = activeBlock ? (activeBlock.getAttribute('data-param-title') || 'Report Parameters') : 'No RDL selected';
-            }
-            if (doneBtn) {
-                doneBtn.disabled = !activeParamPanelId;
-            }
-        }
-
-        function syncForecastingParamsVisibility() {
-            /* Backward-compatible wrapper used by older event hooks in this file. */
-            syncReportParamsVisibility();
-        }
-
-        function getSelectedValues(selectId) {
-            const el = document.getElementById(selectId);
-            if (!el) { return []; }
-
-            if (el.tagName && el.tagName.toLowerCase() === 'select') {
-                return Array.from(el.selectedOptions).map(function (option) {
-                    return option.value;
-                }).filter(Boolean);
-            }
-
-            return Array.from(el.querySelectorAll('input[type="checkbox"]:checked')).map(function (input) {
-                return input.value;
-            }).filter(Boolean);
-        }
-
-        function selectAllOptions(selectId) {
-            const el = document.getElementById(selectId);
-            if (!el) { return; }
-
-            if (el.tagName && el.tagName.toLowerCase() === 'select') {
-                Array.from(el.options).forEach(function (option) { option.selected = true; });
-                return;
-            }
-
-            el.querySelectorAll('input[type="checkbox"]').forEach(function (input) { input.checked = true; });
-        }
-
-        function clearAllOptions(selectId) {
-            const el = document.getElementById(selectId);
-            if (!el) { return; }
-
-            if (el.tagName && el.tagName.toLowerCase() === 'select') {
-                Array.from(el.options).forEach(function (option) { option.selected = false; });
-                return;
-            }
-
-            el.querySelectorAll('input[type="checkbox"]').forEach(function (input) { input.checked = false; });
-        }
-
-        function buildRepeatedParameterValues(parameterName, selectedValues) {
-            return selectedValues.map(function (value) {
-                return {
-                    name: parameterName,
-                    value: String(value)
                 };
-            });
-        }
-
-        function getProcurementParameterValues() {
-            const selectedYears = getSelectedValues("procurementParamYear");
-            const selectedMonths = getSelectedValues("procurementParamMonth");
-
-            return [
-                ...buildRepeatedParameterValues("Year", selectedYears),
-                ...buildRepeatedParameterValues("Month", selectedMonths)
-            ];
-        }
-
-        function getForecastingParameterValues() {
-            return [
-                {
-                    name: "ForecastBaseYear",
-                    value: document.getElementById("forecastParamBaseYear").value
-                },
-                {
-                    name: "ForecastScenario",
-                    value: document.getElementById("forecastParamScenario").value
-                },
-                {
-                    name: "ForecastHorizonYears",
-                    value: document.getElementById("forecastParamHorizon").value
-                }
-            ];
-        }
-
-        function getExecutiveParameterValues() {
-            return [
-                {
-                    name: "Year",
-                    value: document.getElementById("executiveParamYear").value
-                },
-                {
-                    name: "Country",
-                    value: document.getElementById("executiveParamCountry").value.trim()
-                }
-            ];
-        }
-
-
-        function getSupplyOpsParameterValues() {
-            const selectedYears = getSelectedValues("supplyOpsParamYear");
-            const selectedMonths = getSelectedValues("supplyOpsParamMonth");
-
-            return [
-                ...buildRepeatedParameterValues("Year", selectedYears),
-                ...buildRepeatedParameterValues("Month", selectedMonths)
-            ];
-        }
-
-        function getMacroParameterValues() {
-            return [
-                {
-                    name: "MacroYear",
-                    value: document.getElementById("macroParamYear").value
-                }
-            ];
-        }
-
-        function getTradePartnersParameterValues() {
-            const selectedYears = getSelectedValues("tradePartnersParamYear");
-            const selectedCountries = getSelectedValues("tradePartnersParamCountry");
-
-            return [
-                ...buildRepeatedParameterValues("P_year", selectedYears),
-                ...buildRepeatedParameterValues("P_Country", selectedCountries)
-            ];
-        }
-
-        const REPORT_GMAIL_INBOX_URL = "https://mail.google.com/mail/u/0/#inbox";
-
-        function showReportEmailAlert(message, note) {
-            const alertBox = document.getElementById("reportEmailAlert");
-            const messageEl = document.getElementById("reportEmailAlertMessage");
-            const noteEl = document.getElementById("reportEmailAlertNote");
-            const gmailLink = document.getElementById("reportEmailGmailLink");
-
-            if (!alertBox) {
-                alert(message || "Report request submitted successfully. A download link will be sent to your email shortly.");
-                return;
-            }
-
-            if (messageEl) {
-                messageEl.textContent = message || "Report request submitted successfully. A download link will be sent to your email shortly.";
-            }
-
-            if (noteEl) {
-                noteEl.textContent = note || "If you do not see the email in your inbox, please check your Spam or Junk folder.";
-            }
-
-            if (gmailLink) {
-                gmailLink.href = REPORT_GMAIL_INBOX_URL;
-            }
-
-            alertBox.classList.add("show");
-            alertBox.setAttribute("aria-hidden", "false");
-        }
-
-        function closeReportEmailAlert() {
-            const alertBox = document.getElementById("reportEmailAlert");
-
-            if (alertBox) {
-                alertBox.classList.remove("show");
-                alertBox.setAttribute("aria-hidden", "true");
-            }
-        }
-
-        async function sendPDF() {
-            const email = document.getElementById("email").value.trim();
-
-            if (!email) {
-                alert("Enter email");
-                return;
-            }
-
-            const checkedReports = Array.from(document.querySelectorAll("#emailModal .report-options input[type='checkbox']:checked"));
-            const selectedReports = checkedReports.map(x => x.value);
-            const selectedReportLabels = checkedReports.map(function (x) {
-                const label = x.closest("label");
-                return label ? label.innerText.trim() : x.value;
-            });
-
-            if (selectedReports.length === 0) {
-                alert("Select at least one report");
-                return;
-            }
-
-            const parameters = {};
-            const parametersById = {};
-
-            if (selectedReports.includes("Procurement Risk &Fraud Monitoring Report ")) {
-                const procurementParams = getProcurementParameterValues();
-                const hasYear = procurementParams.some(function (parameter) { return parameter.name === "Year"; });
-                const hasMonth = procurementParams.some(function (parameter) { return parameter.name === "Month"; });
-                if (!hasYear || !hasMonth) {
-                    alert("Select at least one Year and one Month for Procurement report");
-                    return;
-                }
-                parameters["Procurement Risk &Fraud Monitoring Report "] = procurementParams;
-                parametersById["470349ed-7f49-494f-b62e-4c5325073e8e"] = procurementParams;
-            }
-
-            if (selectedReports.includes("Forecasting & Strategic Planning Report")) {
-                const forecastParams = getForecastingParameterValues();
-                parameters["Forecasting & Strategic Planning Report"] = forecastParams;
-                parametersById["f816875a-4fd8-44b9-a8f4-c22c536920d4"] = forecastParams;
-            }
-
-            if (selectedReports.includes("Executive Trade & Supply Chain Summary")) {
-                const executiveParams = getExecutiveParameterValues();
-                if (!executiveParams[1].value) {
-                    alert("Enter country for Executive report");
-                    return;
-                }
-                parameters["Executive Trade & Supply Chain Summary"] = executiveParams;
-                parametersById["23b137ec-dc44-4de8-ba30-93eca6c0631e"] = executiveParams;
-            }
-
-            if (selectedReports.includes("Supply Chain Operations Performance")) {
-                const supplyOpsParams = getSupplyOpsParameterValues();
-                const hasYear = supplyOpsParams.some(function (parameter) { return parameter.name === "Year"; });
-                const hasMonth = supplyOpsParams.some(function (parameter) { return parameter.name === "Month"; });
-                if (!hasYear || !hasMonth) {
-                    alert("Select at least one Year and one Month for Supply Chain Operations report");
-                    return;
-                }
-                parameters["Supply Chain Operations Performance"] = supplyOpsParams;
-                parametersById["f4757103-3ab4-44c7-af32-399a2e4129da"] = supplyOpsParams;
-            }
-
-            if (selectedReports.includes("Macro Currency & Cost Exposure")) {
-                const macroParams = getMacroParameterValues();
-                parameters["Macro Currency & Cost Exposure"] = macroParams;
-                parametersById["5e2f5bc7-5fc9-4119-8d58-04162bb2a3da"] = macroParams;
-            }
-
-            if (selectedReports.includes("Trade Partners")) {
-                const tradePartnersParams = getTradePartnersParameterValues();
-                const hasYear = tradePartnersParams.some(function (parameter) { return parameter.name === "P_year"; });
-                const hasCountry = tradePartnersParams.some(function (parameter) { return parameter.name === "P_Country"; });
-                if (!hasYear || !hasCountry) {
-                    alert("Select at least one Year and one Country for Trade Partners report");
-                    return;
-                }
-                parameters["Trade Partners"] = tradePartnersParams;
-                parametersById["c4753a9e-52ac-41e3-8b4b-fd72cdf79f50"] = tradePartnersParams;
-            }
-
-            const reportIdMap = {
-                "Full_Light_Mode_PowerBI": "fd74639c-26b8-4245-927c-f5e5f7bfa1e4",
-                "Procurement Risk &Fraud Monitoring Report ": "470349ed-7f49-494f-b62e-4c5325073e8e",
-                "Forecasting & Strategic Planning Report": "f816875a-4fd8-44b9-a8f4-c22c536920d4",
-                "Executive Trade & Supply Chain Summary": "23b137ec-dc44-4de8-ba30-93eca6c0631e",
-                "Supply Chain Operations Performance": "f4757103-3ab4-44c7-af32-399a2e4129da",
-                "Macro Currency & Cost Exposure": "5e2f5bc7-5fc9-4119-8d58-04162bb2a3da",
-                "Trade Partners": "c4753a9e-52ac-41e3-8b4b-fd72cdf79f50"
-            };
-
-            const payload = {
-                email: email,
-                title: selectedReportLabels.join(", "),
-                reports: selectedReports,
-                reportIds: selectedReports.map(function (report) { return reportIdMap[report]; }).filter(Boolean),
-                parameters: parameters,
-                parametersById: parametersById
-            };
-
-            try {
-                const response = await fetch("/send-dashboard-pdf", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || data.error) {
-                    alert(data.error || "Power Automate failed");
-                    return;
-                }
-
-                showReportEmailAlert(
-                    data.message || "Report request submitted successfully. A download link will be sent to your email shortly.",
-                    data.note || "If you do not see the email in your inbox, please check your Spam or Junk folder."
-                );
-            }
-            catch (e) {
-                console.log(e);
-                alert("Connection error");
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            initWelcomeScreen();
-            initUiState();
-
-            document.addEventListener("pointermove", function (e) {
-                document.documentElement.style.setProperty("--pointer-x", e.clientX + "px");
-                document.documentElement.style.setProperty("--pointer-y", e.clientY + "px");
-            });
-
-            document.querySelectorAll("button").forEach(function (btn) {
-                btn.addEventListener("click", function (e) {
-                    const ripple = document.createElement("span");
-                    const rect = btn.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    ripple.className = "clickRipple";
-                    ripple.style.width = ripple.style.height = size + "px";
-                    ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
-                    ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
-                    btn.appendChild(ripple);
-                    window.setTimeout(function () { ripple.remove(); }, 620);
-                });
-            });
-
-            document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
-                checkbox.addEventListener("change", function () {
-                    if (checkbox.checked) {
-                        activeParamPanelId = checkbox.getAttribute("data-parameter-toggle");
-                    }
-                    syncReportParamsVisibility();
-                });
-            });
-            syncReportParamsVisibility();
-
-            const input = document.getElementById("userInput");
-            if (input) {
-                input.addEventListener("keydown", function (e) {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
+                window.addEventListener('scroll', checkFloating, { passive: true });
+                document.body.addEventListener('scroll', checkFloating, { passive: true });
+                // Initial check
+                checkFloating();
             }
         });
-
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") {
-                const welcomeScreen = document.getElementById("welcomeScreen");
-                const welcomeBtn = document.getElementById("welcomeExploreBtn");
-                if (welcomeScreen && welcomeBtn && !welcomeBtn.disabled) { welcomeBtn.click(); }
-                closeTableFullView();
-                closeReportEmailAlert();
-                closeChat();
-                closeUtilityModals();
-            }
-        });
-        function openEmailSummaryModal() {
-            closeUtilityModals("emailSummaryModal");
-            const e = document.getElementById("emailSummaryModal");
-            if (e) e.classList.add("open");
-        }
-
-        function closeEmailSummaryModal() {
-            const e = document.getElementById("emailSummaryModal");
-            if (e) e.classList.remove("open");
-        }
-
-        async function sendChatSummary() {
-            const emailInput = document.getElementById("emailSummaryInput");
-            if (!emailInput) return;
-            const email = emailInput.value.trim();
-            if (!email) {
-                alert("Please enter a valid email address.");
-                return;
-            }
-
-            const btn = document.getElementById("emailSummarySubmitBtn");
-            const spinner = document.getElementById("emailSummarySpinner");
-            const modalSpinner = document.getElementById("emailSummaryModalSpinner");
-
-            if (btn) btn.disabled = true;
-            if (spinner) spinner.classList.remove("d-none");
-            if (modalSpinner) modalSpinner.classList.remove("d-none");
-
-            // Gather chat history from DOM
-            const history = [];
-            document.querySelectorAll("#messages .bot-message, #messages .user-message").forEach(function (el) {
-                const isUser = el.classList.contains("user-message");
-                const text = el.innerText.replace(/📷 Analyzing Live Dashboard View.../g, "").replace(/⚠️ Screen capture was cancelled or denied./g, "").trim();
-                if (text && text.length > 5 && !text.includes("Typing...")) {
-                    history.push({ role: isUser ? "user" : "assistant", content: text });
-                }
-            });
-
-            if (history.length === 0) {
-                alert("You don't have any chat history to summarize yet! Please ask the AI a question first.");
-                if (btn) btn.disabled = false;
-                if (spinner) spinner.classList.add("d-none");
-                if (modalSpinner) modalSpinner.classList.add("d-none");
-                return;
-            }
-
-            try {
-                const response = await fetch("/email-chat-summary", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: email, history: history })
-                });
-                const data = await response.json();
-
-                if (!response.ok || data.error) {
-                    alert(data.error || "Failed to send email summary.");
-                } else {
-                    alert(data.message || "Summary sent successfully to your email!");
-                    closeEmailSummaryModal();
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Connection error while sending summary.");
-            } finally {
-                if (btn) btn.disabled = false;
-                if (spinner) spinner.classList.add("d-none");
-                if (modalSpinner) modalSpinner.classList.add("d-none");
-            }
-        }
     </script>
-
-    <div id="emailSummaryModal" class="utilityModal" style="z-index: 1000000;">
-        <div class="utilityModalHeader">
-            <div class="utilityModalTitle">Email Chat Summary</div>
-            <button onclick="closeEmailSummaryModal()" type="button"
-                style="background: transparent; border: none; font-size: 24px; color: var(--gray-400); cursor: pointer; padding: 0; line-height: 1;">×</button>
-        </div>
-        <div class="utilityModalBody">
-            <p style="font-size: 13px; color: var(--gray-400); margin-bottom: 12px;">We'll use AI to summarize this
-                entire conversation and send it as a professional executive brief directly to your inbox.</p>
-            <div class="mb-3">
-                <label for="emailSummaryInput" class="form-label" style="font-size: 12px; color: var(--gray-300);">Work
-                    Email</label>
-                <input type="email" id="emailSummaryInput" class="form-control" placeholder="you@company.com">
-            </div>
-            <button id="emailSummarySubmitBtn" onclick="sendChatSummary()"
-                class="btn btn-primary w-100 d-flex align-items-center justify-content-center" style="gap: 8px;">
-                <span>Send Summary via Power Automate</span>
-                <span class="spinner-border spinner-border-sm d-none" id="emailSummaryModalSpinner" role="status"
-                    aria-hidden="true"></span>
-            </button>
-        </div>
-    </div>
-
 </body>
-
 </html>

@@ -1,0 +1,209 @@
+Created At: 2026-06-28T08:20:56Z
+Completed At: 2026-06-28T08:20:56Z
+File Path: `file:///d:/ITI/GP/newapp/templates/index.html`
+Total Lines: 2633
+Total Bytes: 137397
+Showing lines 2433 to 2633
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2433: 
+2434:         document.addEventListener("DOMContentLoaded", function () {
+2435:             initWelcomeScreen();
+2436:             initUiState();
+2437: 
+2438:             document.addEventListener("pointermove", function (e) {
+2439:                 document.documentElement.style.setProperty("--pointer-x", e.clientX + "px");
+2440:                 document.documentElement.style.setProperty("--pointer-y", e.clientY + "px");
+2441:             });
+2442: 
+2443:             document.querySelectorAll("button").forEach(function (btn) {
+2444:                 btn.addEventListener("click", function (e) {
+2445:                     const ripple = document.createElement("span");
+2446:                     const rect = btn.getBoundingClientRect();
+2447:                     const size = Math.max(rect.width, rect.height);
+2448:                     ripple.className = "clickRipple";
+2449:                     ripple.style.width = ripple.style.height = size + "px";
+2450:                     ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+2451:                     ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+2452:                     btn.appendChild(ripple);
+2453:                     window.setTimeout(function () { ripple.remove(); }, 620);
+2454:                 });
+2455:             });
+2456: 
+2457:             document.querySelectorAll('#emailModal input[data-parameter-toggle]').forEach(function (checkbox) {
+2458:                 checkbox.addEventListener("change", function () {
+2459:                     if (checkbox.checked) {
+2460:                         activeParamPanelId = checkbox.getAttribute("data-parameter-toggle");
+2461:                     }
+2462:                     syncReportParamsVisibility();
+2463:                 });
+2464:             });
+2465:             syncReportParamsVisibility();
+2466: 
+2467:             const input = document.getElementById("userInput");
+2468:             if (input) {
+2469:                 input.addEventListener("keydown", function (e) {
+2470:                     if (e.key === "Enter") {
+2471:                         e.preventDefault();
+2472:                         sendMessage();
+2473:                     }
+2474:                 });
+2475:             }
+2476:         });
+2477: 
+2478:         document.addEventListener("keydown", function (e) {
+2479:             if (e.key === "Escape") {
+2480:                 const welcomeScreen = document.getElementById("welcomeScreen");
+2481:                 const welcomeBtn = document.getElementById("welcomeExploreBtn");
+2482:                 if (welcomeScreen && welcomeBtn && !welcomeBtn.disabled) { welcomeBtn.click(); }
+2483:                 closeTableFullView();
+2484:                 closeReportEmailAlert();
+2485:                 closeChat();
+2486:                 closeUtilityModals();
+2487:             }
+2488:         });
+2489:         function openEmailSummaryModal() {
+2490:             closeUtilityModals("emailSummaryModal");
+2491:             const e = document.getElementById("emailSummaryModal");
+2492:             if (e) e.classList.add("open");
+2493:         }
+2494: 
+2495:         function closeEmailSummaryModal() {
+2496:             const e = document.getElementById("emailSummaryModal");
+2497:             if (e) e.classList.remove("open");
+2498:         }
+2499: 
+2500:         async function sendChatSummary() {
+2501:             const emailInput = document.getElementById("emailSummaryInput");
+2502:             if (!emailInput) return;
+2503:             const email = emailInput.value.trim();
+2504:             if (!email) {
+2505:                 alert("Please enter a valid email address.");
+2506:                 return;
+2507:             }
+2508: 
+2509:             const btn = document.getElementById("emailSummarySubmitBtn");
+2510:             const spinner = document.getElementById("emailSummarySpinner");
+2511:             const modalSpinner = document.getElementById("emailSummaryModalSpinner");
+2512: 
+2513:             if (btn) btn.disabled = true;
+2514:             if (spinner) spinner.classList.remove("d-none");
+2515:             if (modalSpinner) modalSpinner.classList.remove("d-none");
+2516: 
+2517:             // Gather chat history from DOM
+2518:             const history = [];
+2519:             document.querySelectorAll("#messages .bot-message, #messages .user-message").forEach(function (el) {
+2520:                 const isUser = el.classList.contains("user-message");
+2521:                 const text = el.innerText.replace(/📷 Analyzing Live Dashboard View.../g, "").replace(/⚠️ Screen capture was cancelled or denied./g, "").trim();
+2522:                 if (text && text.length > 5 && !text.includes("Typing...")) {
+2523:                     history.push({ role: isUser ? "user" : "assistant", content: text });
+2524:                 }
+2525:             });
+2526: 
+2527:             if (history.length === 0) {
+2528:                 alert("You don't have any chat history to summarize yet! Please ask the AI a question first.");
+2529:                 if (btn) btn.disabled = false;
+2530:                 if (spinner) spinner.classList.add("d-none");
+2531:                 if (modalSpinner) modalSpinner.classList.add("d-none");
+2532:                 return;
+2533:             }
+2534: 
+2535:             try {
+2536:                 const response = await fetch("/email-chat-summary", {
+2537:                     method: "POST",
+2538:                     headers: { "Content-Type": "application/json" },
+2539:                     body: JSON.stringify({ email: email, history: history })
+2540:                 });
+2541:                 const data = await response.json();
+2542: 
+2543:                 if (!response.ok || data.error) {
+2544:                     alert(data.error || "Failed to send email summary.");
+2545:                 } else {
+2546:                     alert(data.message || "Summary sent successfully to your email!");
+2547:                     closeEmailSummaryModal();
+2548:                 }
+2549:             } catch (err) {
+2550:                 console.error(err);
+2551:                 alert("Connection error while sending summary.");
+2552:             } finally {
+2553:                 if (btn) btn.disabled = false;
+2554:                 if (spinner) spinner.classList.add("d-none");
+2555:                 if (modalSpinner) modalSpinner.classList.add("d-none");
+2556:             }
+2557:         }
+2558:     </script>
+2559: 
+2560:     <div id="emailSummaryModal" class="utilityModal" style="z-index: 1000000;">
+2561:         <div class="utilityModalHeader">
+2562:             <div class="utilityModalTitle">Email Chat Summary</div>
+2563:             <button onclick="closeEmailSummaryModal()" type="button"
+2564:                 style="background: transparent; border: none; font-size: 24px; color: var(--gray-400); cursor: pointer; padding: 0; line-height: 1;">×</button>
+2565:         </div>
+2566:         <div class="utilityModalBody">
+2567:             <p style="font-size: 13px; color: var(--gray-400); margin-bottom: 12px;">We'll use AI to summarize this
+2568:                 entire conversation and send it as a professional executive brief directly to your inbox.</p>
+2569:             <div class="mb-3">
+2570:                 <label for="emailSummaryInput" class="form-label" style="font-size: 12px; color: var(--gray-300);">Work
+2571:                     Email</label>
+2572:                 <input type="email" id="emailSummaryInput" class="form-control" placeholder="you@company.com">
+2573:             </div>
+2574:             <button id="emailSummarySubmitBtn" onclick="sendChatSummary()"
+2575:                 class="btn btn-primary w-100 d-flex align-items-center justify-content-center" style="gap: 8px;">
+2576:                 <span>Send Summary via Power Automate</span>
+2577:                 <span class="spinner-border spinner-border-sm d-none" id="emailSummaryModalSpinner" role="status"
+2578:                     aria-hidden="true"></span>
+2579:             </button>
+2580:         </div>
+2581:     </div>
+2582: 
+2583:     <script>
+2584:         // Hero Carousel Logic
+2585:         document.addEventListener('DOMContentLoaded', () => {
+2586:             const cards = document.querySelectorAll('.carousel-card');
+2587:             if (!cards.length) return;
+2588:             
+2589:             let currentIndex = 0;
+2590:             const totalCards = cards.length;
+2591:             let rotationInterval;
+2592: 
+2593:             function updateCarousel() {
+2594:                 cards.forEach((card, index) => {
+2595:                     card.classList.remove('active', 'prev', 'next');
+2596:                     
+2597:                     if (index === currentIndex) {
+2598:                         card.classList.add('active');
+2599:                     } else if (index === (currentIndex - 1 + totalCards) % totalCards) {
+2600:                         card.classList.add('prev');
+2601:                     } else if (index === (currentIndex + 1) % totalCards) {
+2602:                         card.classList.add('next');
+2603:                     }
+2604:                 });
+2605:             }
+2606: 
+2607:             function nextCard() {
+2608:                 currentIndex = (currentIndex + 1) % totalCards;
+2609:                 updateCarousel();
+2610:             }
+2611: 
+2612:             function startCarousel() {
+2613:                 updateCarousel();
+2614:                 clearInterval(rotationInterval);
+2615:                 rotationInterval = setInterval(nextCard, 3000);
+2616:             }
+2617: 
+2618:             function pauseCarousel() {
+2619:                 clearInterval(rotationInterval);
+2620:             }
+2621: 
+2622:             const carouselContainer = document.getElementById('heroCarousel');
+2623:             if (carouselContainer) {
+2624:                 carouselContainer.addEventListener('mouseenter', pauseCarousel);
+2625:                 carouselContainer.addEventListener('mouseleave', startCarousel);
+2626:                 // Start after a slight delay to allow rendering
+2627:                 setTimeout(startCarousel, 600);
+2628:             }
+2629:         });
+2630:     </script>
+2631: </body>
+2632: 
+2633: </html>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,59 @@
+Created At: 2026-06-28T09:12:52Z
+Completed At: 2026-06-28T09:12:52Z
+File Path: `file:///d:/ITI/GP/newapp/static/css/style.css`
+Total Lines: 9540
+Total Bytes: 252814
+Showing lines 8930 to 8980
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8930:     display: flex;
+8931:     align-items: center;
+8932:     justify-content: space-between;
+8933:     width: 100%;
+8934:     max-width: 1300px;
+8935:     margin: 0 auto;
+8936:     padding: 2rem;
+8937:     gap: 40px;
+8938:     z-index: 2;
+8939:     animation: welcomePanelIn 1s cubic-bezier(.18,1.18,.34,1) both;
+8940: }
+8941: 
+8942: .welcome-left {
+8943:     flex: 1;
+8944:     max-width: 600px;
+8945:     text-align: left;
+8946: }
+8947: 
+8948: .welcome-main-title {
+8949:     font-size: clamp(40px, 5vw, 64px);
+8950:     font-weight: 950;
+8951:     line-height: 1.05;
+8952:     letter-spacing: -1px;
+8953:     margin-bottom: 24px;
+8954:     color: #ffffff;
+8955:     text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+8956:     text-transform: uppercase;
+8957: }
+8958: 
+8959: .welcome-main-subtitle {
+8960:     font-size: clamp(16px, 1.2vw, 18px);
+8961:     line-height: 1.6;
+8962:     color: rgba(226, 242, 255, 0.85);
+8963:     margin-bottom: 30px;
+8964:     max-width: 540px;
+8965: }
+8966: 
+8967: .welcome-tools {
+8968:     margin-bottom: 40px;
+8969: }
+8970: 
+8971: .tools-label {
+8972:     display: block;
+8973:     font-size: 14px;
+8974:     font-weight: 600;
+8975:     color: #38bdf8;
+8976:     margin-bottom: 12px;
+8977: }
+8978: 
+8979: .tools-list {
+8980:     display: flex;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

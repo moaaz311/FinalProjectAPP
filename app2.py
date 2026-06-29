@@ -49,7 +49,6 @@ logger = logging.getLogger("egypt_trade_ai")
 # ======================
 
 app = Flask(__name__)
-CORS(app)
 
 # ======================
 # ENV
@@ -58,6 +57,10 @@ CORS(app)
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 HTTP_REFERER = os.getenv("HTTP_REFERER", "http://localhost:5000")
+
+# Restrict CORS to the intended frontend domains
+CORS(app, resources={r"/*": {"origins": [HTTP_REFERER, "http://127.0.0.1:5000", "http://localhost:5000"]}})
+
 X_TITLE = os.getenv("X_TITLE", "EgyptTradeAI")
 
 SQL_SERVER = os.getenv("SQL_SERVER")
@@ -159,8 +162,8 @@ try:
     db_error_msg = None
 
 except Exception as e:
-    logger.error("Database connection failed: %s", e)
-    db_error_msg = f"Server: '{SQL_SERVER}' | DB: '{SQL_DATABASE}' | User: '{SQL_USERNAME}' | Exception: {str(e)}"
+    logger.error("Database connection failed: Server: '%s' | DB: '%s' | User: '%s' | Exception: %s", SQL_SERVER, SQL_DATABASE, SQL_USERNAME, str(e))
+    db_error_msg = "Database connection unavailable. Please contact the administrator."
     engine = None
 
 # ======================
@@ -170,6 +173,10 @@ except Exception as e:
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/app")
+def app_dashboard():
+    return render_template("app.html")
 
 @app.route("/about")
 def about():
@@ -1102,35 +1109,20 @@ def build_ai_answer(df: pd.DataFrame, summary: str, question: str = "") -> str:
     result_type = _detect_result_type(question, df, metric_col)
     table_title = _table_title(question, metric_col, result_type, len(df))
 
-    # ======================
-    # CASE 1: TIME SERIES / TREND
-    # ======================
     if result_type == "trend":
         table_html = build_formatted_table(df, display_cols, add_rank=False)
+        icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>'
 
         return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📈 Trend Insight
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">Trend Comparison</div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
+<div class="ai-insight-summary">
+    {html.escape(summary)}
 </div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
-<div style='margin-top:10px;color:#94a3b8'>
-Analysis based on {len(df)} records
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1163,88 +1155,55 @@ Analysis based on {len(df)} records
 
         if len(df) > 1:
             ranking_table_html = f"""
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{build_formatted_table(df, display_cols, add_rank=True)}
+<div class="ai-insight-table-container">
+    {build_formatted_table(df, display_cols, add_rank=True)}
 </div>
 """
 
         label_html = ""
-
         if is_rate_ranking and top_tied_count > 1:
-            label_html = f"""
-<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
-{top_tied_count} results tied at the highest rate
-</div>
-"""
+            label_html = f"{top_tied_count} results tied at the highest rate"
         elif has_real_label:
-            label_html = f"""
-<div style='font-size:22px;font-weight:bold;color:#60a5fa;margin-top:15px'>
-{html.escape(str(top[label_col]))}
-</div>
-"""
+            label_html = f"{html.escape(str(top[label_col]))} is the highest by {html.escape(clean_label(metric_col)).lower()}"
+        else:
+            label_html = f"{html.escape(clean_label(metric_col))}"
+
+        icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3z"/><path fill="currentColor" opacity="0.4" d="M16 13c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/><path fill="currentColor" d="M8 13c-.25 0-.5.01-.76.04C5.12 13.43 3 15.02 3 17v2h4.5v-2.5c0-1.1.42-2.32 1.3-3.08-.26-.27-.55-.42-.8-.42z"/></svg>'
 
         return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📊 Business Insight
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">{html.escape(table_title)}</div>
 </div>
-
-{label_html}
-
-<div style='font-size:30px;font-weight:bold;color:#34d399;margin-top:15px'>
-{formatted_value}
+<div class="ai-insight-summary">
+    {html.escape(summary)}
 </div>
-
-<div style='margin-top:6px;color:#94a3b8;font-size:13px'>
-{html.escape(clean_label(metric_col))}
+<div class="ai-insight-kpi-block">
+    <div class="ai-insight-kpi-icon">🌐</div>
+    <div class="ai-insight-kpi-content">
+        <div class="ai-insight-kpi-value">{formatted_value}</div>
+        <div class="ai-insight-kpi-label">{label_html}</div>
+    </div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
-</div>
-
 {ranking_table_html}
-
-<div style='margin-top:10px;color:#94a3b8'>
-Analysis based on {len(df)} records
-</div>
-
-</div>
 """
 
     # ======================
     # CASE 3: DESCRIPTIVE / LIST RESULT
     # ======================
     table_html = build_formatted_table(df, display_cols, add_rank=False)
+    icon_svg = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>'
 
     return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📋 Result Summary
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">{icon_svg}</div>
+    <div class="ai-insight-title">Result Summary</div>
 </div>
-
-<div style='font-size:26px;font-weight:bold;color:#34d399;margin-top:12px'>
-{len(df)} records found
+<div class="ai-insight-summary">
+    {len(df)} records found. {html.escape(summary)}
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-{html.escape(summary)}
-</div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-{html.escape(table_title)}
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1272,28 +1231,17 @@ def build_sql_preview_answer(df: pd.DataFrame, sql: str) -> str:
     shown_rows = min(len(df), 20)
 
     return f"""
-<div style='line-height:1.8'>
-
-<div style='font-size:20px;font-weight:bold'>
-📋 SQL Result Preview
+<div class="ai-insight-header">
+    <div class="ai-insight-icon">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+    </div>
+    <div class="ai-insight-title">SQL Result Preview</div>
 </div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:14px'>
-The SQL query was executed successfully. Showing the first {shown_rows} rows.
+<div class="ai-insight-summary">
+    The SQL query was executed successfully. Showing the first {shown_rows} rows.
 </div>
-
-<div style='margin-top:18px;color:#dbeafe;font-size:15px;font-weight:bold'>
-Query Result
-</div>
-
-<div style='margin-top:10px;overflow-x:auto'>
-{table_html}
-</div>
-
-<div style='margin-top:10px;color:#94a3b8;font-size:12px'>
-Raw SQL input was handled as a table preview, not as a KPI insight.
-</div>
-
+<div class="ai-insight-table-container">
+    {table_html}
 </div>
 """
 
@@ -1315,23 +1263,26 @@ def _first_existing_column(columns: list[str], candidates: list[str]) -> str | N
     return None
 
 
-def _pick_metric_column_for_chart(df: pd.DataFrame) -> str | None:
+def _pick_metric_columns_for_chart(df: pd.DataFrame) -> list[str]:
     numeric_cols = [
         col for col in df.columns
         if pd.api.types.is_numeric_dtype(df[col]) and _is_measure_col(col)
     ]
 
     if numeric_cols:
-        return numeric_cols[0]
+        return numeric_cols[:2]  # Return up to 2 columns for dual-line chart support
 
     # Fallback for numeric-looking object columns after JSON/None conversion.
+    fallback = []
     for col in df.columns:
         if _is_measure_col(col):
             coerced = pd.to_numeric(df[col], errors="coerce")
             if coerced.notna().any():
-                return col
+                fallback.append(col)
+                if len(fallback) == 2:
+                    break
 
-    return None
+    return fallback
 
 
 def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
@@ -1352,7 +1303,8 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         }
 
     columns = list(df.columns)
-    metric_col = _pick_metric_column_for_chart(df)
+    metric_cols = _pick_metric_columns_for_chart(df)
+    metric_col = metric_cols[0] if metric_cols else None
     result_type = _detect_result_type(question, df, metric_col)
 
     time_col = _first_existing_column(
@@ -1362,7 +1314,7 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
 
     label_candidates = [
         col for col in columns
-        if col != metric_col and not _is_internal_display_col(col)
+        if col not in metric_cols and not _is_internal_display_col(col)
     ]
     label_col = next(
         (col for col in label_candidates if not pd.api.types.is_numeric_dtype(df[col])),
@@ -1385,7 +1337,10 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
     if result_type == "trend" and time_col:
         x_col = time_col
         chart_type = "line"
-        title = f"{clean_label(metric_col)} Trend"
+        if len(metric_cols) > 1:
+            title = "Trend Comparison"
+        else:
+            title = f"{clean_label(metric_col)} Trend"
     elif len(df) == 1:
         top = df.iloc[0]
         return {
@@ -1420,10 +1375,13 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         }
 
     chart_rows = []
-    for _, row in df[[x_col, metric_col]].head(20).iterrows():
+    display_cols = [c for c in columns if not _is_internal_display_col(c)]
+    if not display_cols:
+        display_cols = columns
+
+    for _, row in df[display_cols].head(20).iterrows():
         chart_rows.append({
-            x_col: _json_safe_value(row[x_col]),
-            metric_col: _json_safe_value(row[metric_col]),
+            col: _json_safe_value(row[col]) for col in display_cols
         })
 
     return {
@@ -1431,7 +1389,7 @@ def build_chart_metadata(df: pd.DataFrame, question: str = "") -> dict:
         "type": chart_type,
         "title": title,
         "x": x_col,
-        "y": metric_col,
+        "y": metric_cols if len(metric_cols) > 1 else metric_col,
         "data": chart_rows,
     }
 
