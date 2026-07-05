@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <a href="https://finalprojectapp-ai-grggdybadqfugya3.austriaeast-01.azurewebsites.net/" target="_blank">
+  <a href="https://egypt-econlens-epajh8gjfvdxdyhd.austriaeast-01.azurewebsites.net" target="_blank">
     <img src="https://img.shields.io/badge/🚀%20Live%20Demo-Try%20Egypt%20EconLens%20Platform-d4a843?style=for-the-badge&logo=rocket" alt="Live Cloud Demo"/>
   </a>
 </p>
@@ -493,10 +493,9 @@ This project was developed as a graduation project for the **ITI Business Intell
 
 ---
 
-## 📖 Documentation & License
+## 📖 Documentation
 
-- 📄 **[Project Documentation](https://docs.google.com/document/d/1lHbXuJEGga4qOJOjWLg2ndSixNY3V0OE/edit?usp=sharing&ouid=115243931777492490675&rtpof=true&sd=true)** — Full project pitch, methodology, and analysis
-- 📜 This project is licensed under the MIT License.
+- 📄 **[Project Documentation](https://docs.google.com/document/d/1_hmX6N-lVjhbMK2UnSVNv8LMq9YESnhg/edit?usp=sharing&ouid=116185672424717190455&rtpof=true&sd=true)** — Full project pitch, methodology, and analysis
 
 <p align="center">
   Made with ❤️ by the ITI BI 2026 Team
