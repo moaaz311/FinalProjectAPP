@@ -299,9 +299,9 @@ The interactive Power BI dashboard features **10+ report pages** covering:
 
 <p align="center">
   <img src="screenshots/dashboard_page_1.png" alt="Executive Cockpit Page" width="48%"/>
+  <img src="screenshots/dashboard_page_2.png" alt="Dashboard View" width="48%"/>
   <img src="screenshots/dashboard_page_3.png" alt="Trade Balance Page" width="48%"/>
   <img src="screenshots/app_test_1.png" alt="App Home Dashboard" width="48%"/>
-  <img src="screenshots/app_test_6.png" alt="AI chatbot window" width="48%"/>
 </p>
 </details>
 
@@ -316,9 +316,19 @@ The local SQL Server Data Warehouse can be migrated to **Microsoft Fabric Synaps
 
 <p align="center">
   <img src="fabric.png" alt="Fabric Integration" width="48%"/>
-  <img src="screenshots/fabric_migration_1.png" alt="Fabric Copy Job 1" width="48%"/>
-  <img src="screenshots/power_automate_flow_1.png" alt="Flow 1 visual 1" width="48%"/>
+  <img src="screenshots/fabric_migration_2.png" alt="Fabric Copy Job 2" width="48%"/>
+  <img src="screenshots/fabric_migration_3.png" alt="Fabric Copy Job 3" width="48%"/>
   <img src="screenshots/sharepoint_report_tracker.png" alt="SharePoint Report tracker list" width="48%"/>
+  <img src="screenshots/sharepoint_subscribers_1.png" alt="SharePoint Subscribers list" width="48%"/>
+</p>
+
+### Power Automate Flows & Email Templates
+<p align="center">
+  <img src="screenshots/chatsummaryflow.png" alt="Chat Summary Flow" width="48%"/>
+  <img src="screenshots/sendReportflow.png" alt="Send Report Flow" width="48%"/>
+  <img src="screenshots/supscripers%20flow.png" alt="Subscribers Flow" width="48%"/>
+  <img src="screenshots/refersh%20and%20update%20reports%20flow.png" alt="Refresh and Update Reports Flow" width="48%"/>
+  <img src="screenshots/emailtemplets.png" alt="Email Templates" width="98%"/>
 </p>
 </details>
 
