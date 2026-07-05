@@ -110,11 +110,12 @@ mail = Mail(app)
 # DATABASE
 # ======================
 
+SQL_USERNAME = os.getenv("SQL_USERNAME")
+
 try:
     if not SQL_SERVER or not SQL_DATABASE:
         raise ValueError("SQL_SERVER or SQL_DATABASE is missing in .env file")
         
-    SQL_USERNAME = os.getenv("SQL_USERNAME")
     SQL_PASSWORD = os.getenv("SQL_PASSWORD")
 
     if SQL_USERNAME:
@@ -785,7 +786,8 @@ def _llm(system: str, user: str, model: str, max_tokens: int = 600) -> str:
         },
     )
 
-    return response.choices[0].message.content.strip()
+    content = response.choices[0].message.content
+    return content.strip() if content else ""
 
 
 _ARABIC_TRANSLATION_SYSTEM = """
@@ -835,7 +837,7 @@ Fallback canonical meaning if useful:
 
 def clean_label(col_name: str) -> str:
     """Convert snake_case database columns into clean UI labels."""
-    label = str(col_name).replace("_", " ").title()
+    label = col_name.replace("_", " ").title()
 
     replacements = {
         "Usd": "USD",
@@ -975,7 +977,7 @@ def format_metric(value, col_name: str) -> str:
     return html.escape(res)
 
 def build_formatted_table(source_df: pd.DataFrame, display_cols: list[str], add_rank: bool = False) -> str:
-    table_df = source_df[display_cols].copy()
+    table_df = pd.DataFrame(source_df[display_cols])
 
     rename_map = {
         col: clean_label(col)
@@ -1138,7 +1140,7 @@ def build_ai_answer(df: pd.DataFrame, summary: str, question: str = "") -> str:
 
         has_real_label = (
             label_col != metric_col
-            and label_col in df.columns
+            and label_col in list(df.columns)
             and not pd.api.types.is_numeric_dtype(df[label_col])
         )
 
@@ -1221,7 +1223,7 @@ def build_sql_preview_answer(df: pd.DataFrame, sql: str) -> str:
     if not display_cols:
         display_cols = list(df.columns)
 
-    preview_df = df[display_cols].head(20)
+    preview_df = pd.DataFrame(df[display_cols].head(20))
     table_html = build_formatted_table(
         preview_df,
         display_cols,
@@ -1256,7 +1258,7 @@ def _json_safe_value(value):
 
 
 def _first_existing_column(columns: list[str], candidates: list[str]) -> str | None:
-    lower_map = {str(col).lower(): col for col in columns}
+    lower_map = {col.lower(): col for col in columns}
     for candidate in candidates:
         if candidate.lower() in lower_map:
             return lower_map[candidate.lower()]
@@ -1277,7 +1279,7 @@ def _pick_metric_columns_for_chart(df: pd.DataFrame) -> list[str]:
     for col in df.columns:
         if _is_measure_col(col):
             coerced = pd.to_numeric(df[col], errors="coerce")
-            if coerced.notna().any():
+            if isinstance(coerced, pd.Series) and coerced.notna().any():
                 fallback.append(col)
                 if len(fallback) == 2:
                     break
@@ -2085,25 +2087,24 @@ def email_chat_summary():
             role = "User" if msg.get("role") == "user" else "Assistant"
             convo_text += f"{role}: {msg.get('content')}\n\n"
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Please format this conversation as a Q&A report:\n\n{convo_text}"}
-        ]
-
         summary_model = os.environ.get("SUMMARY_MODEL", "openai/gpt-4o-mini")
 
         response = client.chat.completions.create(
             model=summary_model,
             temperature=0.3,
             max_tokens=4000,
-            messages=messages,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Please format this conversation as a Q&A report:\n\n{convo_text}"}
+            ],
             extra_headers={
                 "HTTP-Referer": HTTP_REFERER,
                 "X-Title": X_TITLE,
             },
         )
 
-        summary_html = response.choices[0].message.content.strip()
+        content = response.choices[0].message.content
+        summary_html = content.strip() if content else ""
         
         # Clean up markdown if AI includes it
         if summary_html.startswith("```html"):
