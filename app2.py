@@ -2154,7 +2154,7 @@ def email_chat_summary():
             </div>
             <div style="padding: 32px 24px; color: #333333; line-height: 1.6; font-size: 15px;">
                 <p style="margin-top: 0;">Hello Team,</p>
-                <p>An AI-generated executive summary of the recent data analytics conversation is ready for your review.</p>
+                <p>Please find the attached report regarding our recent data analytics discussion.</p>
                 
                 <div style="background-color: #ffffff; padding: 10px 0; margin: 28px 0;">
                     {summary_html}
@@ -2179,7 +2179,7 @@ def email_chat_summary():
         # Call Power Automate Flow
         payload = {
             "email": email,
-            "title": "Egypt EconLens - Chat Summary",
+            "title": "Requested Data Report",
             "summaryHtml": styled_html
         }
 
