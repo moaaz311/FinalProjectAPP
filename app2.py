@@ -110,60 +110,89 @@ mail = Mail(app)
 # DATABASE
 # ======================
 
-SQL_USERNAME = os.getenv("SQL_USERNAME")
+# =========================================================
+# OLD SQL SERVER CONNECTION (Commented out per user request)
+# =========================================================
+# SQL_USERNAME = os.getenv("SQL_USERNAME")
+# 
+# try:
+#     if not SQL_SERVER or not SQL_DATABASE:
+#         raise ValueError("SQL_SERVER or SQL_DATABASE is missing in .env file")
+#         
+#     SQL_PASSWORD = os.getenv("SQL_PASSWORD")
+# 
+#     if SQL_USERNAME:
+#         # Remote connection (Microsoft Fabric / Azure SQL) using Managed Identity
+#         
+#         # Format server for Linux ODBC driver to prevent timeouts
+#         formatted_server = SQL_SERVER
+#         if not formatted_server.startswith("tcp:"):
+#             formatted_server = f"tcp:{formatted_server}"
+#         if "," not in formatted_server:
+#             formatted_server = f"{formatted_server},1433"
+#             
+#         connection_string = (
+#             "DRIVER={ODBC Driver 17 for SQL Server};"
+#             f"SERVER={formatted_server};"
+#             f"DATABASE={SQL_DATABASE};"
+#             "Authentication=ActiveDirectoryMsi;"
+#             "Encrypt=yes;"
+#             "TrustServerCertificate=no;"
+#         )
+#         engine = create_engine(
+#             f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
+#             pool_pre_ping=True,
+#             pool_recycle=3600
+#         )
+#     else:
+#         # Fallback to local Windows Authentication
+#         connection_string = (
+#             "DRIVER={ODBC Driver 17 for SQL Server};"
+#             f"SERVER={SQL_SERVER};"
+#             f"DATABASE={SQL_DATABASE};"
+#             "Trusted_Connection=yes;"
+#             "TrustServerCertificate=yes;"
+#         )
+#         engine = create_engine(
+#             f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
+#             pool_pre_ping=True,
+#             pool_recycle=3600
+#         )
+# 
+#     with engine.connect() as conn:
+#         conn.execute(text("SELECT 1"))
+# 
+#     logger.info("Database connected")
+#     db_error_msg = None
+# 
+# except Exception as e:
+#     logger.error("Database connection failed: Server: '%s' | DB: '%s' | User: '%s' | Exception: %s", SQL_SERVER, SQL_DATABASE, SQL_USERNAME, str(e))
+#     db_error_msg = "Database connection unavailable. Please contact the administrator."
+#     engine = None
+
+# =========================================================
+# NEW SUPABASE CONNECTION
+# =========================================================
+SUPABASE_DB_URL = os.getenv("SUPABASE_DB_URL")
 
 try:
-    if not SQL_SERVER or not SQL_DATABASE:
-        raise ValueError("SQL_SERVER or SQL_DATABASE is missing in .env file")
-        
-    SQL_PASSWORD = os.getenv("SQL_PASSWORD")
+    if not SUPABASE_DB_URL:
+        raise ValueError("SUPABASE_DB_URL is missing in .env file")
 
-    if SQL_USERNAME:
-        # Remote connection (Microsoft Fabric / Azure SQL) using Managed Identity
-        
-        # Format server for Linux ODBC driver to prevent timeouts
-        formatted_server = SQL_SERVER
-        if not formatted_server.startswith("tcp:"):
-            formatted_server = f"tcp:{formatted_server}"
-        if "," not in formatted_server:
-            formatted_server = f"{formatted_server},1433"
-            
-        connection_string = (
-            "DRIVER={ODBC Driver 17 for SQL Server};"
-            f"SERVER={formatted_server};"
-            f"DATABASE={SQL_DATABASE};"
-            "Authentication=ActiveDirectoryMsi;"
-            "Encrypt=yes;"
-            "TrustServerCertificate=no;"
-        )
-        engine = create_engine(
-            f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
-            pool_pre_ping=True,
-            pool_recycle=3600
-        )
-    else:
-        # Fallback to local Windows Authentication
-        connection_string = (
-            "DRIVER={ODBC Driver 17 for SQL Server};"
-            f"SERVER={SQL_SERVER};"
-            f"DATABASE={SQL_DATABASE};"
-            "Trusted_Connection=yes;"
-            "TrustServerCertificate=yes;"
-        )
-        engine = create_engine(
-            f"mssql+pyodbc:///?odbc_connect={quote_plus(connection_string)}",
-            pool_pre_ping=True,
-            pool_recycle=3600
-        )
+    engine = create_engine(
+        SUPABASE_DB_URL,
+        pool_pre_ping=True,
+        pool_recycle=300
+    )
 
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
 
-    logger.info("Database connected")
+    logger.info("Supabase database connected")
     db_error_msg = None
 
 except Exception as e:
-    logger.error("Database connection failed: Server: '%s' | DB: '%s' | User: '%s' | Exception: %s", SQL_SERVER, SQL_DATABASE, SQL_USERNAME, str(e))
+    logger.error("Supabase connection failed: %s", str(e))
     db_error_msg = "Database connection unavailable. Please contact the administrator."
     engine = None
 
