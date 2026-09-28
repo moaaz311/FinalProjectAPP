@@ -73,7 +73,6 @@ Egypt's trade ecosystem generates massive volumes of data across multiple agenci
 | 📄 **Executive Chat Summarizer** | Export AI conversations as professional Q&A PDF briefs, delivered via email using Power Automate. |
 | ⚡ **Power Automate Integration** | Automated workflows for dashboard export, paginated PDF delivery, and daily subscriber alerts. |
 | 🌐 **View Transitions API** | Fluid, app-like page navigation without SPA framework overhead. |
-| 📱 **Mobile-First Responsive** | WhatsApp-style AI chat, swipeable bottom dock, and keyboard-aware inputs for a native mobile feel. |
 | 🗄️ **Robust Data Warehouse** | Optimized Star Schema built with SQL Server 2022. |
 | ⚙️ **Automated ETL Pipeline** | Built with SSIS including data validation and DQ checks. |
 
