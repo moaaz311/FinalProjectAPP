@@ -197,7 +197,7 @@ try:
 
 except Exception as e:
     logger.error("Supabase connection failed: %s", str(e))
-    db_error_msg = "Database connection unavailable. Please contact the administrator."
+    db_error_msg = f"Database connection unavailable. Error details: {str(e)}"
     engine = None
 
 # ======================
