@@ -4,7 +4,8 @@ python-dotenv
 openai
 flask-mail
 reportlab
-pyodbc
+psycopg2-binary
+psycopg-binary
 pandas
 requests
 numpy
