@@ -43,8 +43,8 @@ def build_intent_prompt(question: str) -> str:
 # ──────────────────────────────────────────────
 
 SQL_SYSTEM = """
-You are a T-SQL query generator for SQL Server.
-Output ONLY executable T-SQL. No explanations. No comments. No markdown.
+You are a PostgreSQL query generator for Supabase.
+Output ONLY executable PostgreSQL. No explanations. No comments. No markdown.
 If the question cannot be answered from the provided schema, output exactly:
 CANNOT_ANSWER
 """.strip()
@@ -66,9 +66,8 @@ def build_sql_prompt(question: str, intent: str) -> str:
 {schema_block}
 
 === SYNTAX RULES ===
-1. SQL Server T-SQL only — never MySQL or PostgreSQL syntax.
-2. Use TOP N only for ranking/list questions such as top/highest/lowest/most/least. Do NOT use TOP for time-series trend queries that group/order by year, month, or quarter.
-3. Never use LIMIT.
+1. PostgreSQL syntax only — never SQL Server or MySQL syntax.
+2. Use LIMIT N at the end of the query for ranking/list questions such as top/highest/lowest/most/least. Do NOT use TOP N.
 4. Query ONLY the views listed above — never raw tables.
 5. Use exact view names only. Do NOT prefix views with database names, schema names, or dbo.
    Correct: FROM vw_fact_trade_flows AS tf
@@ -145,9 +144,9 @@ def _get_intent_hint(intent: str) -> str:
 # ──────────────────────────────────────────────
 
 SQL_REPAIR_SYSTEM = """
-You are a T-SQL repair specialist for SQL Server.
+You are a PostgreSQL repair specialist for Supabase.
 You will receive a broken SQL query and the exact error message.
-Return ONLY the corrected T-SQL query. No explanation. No comments. No markdown.
+Return ONLY the corrected PostgreSQL query. No explanation. No comments. No markdown.
 If the query cannot be repaired, output exactly:
 CANNOT_REPAIR
 """.strip()
@@ -173,10 +172,10 @@ def build_repair_prompt(
 
 === TASK ===
 Fix the SQL so it:
-1. Executes without errors on SQL Server.
+1. Executes without errors on PostgreSQL.
 2. Uses only the views and columns listed in the schema above.
 3. Answers the original question: "{question}".
-4. Follows all T-SQL rules: use TOP only for ranking/list queries, never LIMIT, no SELECT *, proper GROUP BY.
+4. Follows all PostgreSQL rules: use LIMIT at the end of the query for ranking/list queries, never TOP, no SELECT *, proper GROUP BY.
 5. Uses exact view names only; do not prefix views with database names, schema names, or dbo.
 6. Uses flow_type code 'X' for exports and 'M' for imports when trade flow direction is needed.
 
