@@ -178,6 +178,10 @@ SUPABASE_DB_URL = os.getenv("SUPABASE_DB_URL")
 try:
     if not SUPABASE_DB_URL:
         raise ValueError("SUPABASE_DB_URL is missing in .env file")
+        
+    # Force SQLAlchemy to use the psycopg2 driver
+    if SUPABASE_DB_URL.startswith("postgresql://"):
+        SUPABASE_DB_URL = SUPABASE_DB_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
 
     engine = create_engine(
         SUPABASE_DB_URL,
