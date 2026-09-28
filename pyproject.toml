@@ -1,7 +1,4 @@
-[project]
-name = "egypt-econlens"
-version = "1.0.0"
-requires-python = ">=3.10"
+
 
 [tool.vercel]
 entrypoint = "app2:app"
